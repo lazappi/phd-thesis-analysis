@@ -1,5 +1,3 @@
-# phd-thesis-analysis
+# PhD Thesis Analysis
 
-A [workflowr][] project.
-
-[workflowr]: https://github.com/jdblischak/workflowr
+Code for the analysis chapter of my PhD thesis.

@@ -1,7 +1,7 @@
-name: "phd-thesis-analysis"
+name: "PhD Thesis Analysis"
 output_dir: "../docs"
 navbar:
-  title: "phd-thesis-analysis"
+  title: "PhD Thesis Analysis"
   left:
     - text: "Home"
       href: index.html
@@ -11,10 +11,12 @@ navbar:
       href: license.html
   right:
     - icon: fa-github
-      href: https://github.com/jdblischak/workflowr
+      href: https://github.com/lazappi/phd-thesis-analysis
 output:
   workflowr::wflow_html:
     toc: true
     toc_float: true
     theme: cosmo
     highlight: textmate
+    code_folding: hide
+    df_print: paged
