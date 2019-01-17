@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Pre-processing</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD Thesis Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/lazappi/phd-thesis-analysis">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Pre-processing</h1>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-01-18</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20190110)</code> </summary></p>
+<p>The command <code>set.seed(20190110)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/5857378ef6f71d2bb21aad5fe11389807ec76109" target="_blank">5857378</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/cache/
+    Ignored:    data/
+    Ignored:    packrat/lib-R/
+    Ignored:    packrat/lib-ext/
+    Ignored:    packrat/lib/
+    Ignored:    packrat/src/
+
+Untracked files:
+    Untracked:  docs/figure/
+
+Unstaged changes:
+    Deleted:    R/README.md
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/5857378ef6f71d2bb21aad5fe11389807ec76109/analysis/01-preprocessing.Rmd" target="_blank">5857378</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-18
+</td>
+<td style="text-align:left;">
+Add preprocessing
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code># scRNA-seq
+library(&quot;DropletUtils&quot;)
+library(&quot;SingleCellExperiment&quot;)
+
+# Tidyverse
+library(&quot;tidyverse&quot;)</code></pre>
+<pre class="r"><code>source(here::here(&quot;R/load.R&quot;))
+source(here::here(&quot;R/annotate.R&quot;))
+source(here::here(&quot;R/output.R&quot;))</code></pre>
+<pre class="r"><code>bpparam &lt;- BiocParallel::MulticoreParam(workers = 10)</code></pre>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this document we are going to read in the unfiltered counts matrix produced by <code>Cell Ranger</code> and determine which of those droplets contain cells using the <code>DropletUtils</code> package.</p>
+<pre class="r"><code>path &lt;- here::here(&quot;data/cellranger&quot;)
+raw &lt;- read10x(path, dataset = &quot;Orgs123&quot;)
+
+filt_barcodes &lt;- readr::read_lines(file.path(path, &quot;filtered_barcodes.tsv.gz&quot;))
+
+colData(raw)$CellRangerFilt &lt;- paste(colData(raw)$Barcode, 
+                                     colData(raw)$Sample, sep = &quot;-&quot;) %in%
+    filt_barcodes</code></pre>
+<p>The raw dataset has 33538 features and 2211840 droplets.</p>
+</div>
+<div id="barcode-ranks" class="section level1">
+<h1>Barcode ranks</h1>
+<pre class="r"><code>empty_thresh &lt;- 100
+
+bc_ranks &lt;- barcodeRanks(counts(raw), lower = empty_thresh)
+
+colData(raw)$BarcodeRank &lt;- bc_ranks$rank
+colData(raw)$BarcodeTotal &lt;- bc_ranks$total
+colData(raw)$BarcodeFitted &lt;- bc_ranks$fitted
+
+bc_data &lt;- colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    select(Cell, Kept = CellRangerFilt, Rank = BarcodeRank,
+           Total = BarcodeTotal, Fitted = BarcodeFitted) %&gt;%
+    arrange(Rank)</code></pre>
+<p>Let’s start by ordering the droplets according to their total counts and plotting this on a log scale. This let’s us see the distribution of total counts.</p>
+<pre class="r"><code>ggplot(bc_data, aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    geom_line(aes(y = Fitted), colour = &quot;red&quot;) +
+    geom_hline(yintercept = bc_ranks$knee,
+               colour = &quot;dodgerblue&quot;, linetype = &quot;dashed&quot;) +
+    annotate(&quot;text&quot;, x = 0, y = bc_ranks$knee, label = &quot;Knee&quot;,
+             colour = &quot;dodgerblue&quot;, hjust = 0, vjust = -1) +
+    geom_hline(yintercept = bc_ranks$inflection,
+               colour = &quot;forestgreen&quot;, linetype = &quot;dashed&quot;) +
+    annotate(&quot;text&quot;, x = 0, y = bc_ranks$inflection, label = &quot;Inflection&quot;,
+             colour = &quot;forestgreen&quot;, hjust = 0, vjust = -1) +
+    geom_hline(yintercept = empty_thresh,
+               colour = &quot;darkorchid&quot;, linetype = &quot;dashed&quot;) +
+    annotate(&quot;text&quot;, x = 0, y = empty_thresh, label = &quot;Empty threshold&quot;,
+             colour = &quot;darkorchid&quot;, hjust = 0, vjust = -1) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c(&quot;black&quot;, &quot;violet&quot;)) +
+    ylab(&quot;Total counts&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/01-preprocessing.Rmd/barcodes-plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>This is typical of what we see for 10x experiment where there is a sharp drop off between droplets with lots of counts and those without many. The inflection and knee points are methods for identifying the transition between distributions. These are roughly associated with the cells selected by <code>Cell Ranger</code> The empty threshold line indicates the point at which we assume droplets must be empty (total counts &lt;= 100).</p>
+</div>
+<div id="empty-drops" class="section level1">
+<h1>Empty drops</h1>
+<p>We will now look at identifying which droplets to select using the <code>emptyDrops</code> method. This method tests whether the composition of a droplet is significantly different from the ambient RNA in the sample which is obtained by pooling the empty droplets. Droplets with very large counts are also automatically retained.</p>
+<pre class="r"><code>set.seed(1)
+
+emp_iters &lt;- 10000
+
+emp_drops &lt;- emptyDrops(counts(raw), lower = empty_thresh, niters = emp_iters,
+                        BPPARAM = bpparam)</code></pre>
+<p><code>emptyDrops</code> calculates p-values using a permutation approach. Let’s check that we are usually a sufficient number of iterations. If there are any droplets that have non-significant p-values but are limited by the number of permuations the number should be increased.</p>
+<pre class="r"><code>emp_fdr &lt;- 0.01
+is_cell &lt;- emp_drops$FDR &lt;= emp_fdr
+is_cell[is.na(is_cell)] &lt;- FALSE
+
+colData(raw)$EmpDropsLogProb &lt;- emp_drops$LogProb
+colData(raw)$EmpDropsPValue  &lt;- emp_drops$PValue
+colData(raw)$EmpDropsLimited &lt;- emp_drops$Limited
+colData(raw)$EmpDropsFDR     &lt;- emp_drops$FDR
+colData(raw)$EmpDropsFilt    &lt;- is_cell
+
+table(Limited = emp_drops$Limited, Significant = is_cell)</code></pre>
+<pre><code>       Significant
+Limited FALSE  TRUE
+  FALSE 11030   959
+  TRUE      0  9174</code></pre>
+<p>We can plot the negative log-probability against the total counts to see which droplets <code>emptyDrops</code> has selected.</p>
+<pre class="r"><code>colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    filter(!is.na(EmpDropsFilt)) %&gt;%
+    ggplot(aes(x = BarcodeTotal, y = -EmpDropsLogProb, colour = EmpDropsFilt)) +
+    geom_point() +
+    scale_colour_discrete(name = &quot;Significant&quot;) +
+    xlab(&quot;Total counts&quot;) +
+    ylab(&quot;-log(probability)&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/01-preprocessing.Rmd/empty-drops-plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>There were 2190677 droplets with less than 100 counts which were used to make up the ambient RNA pool. Of the remaining 21163 droplets 10133 were found to have profiles significantly different from the ambient RNA and should contain cells.</p>
+</div>
+<div id="comparison" class="section level1">
+<h1>Comparison</h1>
+<p>Let’s quickly compare differences between the default we get from <code>Cell Ranger</code> and what we have got from using <code>DropletUtils</code>. First let’s look at the number of cells identified by each method.</p>
+<pre class="r"><code>colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    group_by(Sample) %&gt;%
+    summarise(`Cell Ranger` = sum(CellRangerFilt),
+              emptyDrops    = sum(EmpDropsFilt, na.rm = TRUE)) %&gt;%
+    gather(key = Method, value = Total, -Sample) %&gt;%
+    ggplot(aes(x = Method, y = Total, fill = Sample)) +
+    geom_col() +
+    ylab(&quot;Number of cells&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/01-preprocessing.Rmd/compare-total-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>From this plot we can see that <code>emptyDrops</code> has identified many more cells and that they seem to be evenly spread across the three samples. Well will also check to see that the methods are finding the same cells.</p>
+<pre class="r"><code>plot_data &lt;- colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    mutate(`Cell Ranger only` =  CellRangerFilt &amp; !EmpDropsFilt,
+           `emptyDrops only`  = !CellRangerFilt &amp;  EmpDropsFilt,
+           Both               =  CellRangerFilt &amp;  EmpDropsFilt) %&gt;%
+    group_by(Sample) %&gt;%
+    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
+              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
+              Both               = sum(Both, na.rm = TRUE)) %&gt;%
+    gather(key = Selected, value = Count, -Sample) %&gt;%
+    mutate(Selected = factor(Selected,
+                             levels = c(&quot;Both&quot;, &quot;Cell Ranger only&quot;,
+                                        &quot;emptyDrops only&quot;)))
+
+ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
+    geom_col() +
+    theme_minimal()</code></pre>
+<p><img src="figure/01-preprocessing.Rmd/compare-overlap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot_data %&gt;%
+    group_by(Selected) %&gt;%
+    summarise(Total = sum(Count))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Selected"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Total"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Both","2":"8187"},{"1":"Cell Ranger only","2":"104"},{"1":"emptyDrops only","2":"1946"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Most cells are identified by both methods with <code>emptyDrops</code> identifying many more additional cells. There are only a few cells that are identified only by Cell Ranger. We will perform further quality control of cells so at this stage we will keep cells that are selected by either method.</p>
+<pre class="r"><code>selected &lt;- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
+
+colData(selected)$SelMethod &lt;- &quot;Both&quot;
+colData(selected)$SelMethod[!colData(selected)$CellRangerFilt] &lt;- &quot;emptyDrops&quot;
+colData(selected)$SelMethod[!colData(selected)$EmpDropsFilt] &lt;- &quot;CellRanger&quot;</code></pre>
+</div>
+<div id="annotation" class="section level1">
+<h1>Annotation</h1>
+<p>Now that we have a dataset that just contains actual cells we will add some extra annotation. This includes downloading feature annotation from <code>BioMart</code> and assigning cell cycle stages using the <code>cyclone</code> function in the <code>scran</code> package as well as calculating a range of quality control metrics using <code>scater</code>.</p>
+<pre class="r"><code>selected &lt;- annotateSCE(selected,
+                        org        = &quot;human&quot;,
+                        add_anno   = TRUE,
+                        host       = &quot;jul2018.archive.ensembl.org&quot;,
+                        calc_qc    = TRUE,
+                        calc_cpm   = TRUE,
+                        cell_cycle = TRUE,
+                        BPPARAM    = bpparam)
+
+glimpse(as.data.frame(colData(selected)))</code></pre>
+<pre><code>Observations: 10,237
+Variables: 54
+$ Cell                                           &lt;chr&gt; &quot;Cell74&quot;, &quot;Cell10…
+$ Dataset                                        &lt;chr&gt; &quot;Orgs123&quot;, &quot;Orgs1…
+$ Barcode                                        &lt;chr&gt; &quot;AAACCTGAGAGTACAT…
+$ Sample                                         &lt;chr&gt; &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1…
+$ CellRangerFilt                                 &lt;lgl&gt; TRUE, TRUE, FALSE…
+$ BarcodeRank                                    &lt;dbl&gt; 2281.5, 3193.5, 1…
+$ BarcodeTotal                                   &lt;dbl&gt; 11084, 9414, 114,…
+$ BarcodeFitted                                  &lt;dbl&gt; 11089.186, 9427.9…
+$ EmpDropsLogProb                                &lt;dbl&gt; -11721.3989, -948…
+$ EmpDropsPValue                                 &lt;dbl&gt; 0.00009999, 0.000…
+$ EmpDropsLimited                                &lt;lgl&gt; TRUE, TRUE, TRUE,…
+$ EmpDropsFDR                                    &lt;dbl&gt; 0.0000000000, 0.0…
+$ EmpDropsFilt                                   &lt;lgl&gt; TRUE, TRUE, TRUE,…
+$ SelMethod                                      &lt;chr&gt; &quot;Both&quot;, &quot;Both&quot;, &quot;…
+$ G1Score                                        &lt;dbl&gt; 0.029, 0.395, 0.9…
+$ SScore                                         &lt;dbl&gt; 0.029, 0.395, 0.9…
+$ G2MScore                                       &lt;dbl&gt; 0.534, 0.090, 0.0…
+$ CellCycle                                      &lt;chr&gt; &quot;G2M&quot;, &quot;S&quot;, &quot;G1&quot;,…
+$ is_cell_control                                &lt;lgl&gt; FALSE, FALSE, FAL…
+$ total_features_by_counts                       &lt;int&gt; 3193, 2663, 108, …
+$ log10_total_features_by_counts                 &lt;dbl&gt; 3.504335, 3.42553…
+$ total_counts                                   &lt;dbl&gt; 11084, 9414, 114,…
+$ log10_total_counts                             &lt;dbl&gt; 4.044736, 3.97382…
+$ pct_counts_in_top_50_features                  &lt;dbl&gt; 31.07182, 33.8963…
+$ pct_counts_in_top_100_features                 &lt;dbl&gt; 44.92061, 49.2033…
+$ pct_counts_in_top_200_features                 &lt;dbl&gt; 55.37712, 59.6983…
+$ pct_counts_in_top_500_features                 &lt;dbl&gt; 67.68315, 71.8398…
+$ total_features_by_counts_endogenous            &lt;int&gt; 3183, 2653, 108, …
+$ log10_total_features_by_counts_endogenous      &lt;dbl&gt; 3.502973, 3.42390…
+$ total_counts_endogenous                        &lt;dbl&gt; 10647, 9142, 114,…
+$ log10_total_counts_endogenous                  &lt;dbl&gt; 4.027268, 3.96108…
+$ pct_counts_endogenous                          &lt;dbl&gt; 96.05738, 97.1106…
+$ pct_counts_in_top_50_features_endogenous       &lt;dbl&gt; 30.95708, 34.4891…
+$ pct_counts_in_top_100_features_endogenous      &lt;dbl&gt; 44.38809, 49.5077…
+$ pct_counts_in_top_200_features_endogenous      &lt;dbl&gt; 54.16549, 59.1227…
+$ pct_counts_in_top_500_features_endogenous      &lt;dbl&gt; 66.63849, 71.3301…
+$ total_features_by_counts_feature_control       &lt;int&gt; 10, 10, 0, 7, 10,…
+$ log10_total_features_by_counts_feature_control &lt;dbl&gt; 1.0413927, 1.0413…
+$ total_counts_feature_control                   &lt;dbl&gt; 437, 272, 0, 13, …
+$ log10_total_counts_feature_control             &lt;dbl&gt; 2.6414741, 2.4361…
+$ pct_counts_feature_control                     &lt;dbl&gt; 3.9426200, 2.8893…
+$ pct_counts_in_top_50_features_feature_control  &lt;dbl&gt; 100, 100, NaN, 10…
+$ pct_counts_in_top_100_features_feature_control &lt;dbl&gt; 100, 100, NaN, 10…
+$ pct_counts_in_top_200_features_feature_control &lt;dbl&gt; 100, 100, NaN, 10…
+$ pct_counts_in_top_500_features_feature_control &lt;dbl&gt; 100, 100, NaN, 10…
+$ total_features_by_counts_MT                    &lt;int&gt; 10, 10, 0, 7, 10,…
+$ log10_total_features_by_counts_MT              &lt;dbl&gt; 1.0413927, 1.0413…
+$ total_counts_MT                                &lt;dbl&gt; 437, 272, 0, 13, …
+$ log10_total_counts_MT                          &lt;dbl&gt; 2.6414741, 2.4361…
+$ pct_counts_MT                                  &lt;dbl&gt; 3.9426200, 2.8893…
+$ pct_counts_in_top_50_features_MT               &lt;dbl&gt; 100, 100, NaN, 10…
+$ pct_counts_in_top_100_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…
+$ pct_counts_in_top_200_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…
+$ pct_counts_in_top_500_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…</code></pre>
+<pre class="r"><code>glimpse(as.data.frame(rowData(selected)))</code></pre>
+<pre><code>Observations: 33,538
+Variables: 20
+$ ID                         &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000237613&quot;,…
+$ Symbol                     &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;A…
+$ Type                       &lt;chr&gt; &quot;Gene Expression&quot;, &quot;Gene Expression&quot;,…
+$ Name                       &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;A…
+$ ensembl_gene_id            &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000237613&quot;,…
+$ entrezgene                 &lt;int&gt; NA, NA, 79501, NA, NA, NA, NA, NA, 72…
+$ external_gene_name         &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;A…
+$ hgnc_symbol                &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;&quot;…
+$ chromosome_name            &lt;chr&gt; &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1…
+$ description                &lt;chr&gt; &quot;MIR1302-2 host gene&quot;, &quot;family with s…
+$ gene_biotype               &lt;chr&gt; &quot;lincRNA&quot;, &quot;lincRNA&quot;, &quot;protein_coding…
+$ percentage_gene_gc_content &lt;dbl&gt; 48.84, 50.26, 32.06, 39.91, 48.75, 52…
+$ is_feature_control         &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
+$ is_feature_control_MT      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
+$ mean_counts                &lt;dbl&gt; 0.0001953697, 0.0000000000, 0.0000000…
+$ log10_mean_counts          &lt;dbl&gt; 8.483971e-05, 0.000000e+00, 0.000000e…
+$ n_cells_by_counts          &lt;int&gt; 2, 0, 0, 11, 2, 0, 0, 0, 0, 0, 0, 0, …
+$ pct_dropout_by_counts      &lt;dbl&gt; 99.98046, 100.00000, 100.00000, 99.89…
+$ total_counts               &lt;dbl&gt; 2, 0, 0, 11, 2, 0, 0, 0, 0, 0, 0, 0, …
+$ log10_total_counts         &lt;dbl&gt; 0.4771213, 0.0000000, 0.0000000, 1.07…</code></pre>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<div id="parameters" class="section level2">
+<h2>Parameters</h2>
+<p>This table describes parameters used and set in this document.</p>
+<pre class="r"><code>params &lt;- jsonlite::toJSON(list(
+     list(
+        Parameter = &quot;empty_thresh&quot;,
+        Value = empty_thresh,
+        Description = &quot;Droplets with less than this many counts are empty&quot;
+    ),
+    list(
+        Parameter = &quot;emp_iters&quot;,
+        Value = emp_iters,
+        Description = &quot;Number of iterations for emptyDrops p-values&quot;
+    ),
+    list(
+        Parameter = &quot;emp_fdr&quot;,
+        Value = emp_fdr,
+        Description = &quot;FDR cutoff for emptyDrops&quot;
+    ),
+    list(
+        Parameter = &quot;n_cells&quot;,
+        Value = ncol(selected),
+        Description = &quot;Number of cells selected&quot;
+    )
+), pretty = TRUE)
+
+knitr::kable(jsonlite::fromJSON(params))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">empty_thresh</td>
+<td align="left">100</td>
+<td align="left">Droplets with less than this many counts are empty</td>
+</tr>
+<tr class="even">
+<td align="left">emp_iters</td>
+<td align="left">10000</td>
+<td align="left">Number of iterations for emptyDrops p-values</td>
+</tr>
+<tr class="odd">
+<td align="left">emp_fdr</td>
+<td align="left">0.01</td>
+<td align="left">FDR cutoff for emptyDrops</td>
+</tr>
+<tr class="even">
+<td align="left">n_cells</td>
+<td align="left">10237</td>
+<td align="left">Number of cells selected</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="output-files" class="section level2">
+<h2>Output files</h2>
+<p>This table describes the output files produced by this document. Right click and <em>Save Link As…</em> to download the results.</p>
+<pre class="r"><code>write_rds(selected, here::here(&quot;data/processed/01-selected.Rds&quot;))</code></pre>
+<pre class="r"><code>dir.create(here::here(&quot;output&quot;, DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here(&quot;output&quot;, DOCNAME, &quot;parameters.json&quot;))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink(&quot;parameters.json&quot;, DOCNAME)
+    ),
+    Description = c(
+        &quot;Parameters set and used in this analysis&quot;
+    )
+))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/01-preprocessing/parameters.json">parameters.json</a></td>
+<td align="left">Parameters set and used in this analysis</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>─ Session info ──────────────────────────────────────────────────────────
+ setting  value                       
+ version  R version 3.5.0 (2018-04-23)
+ os       CentOS release 6.7 (Final)  
+ system   x86_64, linux-gnu           
+ ui       X11                         
+ language (EN)                        
+ collate  en_US.UTF-8                 
+ ctype    en_US.UTF-8                 
+ tz       Australia/Melbourne         
+ date     2019-01-18                  
+
+─ Packages ──────────────────────────────────────────────────────────────
+ ! package              * version   date       lib source        
+   assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
+   backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
+   bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
+   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
+   BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
+   BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
+   bitops                 1.0-6     2013-08-17 [1] CRAN (R 3.5.0)
+   broom                  0.5.1     2018-12-05 [1] CRAN (R 3.5.0)
+   callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
+   cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
+   cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
+   colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
+   crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
+   DelayedArray         * 0.8.0     2018-10-30 [1] Bioconductor  
+   desc                   1.2.0     2018-05-01 [1] CRAN (R 3.5.0)
+   devtools               2.0.1     2018-10-26 [1] CRAN (R 3.5.0)
+   digest                 0.6.18    2018-10-10 [1] CRAN (R 3.5.0)
+   dplyr                * 0.7.8     2018-11-10 [1] CRAN (R 3.5.0)
+   DropletUtils         * 1.2.2     2019-01-04 [1] Bioconductor  
+   edgeR                  3.24.3    2019-01-02 [1] Bioconductor  
+   evaluate               0.12      2018-10-09 [1] CRAN (R 3.5.0)
+   forcats              * 0.3.0     2018-02-19 [1] CRAN (R 3.5.0)
+   fs                     1.2.6     2018-08-23 [1] CRAN (R 3.5.0)
+   generics               0.0.2     2018-11-29 [1] CRAN (R 3.5.0)
+   GenomeInfoDb         * 1.18.1    2018-11-12 [1] Bioconductor  
+   GenomeInfoDbData       1.2.0     2019-01-15 [1] Bioconductor  
+   GenomicRanges        * 1.34.0    2018-10-30 [1] Bioconductor  
+   ggplot2              * 3.1.0     2018-10-25 [1] CRAN (R 3.5.0)
+   git2r                  0.24.0    2019-01-07 [1] CRAN (R 3.5.0)
+   glue                   1.3.0     2018-07-17 [1] CRAN (R 3.5.0)
+   gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
+   haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
+   HDF5Array              1.10.1    2018-12-05 [1] Bioconductor  
+   here                   0.1       2017-05-28 [1] CRAN (R 3.5.0)
+   hms                    0.4.2     2018-03-10 [1] CRAN (R 3.5.0)
+   htmltools              0.3.6     2017-04-28 [1] CRAN (R 3.5.0)
+   httr                   1.4.0     2018-12-11 [1] CRAN (R 3.5.0)
+   IRanges              * 2.16.0    2018-10-30 [1] Bioconductor  
+   jsonlite               1.6       2018-12-07 [1] CRAN (R 3.5.0)
+   knitr                  1.21      2018-12-10 [1] CRAN (R 3.5.0)
+ P lattice                0.20-35   2017-03-25 [5] CRAN (R 3.5.0)
+   lazyeval               0.2.1     2017-10-29 [1] CRAN (R 3.5.0)
+   limma                  3.38.3    2018-12-02 [1] Bioconductor  
+   locfit                 1.5-9.1   2013-04-20 [1] CRAN (R 3.5.0)
+   lubridate              1.7.4     2018-04-11 [1] CRAN (R 3.5.0)
+   magrittr               1.5       2014-11-22 [1] CRAN (R 3.5.0)
+ P Matrix                 1.2-14    2018-04-09 [5] CRAN (R 3.5.0)
+   matrixStats          * 0.54.0    2018-07-23 [1] CRAN (R 3.5.0)
+   memoise                1.1.0     2017-04-21 [1] CRAN (R 3.5.0)
+   modelr                 0.1.2     2018-05-11 [1] CRAN (R 3.5.0)
+   munsell                0.5.0     2018-06-12 [1] CRAN (R 3.5.0)
+ P nlme                   3.1-137   2018-04-07 [5] CRAN (R 3.5.0)
+   pillar                 1.3.1     2018-12-15 [1] CRAN (R 3.5.0)
+   pkgbuild               1.0.2     2018-10-16 [1] CRAN (R 3.5.0)
+   pkgconfig              2.0.2     2018-08-16 [1] CRAN (R 3.5.0)
+   pkgload                1.0.2     2018-10-29 [1] CRAN (R 3.5.0)
+   plyr                   1.8.4     2016-06-08 [1] CRAN (R 3.5.0)
+   prettyunits            1.0.2     2015-07-13 [1] CRAN (R 3.5.0)
+   processx               3.2.1     2018-12-05 [1] CRAN (R 3.5.0)
+   ps                     1.3.0     2018-12-21 [1] CRAN (R 3.5.0)
+   purrr                * 0.2.5     2018-05-29 [1] CRAN (R 3.5.0)
+   R.methodsS3            1.7.1     2016-02-16 [1] CRAN (R 3.5.0)
+   R.oo                   1.22.0    2018-04-22 [1] CRAN (R 3.5.0)
+   R.utils                2.7.0     2018-08-27 [1] CRAN (R 3.5.0)
+   R6                     2.3.0     2018-10-04 [1] CRAN (R 3.5.0)
+   Rcpp                   1.0.0     2018-11-07 [1] CRAN (R 3.5.0)
+   RCurl                  1.95-4.11 2018-07-15 [1] CRAN (R 3.5.0)
+   readr                * 1.3.1     2018-12-21 [1] CRAN (R 3.5.0)
+   readxl                 1.2.0     2018-12-19 [1] CRAN (R 3.5.0)
+   remotes                2.0.2     2018-10-30 [1] CRAN (R 3.5.0)
+   rhdf5                  2.26.2    2019-01-02 [1] Bioconductor  
+   Rhdf5lib               1.4.2     2018-12-03 [1] Bioconductor  
+   rlang                  0.3.1     2019-01-08 [1] CRAN (R 3.5.0)
+   rmarkdown              1.11      2018-12-08 [1] CRAN (R 3.5.0)
+   rprojroot              1.3-2     2018-01-03 [1] CRAN (R 3.5.0)
+   rstudioapi             0.9.0     2019-01-09 [1] CRAN (R 3.5.0)
+   rvest                  0.3.2     2016-06-17 [1] CRAN (R 3.5.0)
+   S4Vectors            * 0.20.1    2018-11-09 [1] Bioconductor  
+   scales                 1.0.0     2018-08-09 [1] CRAN (R 3.5.0)
+   sessioninfo            1.1.1     2018-11-05 [1] CRAN (R 3.5.0)
+   SingleCellExperiment * 1.4.1     2019-01-04 [1] Bioconductor  
+   stringi                1.2.4     2018-07-20 [1] CRAN (R 3.5.0)
+   stringr              * 1.3.1     2018-05-10 [1] CRAN (R 3.5.0)
+   SummarizedExperiment * 1.12.0    2018-10-30 [1] Bioconductor  
+   testthat               2.0.0     2017-12-13 [5] CRAN (R 3.5.0)
+   tibble               * 2.0.1     2019-01-12 [1] CRAN (R 3.5.0)
+   tidyr                * 0.8.2     2018-10-28 [1] CRAN (R 3.5.0)
+   tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
+   tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
+   usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
+   whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
+   withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)
+   workflowr              1.1.1     2018-07-06 [1] CRAN (R 3.5.0)
+   xfun                   0.4       2018-10-23 [1] CRAN (R 3.5.0)
+   xml2                   1.2.0     2018-01-24 [1] CRAN (R 3.5.0)
+   XVector                0.22.0    2018-10-30 [1] Bioconductor  
+   yaml                   2.2.0     2018-07-25 [1] CRAN (R 3.5.0)
+   zlibbioc               1.28.0    2018-10-30 [1] Bioconductor  
+
+[1] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib/x86_64-pc-linux-gnu/3.5.0
+[2] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-ext/x86_64-pc-linux-gnu/3.5.0
+[3] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-R/x86_64-pc-linux-gnu/3.5.0
+[4] /home/luke.zappia/R/x86_64-pc-linux-gnu-library/3.5
+[5] /usr/local/installed/R/3.5.0/lib64/R/library
+
+ P ── Loaded and on-disk path mismatch.</code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+[
+  {
+    "Parameter": ["empty_thresh"],
+    "Value": [100],
+    "Description": ["Droplets with less than this many counts are empty"]
+  },
+  {
+    "Parameter": ["emp_iters"],
+    "Value": [10000],
+    "Description": ["Number of iterations for emptyDrops p-values"]
+  },
+  {
+    "Parameter": ["emp_fdr"],
+    "Value": [0.01],
+    "Description": ["FDR cutoff for emptyDrops"]
+  },
+  {
+    "Parameter": ["n_cells"],
+    "Value": [10237],
+    "Description": ["Number of cells selected"]
+  }
+]

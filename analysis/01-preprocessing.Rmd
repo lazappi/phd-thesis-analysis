@@ -1,0 +1,318 @@
+---
+title: "Pre-processing"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "01-preprocessing"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = TRUE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 10,
+                      fig.height     = 8,
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("DropletUtils")
+library("SingleCellExperiment")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/load.R"))
+source(here::here("R/annotate.R"))
+source(here::here("R/output.R"))
+```
+
+```{r bpparam, cache = FALSE}
+bpparam <- BiocParallel::MulticoreParam(workers = 10)
+```
+
+Introduction
+============
+
+In this document we are going to read in the unfiltered counts matrix produced
+by `Cell Ranger` and determine which of those droplets contain cells using the
+`DropletUtils` package.
+
+```{r load}
+path <- here::here("data/cellranger")
+raw <- read10x(path, dataset = "Orgs123")
+
+filt_barcodes <- readr::read_lines(file.path(path, "filtered_barcodes.tsv.gz"))
+
+colData(raw)$CellRangerFilt <- paste(colData(raw)$Barcode, 
+                                     colData(raw)$Sample, sep = "-") %in%
+    filt_barcodes
+```
+
+The raw dataset has `r nrow(raw)` features and `r ncol(raw)` droplets.
+
+Barcode ranks
+=============
+
+```{r barcodes}
+empty_thresh <- 100
+
+bc_ranks <- barcodeRanks(counts(raw), lower = empty_thresh)
+
+colData(raw)$BarcodeRank   <- bc_ranks$rank
+colData(raw)$BarcodeTotal  <- bc_ranks$total
+colData(raw)$BarcodeFitted <- bc_ranks$fitted
+
+bc_data <- colData(raw) %>%
+    as.data.frame() %>%
+    select(Cell, Kept = CellRangerFilt, Rank = BarcodeRank,
+           Total = BarcodeTotal, Fitted = BarcodeFitted) %>%
+    arrange(Rank)
+```
+
+Let's start by ordering the droplets according to their total counts and
+plotting this on a log scale. This let's us see the distribution of total
+counts.
+
+```{r barcodes-plot}
+ggplot(bc_data, aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    geom_line(aes(y = Fitted), colour = "red") +
+    geom_hline(yintercept = bc_ranks$knee,
+               colour = "dodgerblue", linetype = "dashed") +
+    annotate("text", x = 0, y = bc_ranks$knee, label = "Knee",
+             colour = "dodgerblue", hjust = 0, vjust = -1) +
+    geom_hline(yintercept = bc_ranks$inflection,
+               colour = "forestgreen", linetype = "dashed") +
+    annotate("text", x = 0, y = bc_ranks$inflection, label = "Inflection",
+             colour = "forestgreen", hjust = 0, vjust = -1) +
+    geom_hline(yintercept = empty_thresh,
+               colour = "darkorchid", linetype = "dashed") +
+    annotate("text", x = 0, y = empty_thresh, label = "Empty threshold",
+             colour = "darkorchid", hjust = 0, vjust = -1) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c("black", "violet")) +
+    ylab("Total counts") +
+    theme_minimal()
+```
+
+This is typical of what we see for 10x experiment where there is a sharp drop
+off between droplets with lots of counts and those without many. The inflection
+and knee points are methods for identifying the transition between
+distributions. These are roughly associated with the cells selected by `Cell
+Ranger` The empty threshold line indicates the point at which we assume droplets
+must be empty (total counts <= `r empty_thresh`).
+
+Empty drops
+===========
+
+We will now look at identifying which droplets to select using the `emptyDrops`
+method. This method tests whether the composition of a droplet is significantly
+different from the ambient RNA in the sample which is obtained by pooling the
+empty droplets. Droplets with very large counts are also automatically retained.
+
+```{r empty-drops}
+set.seed(1)
+
+emp_iters <- 10000
+
+emp_drops <- emptyDrops(counts(raw), lower = empty_thresh, niters = emp_iters,
+                        BPPARAM = bpparam)
+```
+
+`emptyDrops` calculates p-values using a permutation approach. Let's check that
+we are usually a sufficient number of iterations. If there are any droplets
+that have non-significant p-values but are limited by the number of permuations
+the number should be increased.
+
+```{r empty-drops-iters}
+emp_fdr <- 0.01
+is_cell <- emp_drops$FDR <= emp_fdr
+is_cell[is.na(is_cell)] <- FALSE
+
+colData(raw)$EmpDropsLogProb <- emp_drops$LogProb
+colData(raw)$EmpDropsPValue  <- emp_drops$PValue
+colData(raw)$EmpDropsLimited <- emp_drops$Limited
+colData(raw)$EmpDropsFDR     <- emp_drops$FDR
+colData(raw)$EmpDropsFilt    <- is_cell
+
+table(Limited = emp_drops$Limited, Significant = is_cell)
+```
+
+We can plot the negative log-probability against the total counts to see which
+droplets `emptyDrops` has selected.
+
+```{r empty-drops-plot}
+colData(raw) %>%
+    as.data.frame() %>%
+    filter(!is.na(EmpDropsFilt)) %>%
+    ggplot(aes(x = BarcodeTotal, y = -EmpDropsLogProb, colour = EmpDropsFilt)) +
+    geom_point() +
+    scale_colour_discrete(name = "Significant") +
+    xlab("Total counts") +
+    ylab("-log(probability)") +
+    theme_minimal()
+```
+
+There were `r sum(emp_drops$Total <= empty_thresh)` droplets with less than
+`r empty_thresh` counts which were used to make up the ambient RNA pool. Of the
+remaining `r sum(emp_drops$Total > empty_thresh)` droplets `r sum(is_cell)` were
+found to have profiles significantly different from the ambient RNA and should
+contain cells.
+
+Comparison
+==========
+
+Let's quickly compare differences between the default we get from `Cell Ranger`
+and what we have got from using `DropletUtils`. First let's look at the number
+of cells identified by each method.
+
+```{r compare-total}
+colData(raw) %>%
+    as.data.frame() %>%
+    group_by(Sample) %>%
+    summarise(`Cell Ranger` = sum(CellRangerFilt),
+              emptyDrops    = sum(EmpDropsFilt, na.rm = TRUE)) %>%
+    gather(key = Method, value = Total, -Sample) %>%
+    ggplot(aes(x = Method, y = Total, fill = Sample)) +
+    geom_col() +
+    ylab("Number of cells") +
+    theme_minimal()
+```
+
+From this plot we can see that `emptyDrops` has identified many more cells and
+that they seem to be evenly spread across the three samples. Well will also
+check to see that the methods are finding the same cells.
+
+```{r compare-overlap}
+plot_data <- colData(raw) %>%
+    as.data.frame() %>%
+    mutate(`Cell Ranger only` =  CellRangerFilt & !EmpDropsFilt,
+           `emptyDrops only`  = !CellRangerFilt &  EmpDropsFilt,
+           Both               =  CellRangerFilt &  EmpDropsFilt) %>%
+    group_by(Sample) %>%
+    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
+              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
+              Both               = sum(Both, na.rm = TRUE)) %>%
+    gather(key = Selected, value = Count, -Sample) %>%
+    mutate(Selected = factor(Selected,
+                             levels = c("Both", "Cell Ranger only",
+                                        "emptyDrops only")))
+
+ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
+    geom_col() +
+    theme_minimal()
+
+plot_data %>%
+    group_by(Selected) %>%
+    summarise(Total = sum(Count))
+```
+
+Most cells are identified by both methods with `emptyDrops` identifying many
+more additional cells. There are only a few cells that are identified only by
+Cell Ranger. We will perform further quality control of cells so at this stage
+we will keep cells that are selected by either method.
+
+```{r select}
+selected <- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
+
+colData(selected)$SelMethod <- "Both"
+colData(selected)$SelMethod[!colData(selected)$CellRangerFilt] <- "emptyDrops"
+colData(selected)$SelMethod[!colData(selected)$EmpDropsFilt] <- "CellRanger"
+```
+
+Annotation
+==========
+
+Now that we have a dataset that just contains actual cells we will add some
+extra annotation. This includes downloading feature annotation from `BioMart`
+and assigning cell cycle stages using the `cyclone` function in the `scran`
+package as well as calculating a range of quality control metrics using
+`scater`.
+
+```{r annotate}
+selected <- annotateSCE(selected,
+                        org        = "human",
+                        add_anno   = TRUE,
+                        host       = "jul2018.archive.ensembl.org",
+                        calc_qc    = TRUE,
+                        calc_cpm   = TRUE,
+                        cell_cycle = TRUE,
+                        BPPARAM    = bpparam)
+
+glimpse(as.data.frame(colData(selected)))
+glimpse(as.data.frame(rowData(selected)))
+```
+
+Summary
+=======
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters}
+params <- jsonlite::toJSON(list(
+     list(
+        Parameter = "empty_thresh",
+        Value = empty_thresh,
+        Description = "Droplets with less than this many counts are empty"
+    ),
+    list(
+        Parameter = "emp_iters",
+        Value = emp_iters,
+        Description = "Number of iterations for emptyDrops p-values"
+    ),
+    list(
+        Parameter = "emp_fdr",
+        Value = emp_fdr,
+        Description = "FDR cutoff for emptyDrops"
+    ),
+    list(
+        Parameter = "n_cells",
+        Value = ncol(selected),
+        Description = "Number of cells selected"
+    )
+), pretty = TRUE)
+
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+write_rds(selected, here::here("data/processed/01-selected.Rds"))
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME)
+    ),
+    Description = c(
+        "Parameters set and used in this analysis"
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```
