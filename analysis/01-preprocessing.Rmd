@@ -120,10 +120,10 @@ empty droplets. Droplets with very large counts are also automatically retained.
 ```{r empty-drops}
 set.seed(1)
 
-emp_iters <- 10000
+emp_iters <- 30000
 
 emp_drops <- emptyDrops(counts(raw), lower = empty_thresh, niters = emp_iters,
-                        BPPARAM = bpparam)
+                        test.ambient = TRUE, BPPARAM = bpparam)
 ```
 
 `emptyDrops` calculates p-values using a permutation approach. Let's check that
@@ -145,8 +145,27 @@ colData(raw)$EmpDropsFilt    <- is_cell
 table(Limited = emp_drops$Limited, Significant = is_cell)
 ```
 
-We can plot the negative log-probability against the total counts to see which
-droplets `emptyDrops` has selected.
+Another way to check the `emptyDrops` results is to look at the droplets below
+our empty threshold. We are assuming that these droplets only contain ambient
+RNA and therefore the null hypothesis should be true and the distribution of
+p-values should be approximately uniform.
+
+```{r empty-drops-pvals}
+colData(raw) %>%
+    as.data.frame() %>%
+    filter(BarcodeTotal <= empty_thresh,
+           BarcodeTotal > 0) %>%
+    ggplot(aes(x = EmpDropsPValue)) +
+    geom_histogram() +
+    xlab("p-value") +
+    theme_minimal()
+```
+
+Peaks near zero would tell us that not all of the droplets below the threshold
+are truly empty and that we should lower it. 
+
+We can also plot the negative log-probability against the total counts to see
+which droplets `emptyDrops` has selected.
 
 ```{r empty-drops-plot}
 colData(raw) %>%

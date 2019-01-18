@@ -459,7 +459,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/5857378ef6f71d2bb21aad5fe11389807ec76109" target="_blank">5857378</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/7d3cb249c403a84dbf31ab827434f3203a9d104b" target="_blank">7d3cb24</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -472,10 +472,11 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  docs/figure/
+    Untracked:  analysis/02-quality-control.Rmd
+    Untracked:  output/02-quality-control/
 
 Unstaged changes:
-    Deleted:    R/README.md
+    Modified:   output/01-preprocessing/parameters.json
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -509,7 +510,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/5857378ef6f71d2bb21aad5fe11389807ec76109/analysis/01-preprocessing.Rmd" target="_blank">5857378</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/7d3cb249c403a84dbf31ab827434f3203a9d104b/analysis/01-preprocessing.Rmd" target="_blank">7d3cb24</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-18
+</td>
+<td style="text-align:left;">
+Add emptyDrops p-value plot
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/bf4004909e5fb04c6a5a3e4d4189119bc9a788d0/docs/01-preprocessing.html" target="_blank">bf40049</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -555,8 +573,8 @@ colData(raw)$CellRangerFilt &lt;- paste(colData(raw)$Barcode,
 
 bc_ranks &lt;- barcodeRanks(counts(raw), lower = empty_thresh)
 
-colData(raw)$BarcodeRank &lt;- bc_ranks$rank
-colData(raw)$BarcodeTotal &lt;- bc_ranks$total
+colData(raw)$BarcodeRank   &lt;- bc_ranks$rank
+colData(raw)$BarcodeTotal  &lt;- bc_ranks$total
 colData(raw)$BarcodeFitted &lt;- bc_ranks$fitted
 
 bc_data &lt;- colData(raw) %&gt;%
@@ -586,6 +604,36 @@ bc_data &lt;- colData(raw) %&gt;%
     ylab(&quot;Total counts&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01-preprocessing.Rmd/barcodes-plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of barcodes-plot-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/bf4004909e5fb04c6a5a3e4d4189119bc9a788d0/docs/figure/01-preprocessing.Rmd/barcodes-plot-1.png" target="_blank">bf40049</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>This is typical of what we see for 10x experiment where there is a sharp drop off between droplets with lots of counts and those without many. The inflection and knee points are methods for identifying the transition between distributions. These are roughly associated with the cells selected by <code>Cell Ranger</code> The empty threshold line indicates the point at which we assume droplets must be empty (total counts &lt;= 100).</p>
 </div>
 <div id="empty-drops" class="section level1">
@@ -593,10 +641,10 @@ bc_data &lt;- colData(raw) %&gt;%
 <p>We will now look at identifying which droplets to select using the <code>emptyDrops</code> method. This method tests whether the composition of a droplet is significantly different from the ambient RNA in the sample which is obtained by pooling the empty droplets. Droplets with very large counts are also automatically retained.</p>
 <pre class="r"><code>set.seed(1)
 
-emp_iters &lt;- 10000
+emp_iters &lt;- 30000
 
 emp_drops &lt;- emptyDrops(counts(raw), lower = empty_thresh, niters = emp_iters,
-                        BPPARAM = bpparam)</code></pre>
+                        test.ambient = TRUE, BPPARAM = bpparam)</code></pre>
 <p><code>emptyDrops</code> calculates p-values using a permutation approach. Let’s check that we are usually a sufficient number of iterations. If there are any droplets that have non-significant p-values but are limited by the number of permuations the number should be increased.</p>
 <pre class="r"><code>emp_fdr &lt;- 0.01
 is_cell &lt;- emp_drops$FDR &lt;= emp_fdr
@@ -610,10 +658,21 @@ colData(raw)$EmpDropsFilt    &lt;- is_cell
 
 table(Limited = emp_drops$Limited, Significant = is_cell)</code></pre>
 <pre><code>       Significant
-Limited FALSE  TRUE
-  FALSE 11030   959
-  TRUE      0  9174</code></pre>
-<p>We can plot the negative log-probability against the total counts to see which droplets <code>emptyDrops</code> has selected.</p>
+Limited  FALSE   TRUE
+  FALSE 935377    493
+  TRUE       0   9168</code></pre>
+<p>Another way to check the <code>emptyDrops</code> results is to look at the droplets below our empty threshold. We are assuming that these droplets only contain ambient RNA and therefore the null hypothesis should be true and the distribution of p-values should be approximately uniform.</p>
+<pre class="r"><code>colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    filter(BarcodeTotal &lt;= empty_thresh,
+           BarcodeTotal &gt; 0) %&gt;%
+    ggplot(aes(x = EmpDropsPValue)) +
+    geom_histogram() +
+    xlab(&quot;p-value&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/01-preprocessing.Rmd/empty-drops-pvals-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Peaks near zero would tell us that not all of the droplets below the threshold are truly empty and that we should lower it.</p>
+<p>We can also plot the negative log-probability against the total counts to see which droplets <code>emptyDrops</code> has selected.</p>
 <pre class="r"><code>colData(raw) %&gt;%
     as.data.frame() %&gt;%
     filter(!is.na(EmpDropsFilt)) %&gt;%
@@ -624,7 +683,37 @@ Limited FALSE  TRUE
     ylab(&quot;-log(probability)&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01-preprocessing.Rmd/empty-drops-plot-1.png" width="960" style="display: block; margin: auto;" /></p>
-<p>There were 2190677 droplets with less than 100 counts which were used to make up the ambient RNA pool. Of the remaining 21163 droplets 10133 were found to have profiles significantly different from the ambient RNA and should contain cells.</p>
+<details> <summary><em>Expand here to see past versions of empty-drops-plot-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/bf4004909e5fb04c6a5a3e4d4189119bc9a788d0/docs/figure/01-preprocessing.Rmd/empty-drops-plot-1.png" target="_blank">bf40049</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>There were 2190677 droplets with less than 100 counts which were used to make up the ambient RNA pool. Of the remaining 21163 droplets 9661 were found to have profiles significantly different from the ambient RNA and should contain cells.</p>
 </div>
 <div id="comparison" class="section level1">
 <h1>Comparison</h1>
@@ -640,6 +729,36 @@ Limited FALSE  TRUE
     ylab(&quot;Number of cells&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01-preprocessing.Rmd/compare-total-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-total-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/bf4004909e5fb04c6a5a3e4d4189119bc9a788d0/docs/figure/01-preprocessing.Rmd/compare-total-1.png" target="_blank">bf40049</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>From this plot we can see that <code>emptyDrops</code> has identified many more cells and that they seem to be evenly spread across the three samples. Well will also check to see that the methods are finding the same cells.</p>
 <pre class="r"><code>plot_data &lt;- colData(raw) %&gt;%
     as.data.frame() %&gt;%
@@ -659,12 +778,42 @@ ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
     geom_col() +
     theme_minimal()</code></pre>
 <p><img src="figure/01-preprocessing.Rmd/compare-overlap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-overlap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/bf4004909e5fb04c6a5a3e4d4189119bc9a788d0/docs/figure/01-preprocessing.Rmd/compare-overlap-1.png" target="_blank">bf40049</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-18
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>plot_data %&gt;%
     group_by(Selected) %&gt;%
     summarise(Total = sum(Count))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Selected"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Total"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Both","2":"8187"},{"1":"Cell Ranger only","2":"104"},{"1":"emptyDrops only","2":"1946"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Selected"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Total"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Both","2":"8142"},{"1":"Cell Ranger only","2":"149"},{"1":"emptyDrops only","2":"1519"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>Most cells are identified by both methods with <code>emptyDrops</code> identifying many more additional cells. There are only a few cells that are identified only by Cell Ranger. We will perform further quality control of cells so at this stage we will keep cells that are selected by either method.</p>
@@ -687,7 +836,7 @@ colData(selected)$SelMethod[!colData(selected)$EmpDropsFilt] &lt;- &quot;CellRan
                         BPPARAM    = bpparam)
 
 glimpse(as.data.frame(colData(selected)))</code></pre>
-<pre><code>Observations: 10,237
+<pre><code>Observations: 9,810
 Variables: 54
 $ Cell                                           &lt;chr&gt; &quot;Cell74&quot;, &quot;Cell10…
 $ Dataset                                        &lt;chr&gt; &quot;Orgs123&quot;, &quot;Orgs1…
@@ -698,14 +847,14 @@ $ BarcodeRank                                    &lt;dbl&gt; 2281.5, 3193.5, 1�
 $ BarcodeTotal                                   &lt;dbl&gt; 11084, 9414, 114,…
 $ BarcodeFitted                                  &lt;dbl&gt; 11089.186, 9427.9…
 $ EmpDropsLogProb                                &lt;dbl&gt; -11721.3989, -948…
-$ EmpDropsPValue                                 &lt;dbl&gt; 0.00009999, 0.000…
+$ EmpDropsPValue                                 &lt;dbl&gt; 3.333222e-05, 3.3…
 $ EmpDropsLimited                                &lt;lgl&gt; TRUE, TRUE, TRUE,…
-$ EmpDropsFDR                                    &lt;dbl&gt; 0.0000000000, 0.0…
+$ EmpDropsFDR                                    &lt;dbl&gt; 0.000000000, 0.00…
 $ EmpDropsFilt                                   &lt;lgl&gt; TRUE, TRUE, TRUE,…
 $ SelMethod                                      &lt;chr&gt; &quot;Both&quot;, &quot;Both&quot;, &quot;…
-$ G1Score                                        &lt;dbl&gt; 0.029, 0.395, 0.9…
-$ SScore                                         &lt;dbl&gt; 0.029, 0.395, 0.9…
-$ G2MScore                                       &lt;dbl&gt; 0.534, 0.090, 0.0…
+$ G1Score                                        &lt;dbl&gt; 0.033, 0.427, 0.9…
+$ SScore                                         &lt;dbl&gt; 0.033, 0.427, 0.9…
+$ G2MScore                                       &lt;dbl&gt; 0.530, 0.107, 0.0…
 $ CellCycle                                      &lt;chr&gt; &quot;G2M&quot;, &quot;S&quot;, &quot;G1&quot;,…
 $ is_cell_control                                &lt;lgl&gt; FALSE, FALSE, FAL…
 $ total_features_by_counts                       &lt;int&gt; 3193, 2663, 108, …
@@ -760,12 +909,12 @@ $ gene_biotype               &lt;chr&gt; &quot;lincRNA&quot;, &quot;lincRNA&quot
 $ percentage_gene_gc_content &lt;dbl&gt; 48.84, 50.26, 32.06, 39.91, 48.75, 52…
 $ is_feature_control         &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
 $ is_feature_control_MT      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
-$ mean_counts                &lt;dbl&gt; 0.0001953697, 0.0000000000, 0.0000000…
-$ log10_mean_counts          &lt;dbl&gt; 8.483971e-05, 0.000000e+00, 0.000000e…
-$ n_cells_by_counts          &lt;int&gt; 2, 0, 0, 11, 2, 0, 0, 0, 0, 0, 0, 0, …
-$ pct_dropout_by_counts      &lt;dbl&gt; 99.98046, 100.00000, 100.00000, 99.89…
-$ total_counts               &lt;dbl&gt; 2, 0, 0, 11, 2, 0, 0, 0, 0, 0, 0, 0, …
-$ log10_total_counts         &lt;dbl&gt; 0.4771213, 0.0000000, 0.0000000, 1.07…</code></pre>
+$ mean_counts                &lt;dbl&gt; 0.0001019368, 0.0000000000, 0.0000000…
+$ log10_mean_counts          &lt;dbl&gt; 4.426833e-05, 0.000000e+00, 0.000000e…
+$ n_cells_by_counts          &lt;int&gt; 1, 0, 0, 12, 2, 0, 0, 0, 0, 0, 0, 0, …
+$ pct_dropout_by_counts      &lt;dbl&gt; 99.98981, 100.00000, 100.00000, 99.87…
+$ total_counts               &lt;dbl&gt; 1, 0, 0, 12, 2, 0, 0, 0, 0, 0, 0, 0, …
+$ log10_total_counts         &lt;dbl&gt; 0.3010300, 0.0000000, 0.0000000, 1.11…</code></pre>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
@@ -812,7 +961,7 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </tr>
 <tr class="even">
 <td align="left">emp_iters</td>
-<td align="left">10000</td>
+<td align="left">30000</td>
 <td align="left">Number of iterations for emptyDrops p-values</td>
 </tr>
 <tr class="odd">
@@ -822,7 +971,7 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </tr>
 <tr class="even">
 <td align="left">n_cells</td>
-<td align="left">10237</td>
+<td align="left">9810</td>
 <td align="left">Number of cells selected</td>
 </tr>
 </tbody>
