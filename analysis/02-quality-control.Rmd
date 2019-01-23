@@ -1,0 +1,749 @@
+---
+title: "Quality control"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "02-quality-control"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = TRUE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 10,
+                      fig.height     = 8,
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("SingleCellExperiment")
+library("scater")
+library("scran")
+
+# RNA-seq
+library("edgeR")
+
+# Plotting
+library("cowplot")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/plotting.R"))
+source(here::here("R/output.R"))
+```
+
+```{r depends-paths}
+sel_path <- here::here("data/processed/01-selected.Rds")
+```
+
+```{r bpparam, cache = FALSE}
+bpparam <- BiocParallel::MulticoreParam(workers = 10)
+```
+
+Introduction
+============
+
+In this document we are going to explore the dataset and filter it to remove
+low quality cells and lowly expressed genes using the `scater` and `scran`
+packages. The goal is to have a high quality dataset that can be used for
+further analysis. 
+
+```{r load, cache.extra = tools::md5sum(sel_path)}
+if (file.exists(sel_path)) {
+    selected <- read_rds(sel_path)
+} else {
+    stop("Selected dataset is missing. ",
+         "Please run '01-preprocessing.Rmd' first.",
+         call. = FALSE)
+}
+
+set.seed(1)
+sizeFactors(selected) <- librarySizeFactors(selected)
+selected <- normalize(selected)
+selected <- runPCA(selected, method = "irlba")
+selected <- runTSNE(selected)
+selected <- runUMAP(selected)
+
+cell_data <- as.data.frame(colData(selected))
+feat_data <- as.data.frame(rowData(selected))
+```
+
+Exploration
+===========
+
+We will start off by making some plots to explore the dataset.
+
+Expression by cell {.tabset}
+------------------
+
+Distributions by cell. Blue line shows the median and red lines show median
+absolute deviations (MADs) from the median.
+
+### Total counts {.unnumbered}
+
+```{r counts}
+outlierHistogram(cell_data, "log10_total_counts", mads = 1:6)
+```
+
+### Total features {.unnumbered}
+
+```{r features}
+outlierHistogram(cell_data, "log10_total_features_by_counts", mads = 1:6)
+```
+
+### Percent mitochondrial {.unnumbered}
+
+```{r percent-MT}
+outlierHistogram(cell_data, "pct_counts_MT", mads = c(1, 3, 5, 7))
+```
+
+Dimensionality reduction {.tabset}
+------------------------
+
+Dimensionality reduction plots coloured by technical factors can help identify
+which may be playing a bit role in the dataset.
+
+```{r dimred-factors}
+dimred_factors <- c(
+    "Sample"              = "Sample",
+    "Total counts"        = "log10_total_counts",
+    "CellCycle"           = "CellCycle", 
+    "Total features"      = "log10_total_features_by_counts",
+    "Mitochondrial genes" = "pct_counts_MT",
+    "Selection method"    = "SelMethod"
+)
+```
+
+### PCA
+
+```{r pca}
+plot_list <- lapply(names(dimred_factors), function(fct_name) {
+    plotPCA(selected, colour_by = dimred_factors[fct_name],
+            shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+### t-SNE
+
+```{r t-sne}
+plot_list <- lapply(names(dimred_factors), function(fct_name) {
+    plotTSNE(selected, colour_by = dimred_factors[fct_name],
+             shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+### UMAP
+
+```{r umap}
+plot_list <- lapply(names(dimred_factors), function(fct_name) {
+    plotUMAP(selected, colour_by = dimred_factors[fct_name],
+             shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+Explanatory variables
+---------------------
+
+This plot shows the percentage of variance in the dataset that is explained by
+various technical factors. 
+
+```{r exp-vars}
+exp_vars <- c("Sample", "CellCycle", "SelMethod", "log10_total_counts",
+              "pct_counts_in_top_100_features", "total_features_by_counts",
+              "pct_counts_MT")
+
+all_zero <- Matrix::rowSums(counts(selected)) == 0
+plotExplanatoryVariables(selected[!all_zero, ], variables = exp_vars)
+```
+
+Here we see that factors associated with the number of counts and features in
+each cell represent large sources of variation.
+
+Cell cycle
+----------
+
+The dataset has already been scored for cell cycle activity. This plot shows
+the G2/M score against the G1 score for each cell and let's us see the balance
+of cell cycle phases in the dataset.
+
+```{r cell-cycle}
+ggplot(cell_data,
+       aes(x = G1Score, y = G2MScore, colour = CellCycle, shape = Sample)) +
+    geom_point() +
+    xlab("G1 score") +
+    ylab("G2/M score") +
+    theme_minimal()
+
+knitr::kable(table(Phase = cell_data$CellCycle, useNA = "ifany"))
+```
+
+Expression by gene {.tabset}
+------------------
+
+Distributions by cell. Blue line shows the median and red lines show median
+absolute deviations (MADs) from the median. We show distributions for all genes
+and those that have at least one count.
+
+### Mean
+
+```{r exprs-mean}
+outlierHistogram(feat_data, "log10_mean_counts", mads = c(10, 20))
+```
+
+### Total
+
+```{r exprs-total}
+outlierHistogram(feat_data, "log10_total_counts", mads = 1:5)
+```
+
+### Mean (expressed)
+
+```{r exprs-mean-expressed}
+outlierHistogram(feat_data[feat_data$total_counts > 0, ],
+                 "log10_mean_counts", mads = c(10, 20))
+```
+
+### Total (expressed)
+
+```{r exprs-total-expressed}
+outlierHistogram(feat_data[feat_data$total_counts > 0, ],
+                 "log10_total_counts", mads = 1:5)
+```
+
+High expression genes
+---------------------
+
+We can also look at the expression levels of just the top 50 most expressed
+genes.
+
+```{r high-exprs}
+plotHighestExprs(selected)
+```
+
+As is typical for 10x experiments we see that many of these are ribosomal
+proteins.
+
+Expression frequency {.tabset}
+--------------------
+
+The relationshop between the number of cells that express a gene and the overall
+expression level can also be interesting. We expect to see that higher expressed
+genes are expressed in more cells but there will also be some that stand out
+from this.
+
+### Frequency by mean
+
+```{r freq-by-mean}
+plotExprsFreqVsMean(selected, controls = NULL)
+```
+
+### Zeros by total counts
+
+```{r ncells-by-mean}
+ggplot(feat_data,
+       aes(x = log10_total_counts, y = 1 - n_cells_by_counts / nrow(selected),
+           colour = gene_biotype)) +
+    geom_point(alpha = 0.2, size = 1) +
+    scale_y_continuous(labels = scales::percent) +
+    xlab("log(total counts)") +
+    ylab("Percentage zeros")
+```
+
+Cell filtering
+==============
+
+We will now perform filtering to select high quality cells. Before we start we
+have `r ncol(selected)` cells.
+
+Manual outliers
+---------------
+
+The simplest filtering method is to set thresholds on some of the factors we
+have explored. Specifically these are the total number of counts per cell, the
+number of features expressed in each cell and the percentage of counts assigned
+to genes on the mitochondrial chromosome which is used as a proxy for cell
+damage. The selected thresholds and numbers of filtered cells using this method
+are:
+
+```{r manual-outliers}
+counts_mads   <- 4
+features_mads <- 4
+mt_mads       <- 4
+
+counts_out   <- isOutlier(cell_data$log10_total_counts,
+                          nmads = counts_mads, type = "lower")
+features_out <- isOutlier(cell_data$log10_total_features_by_counts,
+                          nmads = features_mads, type = "lower")
+mt_out       <- isOutlier(cell_data$pct_counts_MT,
+                          nmads = mt_mads, type = "higher")
+
+kept_manual <- !(counts_out | features_out | mt_out)
+colData(selected)$KeptManual <- kept_manual
+
+manual_summ <- tibble(
+    Type = c(
+        "Total counts",
+        "Total features",
+        "Mitochondrial %",
+        "Kept (manual)"
+    ),
+    Threshold = c(
+        paste("< 10 ^", round(attr(counts_out, "thresholds")["lower"], 2)),
+        paste("< 10 ^", round(attr(features_out, "thresholds")["lower"], 2)),
+        paste(">", round(attr(mt_out, "thresholds")["higher"], 2)),
+        ""
+    ),
+    Count = c(
+        sum(counts_out),
+        sum(features_out),
+        sum(mt_out),
+        sum(kept_manual)
+    )
+)
+
+knitr::kable(manual_summ)
+```
+
+PCA outliers
+------------
+
+An alternative approach is to perform a PCA using technical factors instead of
+gene expression and then use outlier detection to identify low-quality cells.
+This has the advantage of being an automated process but is difficult to
+interpret and may be affected if there are many low-quality cells.
+
+```{r pca-outliers}
+selected <- runPCA(selected, use_coldata = TRUE, detect_outliers = TRUE)
+
+plotReducedDim(selected, use_dimred = "PCA_coldata", colour_by = "outlier",
+               add_ticks = FALSE)
+
+kept_pca <- !colData(selected)$outlier
+colData(selected)$KeptPCA <- kept_pca
+
+pca_summ <- tibble(
+    Type = c(
+        "PCA",
+        "Kept (PCA)"
+    ),
+    Count = c(
+        sum(!kept_pca),
+        sum(kept_pca)
+    )
+)
+
+knitr::kable(pca_summ)
+```
+
+Outlier summary {.tabset}
+---------------
+
+```{r outlier-summary}
+kept_both <- kept_manual & kept_pca
+colData(selected)$Kept              <- "False"
+colData(selected)$Kept[kept_manual] <- "Manual"
+colData(selected)$Kept[kept_pca]    <- "PCA"
+colData(selected)$Kept[kept_both]   <- "Both"
+```
+
+The manual method has identified `r sum(kept_manual)` high-quality cells and the
+PCA method identified `r sum(kept_pca)`. If we combine both methods we get
+`r sum(kept_both)` cells. We can look at which cells each method identified on
+our dimensionality reduction plots.
+
+```{r out-factors}
+out_factors <- c(
+    "Kept"                = "Kept",
+    "Total counts"        = "log10_total_counts",
+    "Total features"      = "log10_total_features_by_counts",
+    "Mitochondrial genes" = "pct_counts_MT"
+)
+```
+
+### PCA
+
+```{r pca-summary}
+plot_list <- lapply(names(out_factors), function(fct_name) {
+    plotPCA(selected, colour_by = out_factors[fct_name],
+            shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+### t-SNE
+
+```{r tSNE-summary}
+plot_list <- lapply(names(out_factors), function(fct_name) {
+    plotTSNE(selected, colour_by = out_factors[fct_name],
+             shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+### UMAP
+
+```{r umap-summary}
+plot_list <- lapply(names(out_factors), function(fct_name) {
+    plotUMAP(selected, colour_by = out_factors[fct_name],
+             shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+Filter
+------
+
+We are going to use the manual filtering as it is easier to interpret and
+adjust.
+
+```{r filter}
+filtered <- selected[, kept_manual]
+
+set.seed(1)
+sizeFactors(filtered) <- librarySizeFactors(filtered)
+filtered <- normalize(filtered)
+filtered <- runPCA(filtered, method = "irlba")
+filtered <- runTSNE(filtered)
+filtered <- runUMAP(filtered)
+```
+
+Our filtered dataset now has `r ncol(filtered)` cells.
+
+Doublets
+========
+
+One kind of low-quality cell we have not yet considered are doubletes where two
+cells are captured in the same droplet. We expect doublets to have at least the
+normal amount of RNA so they won't be captured by our previous filters. To
+identify them we will use a method that simulates doublets by combining cells
+and then checks the neighbourhood of cells to see if they are near simulated
+doublets. This gives us a doublet score for each cell.
+
+```{r doublets}
+set.seed(1)
+doublet_scores <- doubletCells(filtered, approximate = TRUE, BPPARAM = bpparam)
+
+colData(filtered)$DoubletScore <- doublet_scores
+```
+
+Plots {.tabset}
+-----
+
+### PCA
+
+```{r pca-doublets}
+plotPCA(filtered, colour_by = "DoubletScore", add_ticks = FALSE)
+```
+
+### t-SNE
+
+```{r tSNE-doublets}
+plotTSNE(filtered, colour_by = "DoubletScore", add_ticks = FALSE)
+```
+
+### UMAP
+
+```{r umap-doublets}
+plotUMAP(filtered, colour_by = "DoubletScore", add_ticks = FALSE)
+```
+
+### Histogram
+
+```{r hist-doublets}
+outlierHistogram(as.data.frame(colData(filtered)), "DoubletScore",
+                 mads = c(1, 3, 5, 7, 9, 11, 13, 15))
+```
+
+Filter
+------
+
+```{r filter-doublets}
+doublet_out <- isOutlier(doublet_scores, nmads = 15, type = "higher")
+
+filtered <- filtered[, !doublet_out]
+```
+
+We choose a threshold for the doublet score that removes around the number of
+cells as the expected doublet frequency for a 10x experiment (around 1 percent).
+A threshold of `r round(attr(doublet_out, "thresholds")["higher"], 2)`
+identifies `r sum(doublet_out)` doublets leaving us with `r ncol(filtered)`
+cells.
+
+Gene filtering
+==============
+
+We also want to perform som filtering of features to remove lowly expressed
+genes that increase the computation required and may not meet the assumptions
+of some methods. Let's look as some distributions now that we have removed
+low-quality cells.
+
+Distributions {.tabset}
+-------------
+
+### Average counts
+
+```{r mean-histogram}
+avg_counts <- calcAverage(filtered, use_size_factors = FALSE)
+rowData(filtered)$AvgCount <- avg_counts
+rowData(filtered)$Log10AvgCount <- log10(avg_counts)
+
+outlierHistogram(as.data.frame(rowData(filtered)), "Log10AvgCount",
+                 mads = 1:3, bins = 100)
+```
+
+### Number of cells
+
+```{r cells-histogram}
+outlierHistogram(as.data.frame(rowData(filtered)), "n_cells_by_counts",
+                 mads = 1:3, bins = 100) +
+    scale_x_log10()
+```
+
+Filter
+------
+
+```{r genes-filter}
+min_count <- 1
+min_cells <- 2
+
+keep <- Matrix::rowSums(counts(filtered) >= min_count) >= min_cells
+
+set.seed(1)
+filtered <- filtered[keep, ]
+sizeFactors(filtered) <- librarySizeFactors(filtered)
+filtered <- normalize(filtered)
+filtered <- runPCA(filtered, method = "irlba")
+filtered <- runTSNE(filtered)
+filtered <- runUMAP(filtered)
+```
+
+We use a minimal filter that keeps genes with at least `r min_count` counts in
+at least `r min_cells` cells. After filtering we have reduced the number of
+features from `r nrow(selected)` to `r nrow(filtered)`.
+
+Validation
+==========
+
+The final quality control step is to inspect some validation plots that should
+help us see if we need to make any adjustments.
+
+Kept vs lost
+------------
+
+One thing we can look at is the difference in expression between the kept and
+removed cells. If we see known genes that are highly expressed in the removed
+cells taht can indicate that we have removed an interesting population of cells
+from the dataset. The red line shows equal expression and the blue line is a
+linear fit.
+
+```{r kept-lost}
+pass_qc <- colnames(selected) %in% colnames(filtered)
+
+lost_counts <- counts(selected)[, !pass_qc]
+kept_counts <- counts(selected)[,  pass_qc]
+
+kept_lost <- tibble(
+    Gene     = rownames(selected),
+    Lost     = calcAverage(lost_counts),
+    LostProp = Matrix::rowSums(lost_counts > 0) / ncol(lost_counts),
+    Kept     = calcAverage(kept_counts),
+    KeptProp = Matrix::rowSums(kept_counts > 0) / ncol(kept_counts)
+) %>%
+    mutate(LogFC = predFC(cbind(Lost, Kept),
+                          design = cbind(1, c(1, 0)))[,2]) %>%
+    mutate(LostCapped = pmax(Lost, min(Lost[Lost > 0]) * 0.5),
+           KeptCapped = pmax(Kept, min(Kept[Kept > 0]) * 0.5))
+
+ggplot(kept_lost,
+       aes(x = LostCapped, y = KeptCapped, colour = LostProp - KeptProp)) +
+    geom_point(size = 1, alpha = 0.2) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(method = "lm") +
+    scale_x_log10() +
+    scale_y_log10() +
+    scale_colour_viridis_c() +
+    xlab("Average count (removed)") +
+    ylab("Average count (kept)") +
+    theme_minimal()
+
+kept_lost %>%
+    select(Gene, LogFC, Lost, LostProp, Kept, KeptProp) %>%
+    arrange(-LogFC) %>%
+    as.data.frame() %>%
+    head(100)
+```
+
+Dimensionality reduction {.tabset}
+------------------------
+
+Dimsionality reduction plots coloured by technical factors again gives us
+a good overview of the dataset.
+
+### PCA
+
+```{r pca-valid}
+plot_list <- lapply(names(dimred_factors), function(fct_name) {
+    plotPCA(filtered, colour_by = dimred_factors[fct_name],
+            shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+### t-SNE
+
+```{r t-sne-valid}
+plot_list <- lapply(names(dimred_factors), function(fct_name) {
+    plotTSNE(filtered, colour_by = dimred_factors[fct_name],
+             shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+### UMAP
+
+```{r umap-valid}
+plot_list <- lapply(names(dimred_factors), function(fct_name) {
+    plotUMAP(filtered, colour_by = dimred_factors[fct_name],
+             shape_by = "Sample", add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+Summary
+=======
+
+After quality control we have a dataset with `r ncol(filtered)` cells and
+`r nrow(filtered)`.
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters}
+params <- jsonlite::toJSON(list(
+    list(
+        Parameter = "counts_thresh",
+        Value = attr(counts_out, "thresholds")["lower"],
+        Description = "Minimum threshold for (log10) total counts"
+    ),
+    list(
+        Parameter = "features_thresh",
+        Value = attr(features_out, "thresholds")["lower"],
+        Description = "Minimum threshold for (log10) total features"
+    ),
+    list(
+        Parameter = "mt_thresh",
+        Value = attr(mt_out, "thresholds")["higher"],
+        Description = "Maximum threshold for percentage counts mitochondrial"
+    ),
+    list(
+        Parameter = "counts_mads",
+        Value = counts_mads,
+        Description = "MADs for (log10) total counts threshold"
+    ),
+    list(
+        Parameter = "features_mads",
+        Value = features_mads,
+        Description = "MADs for (log10) total features threshold"
+    ),
+    list(
+        Parameter = "mt_mads",
+        Value = features_mads,
+        Description = "MADs for percentage counts mitochondrial threshold"
+    ),
+    list(
+        Parameter = "min_count",
+        Value = min_count,
+        Description = "Minimum count per cell for gene filtering"
+    ),
+    list(
+        Parameter = "min_cells",
+        Value = min_cells,
+        Description = "Minimum cells with min_count counts for gene filtering"
+    ),
+    list(
+        Parameter = "n_cells",
+        Value = ncol(filtered),
+        Description = "Number of cells in the filtered dataset"
+    ),
+    list(
+        Parameter = "n_genes",
+        Value = nrow(filtered),
+        Description = "Number of genes in the filtered dataset"
+    ),
+    list(
+        Parameter = "median_genes",
+        Value = median(Matrix::colSums(counts(filtered) != 0)),
+        Description = paste("Median number of expressed genes per cell in the",
+                            "filtered dataset")
+    ),
+    list(
+        Parameter = "median_counts",
+        Value = median(Matrix::colSums(counts(filtered))),
+        Description = paste("Median number of counts per cell in the filtered",
+                            "dataset")
+    )
+), pretty = TRUE)
+
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+write_rds(filtered, here::here("data/processed/02-filtered.Rds"))
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME)
+    ),
+    Description = c(
+        "Parameters set and used in this analysis"
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```

@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Quality control</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD Thesis Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/lazappi/phd-thesis-analysis">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Quality control</h1>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-01-23</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20190110)</code> </summary></p>
+<p>The command <code>set.seed(20190110)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/bc70a5613307ff04657f0bda997aa5239baaf8c3" target="_blank">bc70a56</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/cache/
+    Ignored:    data/
+    Ignored:    packrat/lib-R/
+    Ignored:    packrat/lib-ext/
+    Ignored:    packrat/lib/
+    Ignored:    packrat/src/
+
+Untracked files:
+    Untracked:  docs/figure/02-quality-control.Rmd/
+    Untracked:  output/02-quality-control/
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/bc70a5613307ff04657f0bda997aa5239baaf8c3/analysis/02-quality-control.Rmd" target="_blank">bc70a56</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-23
+</td>
+<td style="text-align:left;">
+Add quality control
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code># scRNA-seq
+library(&quot;SingleCellExperiment&quot;)
+library(&quot;scater&quot;)
+library(&quot;scran&quot;)
+
+# RNA-seq
+library(&quot;edgeR&quot;)
+
+# Plotting
+library(&quot;cowplot&quot;)
+
+# Tidyverse
+library(&quot;tidyverse&quot;)</code></pre>
+<pre class="r"><code>source(here::here(&quot;R/plotting.R&quot;))
+source(here::here(&quot;R/output.R&quot;))</code></pre>
+<pre class="r"><code>sel_path &lt;- here::here(&quot;data/processed/01-selected.Rds&quot;)</code></pre>
+<pre class="r"><code>bpparam &lt;- BiocParallel::MulticoreParam(workers = 10)</code></pre>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this document we are going to explore the dataset and filter it to remove low quality cells and lowly expressed genes using the <code>scater</code> and <code>scran</code> packages. The goal is to have a high quality dataset that can be used for further analysis.</p>
+<pre class="r"><code>if (file.exists(sel_path)) {
+    selected &lt;- read_rds(sel_path)
+} else {
+    stop(&quot;Selected dataset is missing. &quot;,
+         &quot;Please run &#39;01-preprocessing.Rmd&#39; first.&quot;,
+         call. = FALSE)
+}
+
+set.seed(1)
+sizeFactors(selected) &lt;- librarySizeFactors(selected)
+selected &lt;- normalize(selected)
+selected &lt;- runPCA(selected, method = &quot;irlba&quot;)
+selected &lt;- runTSNE(selected)
+selected &lt;- runUMAP(selected)
+
+cell_data &lt;- as.data.frame(colData(selected))
+feat_data &lt;- as.data.frame(rowData(selected))</code></pre>
+</div>
+<div id="exploration" class="section level1">
+<h1>Exploration</h1>
+<p>We will start off by making some plots to explore the dataset.</p>
+<div id="expression-by-cell" class="section level2 tabset">
+<h2>Expression by cell</h2>
+<p>Distributions by cell. Blue line shows the median and red lines show median absolute deviations (MADs) from the median.</p>
+<div id="total-counts" class="section level3 unnumbered">
+<h3>Total counts</h3>
+<pre class="r"><code>outlierHistogram(cell_data, &quot;log10_total_counts&quot;, mads = 1:6)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/counts-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="total-features" class="section level3 unnumbered">
+<h3>Total features</h3>
+<pre class="r"><code>outlierHistogram(cell_data, &quot;log10_total_features_by_counts&quot;, mads = 1:6)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/features-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="percent-mitochondrial" class="section level3 unnumbered">
+<h3>Percent mitochondrial</h3>
+<pre class="r"><code>outlierHistogram(cell_data, &quot;pct_counts_MT&quot;, mads = c(1, 3, 5, 7))</code></pre>
+<p><img src="figure/02-quality-control.Rmd/percent-MT-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="dimensionality-reduction" class="section level2 tabset">
+<h2>Dimensionality reduction</h2>
+<p>Dimensionality reduction plots coloured by technical factors can help identify which may be playing a bit role in the dataset.</p>
+<pre class="r"><code>dimred_factors &lt;- c(
+    &quot;Sample&quot;              = &quot;Sample&quot;,
+    &quot;Total counts&quot;        = &quot;log10_total_counts&quot;,
+    &quot;CellCycle&quot;           = &quot;CellCycle&quot;, 
+    &quot;Total features&quot;      = &quot;log10_total_features_by_counts&quot;,
+    &quot;Mitochondrial genes&quot; = &quot;pct_counts_MT&quot;,
+    &quot;Selection method&quot;    = &quot;SelMethod&quot;
+)</code></pre>
+<div id="pca" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(dimred_factors), function(fct_name) {
+    plotPCA(selected, colour_by = dimred_factors[fct_name],
+            shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(dimred_factors), function(fct_name) {
+    plotTSNE(selected, colour_by = dimred_factors[fct_name],
+             shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/t-sne-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(dimred_factors), function(fct_name) {
+    plotUMAP(selected, colour_by = dimred_factors[fct_name],
+             shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="explanatory-variables" class="section level2">
+<h2>Explanatory variables</h2>
+<p>This plot shows the percentage of variance in the dataset that is explained by various technical factors.</p>
+<pre class="r"><code>exp_vars &lt;- c(&quot;Sample&quot;, &quot;CellCycle&quot;, &quot;SelMethod&quot;, &quot;log10_total_counts&quot;,
+              &quot;pct_counts_in_top_100_features&quot;, &quot;total_features_by_counts&quot;,
+              &quot;pct_counts_MT&quot;)
+
+all_zero &lt;- Matrix::rowSums(counts(selected)) == 0
+plotExplanatoryVariables(selected[!all_zero, ], variables = exp_vars)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/exp-vars-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Here we see that factors associated with the number of counts and features in each cell represent large sources of variation.</p>
+</div>
+<div id="cell-cycle" class="section level2">
+<h2>Cell cycle</h2>
+<p>The dataset has already been scored for cell cycle activity. This plot shows the G2/M score against the G1 score for each cell and let’s us see the balance of cell cycle phases in the dataset.</p>
+<pre class="r"><code>ggplot(cell_data,
+       aes(x = G1Score, y = G2MScore, colour = CellCycle, shape = Sample)) +
+    geom_point() +
+    xlab(&quot;G1 score&quot;) +
+    ylab(&quot;G2/M score&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/02-quality-control.Rmd/cell-cycle-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>knitr::kable(table(Phase = cell_data$CellCycle, useNA = &quot;ifany&quot;))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Phase</th>
+<th align="right">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">G1</td>
+<td align="right">5640</td>
+</tr>
+<tr class="even">
+<td align="left">G2M</td>
+<td align="right">1329</td>
+</tr>
+<tr class="odd">
+<td align="left">S</td>
+<td align="right">2698</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">143</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="expression-by-gene" class="section level2 tabset">
+<h2>Expression by gene</h2>
+<p>Distributions by cell. Blue line shows the median and red lines show median absolute deviations (MADs) from the median. We show distributions for all genes and those that have at least one count.</p>
+<div id="mean" class="section level3">
+<h3>Mean</h3>
+<pre class="r"><code>outlierHistogram(feat_data, &quot;log10_mean_counts&quot;, mads = c(10, 20))</code></pre>
+<p><img src="figure/02-quality-control.Rmd/exprs-mean-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="total" class="section level3">
+<h3>Total</h3>
+<pre class="r"><code>outlierHistogram(feat_data, &quot;log10_total_counts&quot;, mads = 1:5)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/exprs-total-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="mean-expressed" class="section level3">
+<h3>Mean (expressed)</h3>
+<pre class="r"><code>outlierHistogram(feat_data[feat_data$total_counts &gt; 0, ],
+                 &quot;log10_mean_counts&quot;, mads = c(10, 20))</code></pre>
+<p><img src="figure/02-quality-control.Rmd/exprs-mean-expressed-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="total-expressed" class="section level3">
+<h3>Total (expressed)</h3>
+<pre class="r"><code>outlierHistogram(feat_data[feat_data$total_counts &gt; 0, ],
+                 &quot;log10_total_counts&quot;, mads = 1:5)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/exprs-total-expressed-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="high-expression-genes" class="section level2">
+<h2>High expression genes</h2>
+<p>We can also look at the expression levels of just the top 50 most expressed genes.</p>
+<pre class="r"><code>plotHighestExprs(selected)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/high-exprs-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>As is typical for 10x experiments we see that many of these are ribosomal proteins.</p>
+</div>
+<div id="expression-frequency" class="section level2 tabset">
+<h2>Expression frequency</h2>
+<p>The relationshop between the number of cells that express a gene and the overall expression level can also be interesting. We expect to see that higher expressed genes are expressed in more cells but there will also be some that stand out from this.</p>
+<div id="frequency-by-mean" class="section level3">
+<h3>Frequency by mean</h3>
+<pre class="r"><code>plotExprsFreqVsMean(selected, controls = NULL)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/freq-by-mean-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="zeros-by-total-counts" class="section level3">
+<h3>Zeros by total counts</h3>
+<pre class="r"><code>ggplot(feat_data,
+       aes(x = log10_total_counts, y = 1 - n_cells_by_counts / nrow(selected),
+           colour = gene_biotype)) +
+    geom_point(alpha = 0.2, size = 1) +
+    scale_y_continuous(labels = scales::percent) +
+    xlab(&quot;log(total counts)&quot;) +
+    ylab(&quot;Percentage zeros&quot;)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/ncells-by-mean-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="cell-filtering" class="section level1">
+<h1>Cell filtering</h1>
+<p>We will now perform filtering to select high quality cells. Before we start we have 9810 cells.</p>
+<div id="manual-outliers" class="section level2">
+<h2>Manual outliers</h2>
+<p>The simplest filtering method is to set thresholds on some of the factors we have explored. Specifically these are the total number of counts per cell, the number of features expressed in each cell and the percentage of counts assigned to genes on the mitochondrial chromosome which is used as a proxy for cell damage. The selected thresholds and numbers of filtered cells using this method are:</p>
+<pre class="r"><code>counts_mads   &lt;- 4
+features_mads &lt;- 4
+mt_mads       &lt;- 4
+
+counts_out   &lt;- isOutlier(cell_data$log10_total_counts,
+                          nmads = counts_mads, type = &quot;lower&quot;)
+features_out &lt;- isOutlier(cell_data$log10_total_features_by_counts,
+                          nmads = features_mads, type = &quot;lower&quot;)
+mt_out       &lt;- isOutlier(cell_data$pct_counts_MT,
+                          nmads = mt_mads, type = &quot;higher&quot;)
+
+kept_manual &lt;- !(counts_out | features_out | mt_out)
+colData(selected)$KeptManual &lt;- kept_manual
+
+manual_summ &lt;- tibble(
+    Type = c(
+        &quot;Total counts&quot;,
+        &quot;Total features&quot;,
+        &quot;Mitochondrial %&quot;,
+        &quot;Kept (manual)&quot;
+    ),
+    Threshold = c(
+        paste(&quot;&lt; 10 ^&quot;, round(attr(counts_out, &quot;thresholds&quot;)[&quot;lower&quot;], 2)),
+        paste(&quot;&lt; 10 ^&quot;, round(attr(features_out, &quot;thresholds&quot;)[&quot;lower&quot;], 2)),
+        paste(&quot;&gt;&quot;, round(attr(mt_out, &quot;thresholds&quot;)[&quot;higher&quot;], 2)),
+        &quot;&quot;
+    ),
+    Count = c(
+        sum(counts_out),
+        sum(features_out),
+        sum(mt_out),
+        sum(kept_manual)
+    )
+)
+
+knitr::kable(manual_summ)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Type</th>
+<th align="left">Threshold</th>
+<th align="right">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Total counts</td>
+<td align="left">&lt; 10 ^ 2.37</td>
+<td align="right">958</td>
+</tr>
+<tr class="even">
+<td align="left">Total features</td>
+<td align="left">&lt; 10 ^ 2.41</td>
+<td align="right">1201</td>
+</tr>
+<tr class="odd">
+<td align="left">Mitochondrial %</td>
+<td align="left">&gt; 8.18</td>
+<td align="right">600</td>
+</tr>
+<tr class="even">
+<td align="left">Kept (manual)</td>
+<td align="left"></td>
+<td align="right">8120</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pca-outliers" class="section level2">
+<h2>PCA outliers</h2>
+<p>An alternative approach is to perform a PCA using technical factors instead of gene expression and then use outlier detection to identify low-quality cells. This has the advantage of being an automated process but is difficult to interpret and may be affected if there are many low-quality cells.</p>
+<pre class="r"><code>selected &lt;- runPCA(selected, use_coldata = TRUE, detect_outliers = TRUE)
+
+plotReducedDim(selected, use_dimred = &quot;PCA_coldata&quot;, colour_by = &quot;outlier&quot;,
+               add_ticks = FALSE)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/pca-outliers-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>kept_pca &lt;- !colData(selected)$outlier
+colData(selected)$KeptPCA &lt;- kept_pca
+
+pca_summ &lt;- tibble(
+    Type = c(
+        &quot;PCA&quot;,
+        &quot;Kept (PCA)&quot;
+    ),
+    Count = c(
+        sum(!kept_pca),
+        sum(kept_pca)
+    )
+)
+
+knitr::kable(pca_summ)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Type</th>
+<th align="right">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">PCA</td>
+<td align="right">499</td>
+</tr>
+<tr class="even">
+<td align="left">Kept (PCA)</td>
+<td align="right">9311</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="outlier-summary" class="section level2 tabset">
+<h2>Outlier summary</h2>
+<pre class="r"><code>kept_both &lt;- kept_manual &amp; kept_pca
+colData(selected)$Kept              &lt;- &quot;False&quot;
+colData(selected)$Kept[kept_manual] &lt;- &quot;Manual&quot;
+colData(selected)$Kept[kept_pca]    &lt;- &quot;PCA&quot;
+colData(selected)$Kept[kept_both]   &lt;- &quot;Both&quot;</code></pre>
+<p>The manual method has identified 8120 high-quality cells and the PCA method identified 9311. If we combine both methods we get 8120 cells. We can look at which cells each method identified on our dimensionality reduction plots.</p>
+<pre class="r"><code>out_factors &lt;- c(
+    &quot;Kept&quot;                = &quot;Kept&quot;,
+    &quot;Total counts&quot;        = &quot;log10_total_counts&quot;,
+    &quot;Total features&quot;      = &quot;log10_total_features_by_counts&quot;,
+    &quot;Mitochondrial genes&quot; = &quot;pct_counts_MT&quot;
+)</code></pre>
+<div id="pca-1" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(out_factors), function(fct_name) {
+    plotPCA(selected, colour_by = out_factors[fct_name],
+            shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/pca-summary-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-1" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(out_factors), function(fct_name) {
+    plotTSNE(selected, colour_by = out_factors[fct_name],
+             shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/tSNE-summary-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-1" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(out_factors), function(fct_name) {
+    plotUMAP(selected, colour_by = out_factors[fct_name],
+             shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/umap-summary-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="filter" class="section level2">
+<h2>Filter</h2>
+<p>We are going to use the manual filtering as it is easier to interpret and adjust.</p>
+<pre class="r"><code>filtered &lt;- selected[, kept_manual]
+
+set.seed(1)
+sizeFactors(filtered) &lt;- librarySizeFactors(filtered)
+filtered &lt;- normalize(filtered)
+filtered &lt;- runPCA(filtered, method = &quot;irlba&quot;)
+filtered &lt;- runTSNE(filtered)
+filtered &lt;- runUMAP(filtered)</code></pre>
+<p>Our filtered dataset now has 8120 cells.</p>
+</div>
+</div>
+<div id="doublets" class="section level1">
+<h1>Doublets</h1>
+<p>One kind of low-quality cell we have not yet considered are doubletes where two cells are captured in the same droplet. We expect doublets to have at least the normal amount of RNA so they won’t be captured by our previous filters. To identify them we will use a method that simulates doublets by combining cells and then checks the neighbourhood of cells to see if they are near simulated doublets. This gives us a doublet score for each cell.</p>
+<pre class="r"><code>set.seed(1)
+doublet_scores &lt;- doubletCells(filtered, approximate = TRUE, BPPARAM = bpparam)
+
+colData(filtered)$DoubletScore &lt;- doublet_scores</code></pre>
+<div id="plots" class="section level2 tabset">
+<h2>Plots</h2>
+<div id="pca-2" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotPCA(filtered, colour_by = &quot;DoubletScore&quot;, add_ticks = FALSE)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/pca-doublets-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-2" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotTSNE(filtered, colour_by = &quot;DoubletScore&quot;, add_ticks = FALSE)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/tSNE-doublets-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-2" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotUMAP(filtered, colour_by = &quot;DoubletScore&quot;, add_ticks = FALSE)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/umap-doublets-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="histogram" class="section level3">
+<h3>Histogram</h3>
+<pre class="r"><code>outlierHistogram(as.data.frame(colData(filtered)), &quot;DoubletScore&quot;,
+                 mads = c(1, 3, 5, 7, 9, 11, 13, 15))</code></pre>
+<p><img src="figure/02-quality-control.Rmd/hist-doublets-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="filter-1" class="section level2">
+<h2>Filter</h2>
+<pre class="r"><code>doublet_out &lt;- isOutlier(doublet_scores, nmads = 15, type = &quot;higher&quot;)
+
+filtered &lt;- filtered[, !doublet_out]</code></pre>
+<p>We choose a threshold for the doublet score that removes around the number of cells as the expected doublet frequency for a 10x experiment (around 1 percent). A threshold of 1.58 identifies 107 doublets leaving us with 8013 cells.</p>
+</div>
+</div>
+<div id="gene-filtering" class="section level1">
+<h1>Gene filtering</h1>
+<p>We also want to perform som filtering of features to remove lowly expressed genes that increase the computation required and may not meet the assumptions of some methods. Let’s look as some distributions now that we have removed low-quality cells.</p>
+<div id="distributions" class="section level2 tabset">
+<h2>Distributions</h2>
+<div id="average-counts" class="section level3">
+<h3>Average counts</h3>
+<pre class="r"><code>avg_counts &lt;- calcAverage(filtered, use_size_factors = FALSE)
+rowData(filtered)$AvgCount &lt;- avg_counts
+rowData(filtered)$Log10AvgCount &lt;- log10(avg_counts)
+
+outlierHistogram(as.data.frame(rowData(filtered)), &quot;Log10AvgCount&quot;,
+                 mads = 1:3, bins = 100)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/mean-histogram-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="number-of-cells" class="section level3">
+<h3>Number of cells</h3>
+<pre class="r"><code>outlierHistogram(as.data.frame(rowData(filtered)), &quot;n_cells_by_counts&quot;,
+                 mads = 1:3, bins = 100) +
+    scale_x_log10()</code></pre>
+<p><img src="figure/02-quality-control.Rmd/cells-histogram-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="filter-2" class="section level2">
+<h2>Filter</h2>
+<pre class="r"><code>min_count &lt;- 1
+min_cells &lt;- 2
+
+keep &lt;- Matrix::rowSums(counts(filtered) &gt;= min_count) &gt;= min_cells
+
+set.seed(1)
+filtered &lt;- filtered[keep, ]
+sizeFactors(filtered) &lt;- librarySizeFactors(filtered)
+filtered &lt;- normalize(filtered)
+filtered &lt;- runPCA(filtered, method = &quot;irlba&quot;)
+filtered &lt;- runTSNE(filtered)
+filtered &lt;- runUMAP(filtered)</code></pre>
+<p>We use a minimal filter that keeps genes with at least 1 counts in at least 2 cells. After filtering we have reduced the number of features from 33538 to 22745.</p>
+</div>
+</div>
+<div id="validation" class="section level1">
+<h1>Validation</h1>
+<p>The final quality control step is to inspect some validation plots that should help us see if we need to make any adjustments.</p>
+<div id="kept-vs-lost" class="section level2">
+<h2>Kept vs lost</h2>
+<p>One thing we can look at is the difference in expression between the kept and removed cells. If we see known genes that are highly expressed in the removed cells taht can indicate that we have removed an interesting population of cells from the dataset. The red line shows equal expression and the blue line is a linear fit.</p>
+<pre class="r"><code>pass_qc &lt;- colnames(selected) %in% colnames(filtered)
+
+lost_counts &lt;- counts(selected)[, !pass_qc]
+kept_counts &lt;- counts(selected)[,  pass_qc]
+
+kept_lost &lt;- tibble(
+    Gene     = rownames(selected),
+    Lost     = calcAverage(lost_counts),
+    LostProp = Matrix::rowSums(lost_counts &gt; 0) / ncol(lost_counts),
+    Kept     = calcAverage(kept_counts),
+    KeptProp = Matrix::rowSums(kept_counts &gt; 0) / ncol(kept_counts)
+) %&gt;%
+    mutate(LogFC = predFC(cbind(Lost, Kept),
+                          design = cbind(1, c(1, 0)))[,2]) %&gt;%
+    mutate(LostCapped = pmax(Lost, min(Lost[Lost &gt; 0]) * 0.5),
+           KeptCapped = pmax(Kept, min(Kept[Kept &gt; 0]) * 0.5))
+
+ggplot(kept_lost,
+       aes(x = LostCapped, y = KeptCapped, colour = LostProp - KeptProp)) +
+    geom_point(size = 1, alpha = 0.2) +
+    geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
+    geom_smooth(method = &quot;lm&quot;) +
+    scale_x_log10() +
+    scale_y_log10() +
+    scale_colour_viridis_c() +
+    xlab(&quot;Average count (removed)&quot;) +
+    ylab(&quot;Average count (kept)&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/02-quality-control.Rmd/kept-lost-1.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>kept_lost %&gt;%
+    select(Gene, LogFC, Lost, LostProp, Kept, KeptProp) %&gt;%
+    arrange(-LogFC) %&gt;%
+    as.data.frame() %&gt;%
+    head(100)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Gene"],"name":[1],"type":["chr"],"align":["left"]},{"label":["LogFC"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Lost"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["LostProp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Kept"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["KeptProp"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"PLCG2","2":"4.044051","3":"2.7459591","4":"0.053978854","5":"4.283699e-01","6":"0.0576563085","_rn_":"1"},{"1":"AC005523.2","2":"3.751100","3":"0.7012019","4":"0.002782415","5":"9.785261e-03","6":"0.0071134407","_rn_":"2"},{"1":"LINC00843","2":"3.744790","3":"0.6659861","4":"0.001669449","5":"1.015399e-03","6":"0.0012479720","_rn_":"3"},{"1":"AL627309.1","2":"3.743542","3":"0.6655021","4":"0.000556483","5":"1.053320e-03","6":"0.0013727692","_rn_":"4"},{"1":"LINC02067","2":"3.743443","3":"0.6659377","4":"0.002225932","5":"1.186628e-03","6":"0.0009983776","_rn_":"5"},{"1":"AC025569.1","2":"3.740535","3":"0.6655795","4":"0.001112966","5":"1.487086e-03","6":"0.0013727692","_rn_":"6"},{"1":"AC010761.1","2":"3.733961","3":"0.6660325","4":"0.001669449","5":"2.517229e-03","6":"0.0036191189","_rn_":"7"},{"1":"LINC00921","2":"3.733843","3":"0.6712197","4":"0.001669449","5":"3.969436e-03","6":"0.0041183077","_rn_":"8"},{"1":"AC008738.2","2":"3.728994","3":"0.6657442","4":"0.001112966","5":"3.123857e-03","6":"0.0037439161","_rn_":"9"},{"1":"HSF4","2":"3.727519","3":"0.6656379","4":"0.001669449","5":"3.298579e-03","6":"0.0028703357","_rn_":"10"},{"1":"NR5A2","2":"3.719068","3":"0.6949372","4":"0.003338898","5":"1.266713e-02","6":"0.0097341820","_rn_":"11"},{"1":"AC091057.3","2":"3.718928","3":"0.6657005","4":"0.002225932","5":"4.510067e-03","6":"0.0018719581","_rn_":"12"},{"1":"AP000350.7","2":"3.716061","3":"0.6664698","4":"0.004451864","5":"5.125884e-03","6":"0.0048670910","_rn_":"13"},{"1":"GOLGA8N","2":"3.716040","3":"0.6683205","4":"0.002782415","5":"5.647387e-03","6":"0.0053662798","_rn_":"14"},{"1":"AL023583.1","2":"3.709461","3":"0.6658152","4":"0.002782415","5":"5.866496e-03","6":"0.0068638462","_rn_":"15"},{"1":"MAEL","2":"3.678079","3":"0.6762317","4":"0.003895381","5":"1.331632e-02","6":"0.0102333708","_rn_":"16"},{"1":"CEBPA-DT","2":"3.615230","3":"0.6660708","4":"0.003895381","5":"1.961009e-02","6":"0.0175964058","_rn_":"17"},{"1":"LAIR1","2":"3.592591","3":"0.6716174","4":"0.006677796","5":"2.472327e-02","6":"0.0267066018","_rn_":"18"},{"1":"LINC00663","2":"3.591137","3":"0.6806801","4":"0.006677796","5":"2.771597e-02","6":"0.0263322102","_rn_":"19"},{"1":"U2AF1","2":"3.499106","3":"0.6716146","4":"0.012242627","5":"3.953958e-02","6":"0.0409334831","_rn_":"20"},{"1":"TIMM23B","2":"3.229734","3":"0.6866049","4":"0.027267668","5":"9.390333e-02","6":"0.0902283789","_rn_":"21"},{"1":"TAAR6","2":"3.211820","3":"0.4436681","4":"0.000556483","5":"9.652068e-04","6":"0.0011231748","_rn_":"22"},{"1":"FAM163A","2":"3.189185","3":"0.4441154","4":"0.002782415","5":"4.270210e-03","6":"0.0048670910","_rn_":"23"},{"1":"ADAM32","2":"3.110369","3":"0.4446772","4":"0.006121313","5":"1.578960e-02","6":"0.0151004617","_rn_":"24"},{"1":"PUS7","2":"2.931894","3":"0.4942910","4":"0.017250974","5":"6.770520e-02","6":"0.0683888681","_rn_":"25"},{"1":"HEY2","2":"2.808690","3":"0.4688879","4":"0.020589872","5":"7.791643e-02","6":"0.0653937352","_rn_":"26"},{"1":"ZNF417","2":"2.694907","3":"0.3344086","4":"0.006121313","5":"2.395554e-02","6":"0.0244602521","_rn_":"27"},{"1":"ZNF773","2":"2.644841","3":"0.3410882","4":"0.012799110","5":"3.567780e-02","6":"0.0336952452","_rn_":"28"},{"1":"ZNF587B","2":"2.644358","3":"0.3440260","4":"0.011686144","5":"3.748617e-02","6":"0.0324472732","_rn_":"29"},{"1":"AL158063.1","2":"2.544622","3":"0.2662303","4":"0.001112966","5":"5.135750e-03","6":"0.0042431050","_rn_":"30"},{"1":"TRG-AS1","2":"2.407033","3":"0.2471627","4":"0.002225932","5":"1.208350e-02","6":"0.0061150630","_rn_":"31"},{"1":"TMEM8A","2":"2.265444","3":"0.3407324","4":"0.043962159","5":"1.052784e-01","6":"0.0841133159","_rn_":"32"},{"1":"ZNF134","2":"2.241955","3":"0.4249868","4":"0.046744574","5":"1.758318e-01","6":"0.1512542119","_rn_":"33"},{"1":"ZNF248","2":"2.238619","3":"0.3077008","4":"0.026154702","5":"8.516734e-02","6":"0.0808685885","_rn_":"34"},{"1":"HNF1A","2":"2.044195","3":"0.1689268","4":"0.007234279","5":"1.900163e-03","6":"0.0019967553","_rn_":"35"},{"1":"LINC01535","2":"2.039750","3":"0.1663755","4":"0.000556483","5":"2.275623e-04","6":"0.0003743916","_rn_":"36"},{"1":"SLC9C1","2":"2.029230","3":"0.1665037","4":"0.001669449","5":"1.783762e-03","6":"0.0013727692","_rn_":"37"},{"1":"EVA1C","2":"2.012966","3":"0.1663755","4":"0.000556483","5":"3.916051e-03","6":"0.0043679022","_rn_":"38"},{"1":"LRRC8A","2":"1.997709","3":"0.3443948","4":"0.045631608","5":"1.702166e-01","6":"0.1351553725","_rn_":"39"},{"1":"AL157373.2","2":"1.974146","3":"0.1672590","4":"0.006121313","5":"1.021336e-02","6":"0.0102333708","_rn_":"40"},{"1":"RPP25","2":"1.964196","3":"0.2973285","4":"0.017250974","5":"1.344133e-01","6":"0.0954698615","_rn_":"41"},{"1":"ZNF286A","2":"1.955052","3":"0.2118157","4":"0.013912076","5":"5.529198e-02","6":"0.0567827281","_rn_":"42"},{"1":"CLEC18A","2":"1.913435","3":"0.2136669","4":"0.028380634","5":"6.447431e-02","6":"0.0293273431","_rn_":"43"},{"1":"BCL6B","2":"1.866481","3":"0.3793382","4":"0.033388982","5":"2.404417e-01","6":"0.0722575814","_rn_":"44"},{"1":"FAM81B","2":"1.865980","3":"0.1728717","4":"0.018920423","5":"3.198733e-02","6":"0.0164732310","_rn_":"45"},{"1":"CLDN5","2":"1.858583","3":"2.0585374","4":"0.160823595","5":"1.948165e+00","6":"0.2122800449","_rn_":"46"},{"1":"PIM3","2":"1.857990","3":"0.5229061","4":"0.050083472","5":"3.888830e-01","6":"0.1744664920","_rn_":"47"},{"1":"C20orf194","2":"1.848605","3":"0.2710043","4":"0.040623261","5":"1.351081e-01","6":"0.1203045052","_rn_":"48"},{"1":"UPP1","2":"1.813788","3":"0.2508923","4":"0.018363940","5":"1.221419e-01","6":"0.0672656932","_rn_":"49"},{"1":"MT-ND6","2":"1.801342","3":"0.6744125","4":"0.211463550","5":"5.724209e-01","6":"0.3471858230","_rn_":"50"},{"1":"C7orf31","2":"1.794778","3":"0.1818294","4":"0.011686144","5":"5.306108e-02","6":"0.0519156371","_rn_":"51"},{"1":"JUP","2":"1.791818","3":"0.5263143","4":"0.085698386","5":"4.199886e-01","6":"0.1846998627","_rn_":"52"},{"1":"COL18A1","2":"1.770540","3":"0.3007064","4":"0.082915971","5":"1.856147e-01","6":"0.1168101835","_rn_":"53"},{"1":"AC104825.1","2":"1.764387","3":"0.1517449","4":"0.010573178","5":"2.576250e-02","6":"0.0242106577","_rn_":"54"},{"1":"SPOCK2","2":"1.760671","3":"0.6168968","4":"0.090150250","5":"5.318974e-01","6":"0.1165605890","_rn_":"55"},{"1":"HTRA1","2":"1.757633","3":"0.5259494","4":"0.102392877","5":"4.343760e-01","6":"0.2087857232","_rn_":"56"},{"1":"CDK20","2":"1.751676","3":"0.1676836","4":"0.015581525","5":"4.516218e-02","6":"0.0416822663","_rn_":"57"},{"1":"CPXM1","2":"1.736955","3":"1.7003877","4":"0.203116305","5":"1.741107e+00","6":"0.4087108449","_rn_":"58"},{"1":"DEAF1","2":"1.734608","3":"0.3730963","4":"0.058430718","5":"2.753669e-01","6":"0.2180207163","_rn_":"59"},{"1":"ANXA1","2":"1.734356","3":"1.4961054","4":"0.136894825","5":"1.518486e+00","6":"0.2367402970","_rn_":"60"},{"1":"PIK3R4","2":"1.713261","3":"0.1657473","4":"0.014468559","5":"4.951155e-02","6":"0.0453013852","_rn_":"61"},{"1":"AC008496.2","2":"1.704358","3":"0.1213249","4":"0.001112966","5":"8.317318e-04","6":"0.0007487832","_rn_":"62"},{"1":"PCDH12","2":"1.699812","3":"0.3353793","4":"0.043405676","5":"2.441292e-01","6":"0.0661425184","_rn_":"63"},{"1":"ANXA4","2":"1.699573","3":"0.3152510","4":"0.058987201","5":"2.213787e-01","6":"0.1455135405","_rn_":"64"},{"1":"SERPINB9","2":"1.693707","3":"0.2176007","4":"0.027267668","5":"1.119058e-01","6":"0.0582802945","_rn_":"65"},{"1":"GPM6A","2":"1.672475","3":"0.1260660","4":"0.002782415","5":"1.072156e-02","6":"0.0079870211","_rn_":"66"},{"1":"CD99L2","2":"1.671180","3":"0.2477278","4":"0.048414023","5":"1.516009e-01","6":"0.1326594284","_rn_":"67"},{"1":"TGFBR3","2":"1.667408","3":"0.5991521","4":"0.084585420","5":"5.599730e-01","6":"0.1319106452","_rn_":"68"},{"1":"ERP27","2":"1.665262","3":"0.1220833","4":"0.003895381","5":"7.136225e-03","6":"0.0056158742","_rn_":"69"},{"1":"NPHP1","2":"1.663726","3":"0.1738015","4":"0.022815804","5":"6.747145e-02","6":"0.0617746162","_rn_":"70"},{"1":"AGFG2","2":"1.663176","3":"0.1364315","4":"0.008347245","5":"2.411596e-02","6":"0.0197179583","_rn_":"71"},{"1":"XRN1","2":"1.662028","3":"0.3009043","4":"0.060656650","5":"2.157030e-01","6":"0.1729689255","_rn_":"72"},{"1":"LRRC1","2":"1.652186","3":"0.1591748","4":"0.025598219","5":"5.245334e-02","6":"0.0484213154","_rn_":"73"},{"1":"WT1","2":"1.647813","3":"1.0761914","4":"0.122982749","5":"1.130989e+00","6":"0.1622363659","_rn_":"74"},{"1":"ACOX3","2":"1.641006","3":"0.1733264","4":"0.014468559","5":"7.110213e-02","6":"0.0625233995","_rn_":"75"},{"1":"OTUD1","2":"1.635053","3":"0.1360281","4":"0.014468559","5":"2.798279e-02","6":"0.0180955947","_rn_":"76"},{"1":"TSPAN8","2":"1.632580","3":"0.4478061","4":"0.047857540","5":"3.986933e-01","6":"0.0658929240","_rn_":"77"},{"1":"SEMA3B","2":"1.632538","3":"0.3881750","4":"0.080133556","5":"3.278798e-01","6":"0.1221764632","_rn_":"78"},{"1":"RNPEPL1","2":"1.625816","3":"0.1545255","4":"0.024485253","5":"5.149945e-02","6":"0.0433046300","_rn_":"79"},{"1":"NPHS1","2":"1.615761","3":"0.4800734","4":"0.071786311","5":"4.444502e-01","6":"0.0998377636","_rn_":"80"},{"1":"NEBL","2":"1.614869","3":"0.2862253","4":"0.049526989","5":"2.117527e-01","6":"0.0831149382","_rn_":"81"},{"1":"ABCG1","2":"1.611229","3":"0.1778570","4":"0.016694491","5":"8.214696e-02","6":"0.0423062523","_rn_":"82"},{"1":"MRPL15","2":"1.606405","3":"0.7222701","4":"0.111296605","5":"7.415663e-01","6":"0.4264320479","_rn_":"83"},{"1":"AP5B1","2":"1.603068","3":"0.1290514","4":"0.010573178","5":"2.455954e-02","6":"0.0228378884","_rn_":"84"},{"1":"HSPG2","2":"1.601668","3":"0.4726103","4":"0.089593767","5":"4.416868e-01","6":"0.1763384500","_rn_":"85"},{"1":"PLPP3","2":"1.601487","3":"0.4240471","4":"0.072899277","5":"3.828274e-01","6":"0.2242605766","_rn_":"86"},{"1":"SLC9A8","2":"1.600634","3":"0.1387619","4":"0.011129661","5":"3.672526e-02","6":"0.0299513291","_rn_":"87"},{"1":"LAMA5","2":"1.593951","3":"0.2499175","4":"0.071786311","5":"1.734207e-01","6":"0.0921003370","_rn_":"88"},{"1":"TPPP3","2":"1.582494","3":"0.6924439","4":"0.076238175","5":"7.205661e-01","6":"0.1286659179","_rn_":"89"},{"1":"CXorf56","2":"1.577675","3":"0.1690521","4":"0.023928770","5":"7.784224e-02","6":"0.0681392737","_rn_":"90"},{"1":"EPS8L1","2":"1.569165","3":"0.2087566","4":"0.026154702","5":"1.287456e-01","6":"0.0620242107","_rn_":"91"},{"1":"C1orf56","2":"1.565064","3":"0.3739076","4":"0.067334446","5":"3.352341e-01","6":"0.2016722825","_rn_":"92"},{"1":"MT-CO2","2":"1.563505","3":"28.8940632","4":"0.541457986","5":"3.587304e+01","6":"0.9414701111","_rn_":"93"},{"1":"MT-ND2","2":"1.556697","3":"14.2334322","4":"0.489705064","5":"1.768953e+01","6":"0.9247472857","_rn_":"94"},{"1":"GSKIP","2":"1.556266","3":"0.2401710","4":"0.032832499","5":"1.710082e-01","6":"0.1365281418","_rn_":"95"},{"1":"ITM2B","2":"1.555583","3":"3.4682047","4":"0.311074012","5":"4.215586e+00","6":"0.6836390865","_rn_":"96"},{"1":"CLCN7","2":"1.555564","3":"0.2316505","4":"0.062326099","5":"1.605116e-01","6":"0.1257955822","_rn_":"97"},{"1":"ICAM2","2":"1.554043","3":"0.3709450","4":"0.040066778","5":"3.355969e-01","6":"0.0777486584","_rn_":"98"},{"1":"CALCRL","2":"1.552934","3":"0.2852133","4":"0.028380634","5":"2.283954e-01","6":"0.1045800574","_rn_":"99"},{"1":"AC093462.1","2":"1.550594","3":"0.1237991","4":"0.006677796","5":"2.614892e-02","6":"0.0242106577","_rn_":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="dimensionality-reduction-1" class="section level2 tabset">
+<h2>Dimensionality reduction</h2>
+<p>Dimsionality reduction plots coloured by technical factors again gives us a good overview of the dataset.</p>
+<div id="pca-3" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(dimred_factors), function(fct_name) {
+    plotPCA(filtered, colour_by = dimred_factors[fct_name],
+            shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/pca-valid-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-3" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(dimred_factors), function(fct_name) {
+    plotTSNE(filtered, colour_by = dimred_factors[fct_name],
+             shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/t-sne-valid-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-3" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plot_list &lt;- lapply(names(dimred_factors), function(fct_name) {
+    plotUMAP(filtered, colour_by = dimred_factors[fct_name],
+             shape_by = &quot;Sample&quot;, add_ticks = FALSE) +
+        ggtitle(fct_name)
+})
+
+plot_grid(plotlist = plot_list, ncol = 2)</code></pre>
+<p><img src="figure/02-quality-control.Rmd/umap-valid-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>After quality control we have a dataset with 8013 cells and 22745.</p>
+<div id="parameters" class="section level2">
+<h2>Parameters</h2>
+<p>This table describes parameters used and set in this document.</p>
+<pre class="r"><code>params &lt;- jsonlite::toJSON(list(
+    list(
+        Parameter = &quot;counts_thresh&quot;,
+        Value = attr(counts_out, &quot;thresholds&quot;)[&quot;lower&quot;],
+        Description = &quot;Minimum threshold for (log10) total counts&quot;
+    ),
+    list(
+        Parameter = &quot;features_thresh&quot;,
+        Value = attr(features_out, &quot;thresholds&quot;)[&quot;lower&quot;],
+        Description = &quot;Minimum threshold for (log10) total features&quot;
+    ),
+    list(
+        Parameter = &quot;mt_thresh&quot;,
+        Value = attr(mt_out, &quot;thresholds&quot;)[&quot;higher&quot;],
+        Description = &quot;Maximum threshold for percentage counts mitochondrial&quot;
+    ),
+    list(
+        Parameter = &quot;counts_mads&quot;,
+        Value = counts_mads,
+        Description = &quot;MADs for (log10) total counts threshold&quot;
+    ),
+    list(
+        Parameter = &quot;features_mads&quot;,
+        Value = features_mads,
+        Description = &quot;MADs for (log10) total features threshold&quot;
+    ),
+    list(
+        Parameter = &quot;mt_mads&quot;,
+        Value = features_mads,
+        Description = &quot;MADs for percentage counts mitochondrial threshold&quot;
+    ),
+    list(
+        Parameter = &quot;min_count&quot;,
+        Value = min_count,
+        Description = &quot;Minimum count per cell for gene filtering&quot;
+    ),
+    list(
+        Parameter = &quot;min_cells&quot;,
+        Value = min_cells,
+        Description = &quot;Minimum cells with min_count counts for gene filtering&quot;
+    ),
+    list(
+        Parameter = &quot;n_cells&quot;,
+        Value = ncol(filtered),
+        Description = &quot;Number of cells in the filtered dataset&quot;
+    ),
+    list(
+        Parameter = &quot;n_genes&quot;,
+        Value = nrow(filtered),
+        Description = &quot;Number of genes in the filtered dataset&quot;
+    ),
+    list(
+        Parameter = &quot;median_genes&quot;,
+        Value = median(Matrix::colSums(counts(filtered) != 0)),
+        Description = paste(&quot;Median number of expressed genes per cell in the&quot;,
+                            &quot;filtered dataset&quot;)
+    ),
+    list(
+        Parameter = &quot;median_counts&quot;,
+        Value = median(Matrix::colSums(counts(filtered))),
+        Description = paste(&quot;Median number of counts per cell in the filtered&quot;,
+                            &quot;dataset&quot;)
+    )
+), pretty = TRUE)
+
+knitr::kable(jsonlite::fromJSON(params))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">counts_thresh</td>
+<td align="left">2.3712</td>
+<td align="left">Minimum threshold for (log10) total counts</td>
+</tr>
+<tr class="even">
+<td align="left">features_thresh</td>
+<td align="left">2.4112</td>
+<td align="left">Minimum threshold for (log10) total features</td>
+</tr>
+<tr class="odd">
+<td align="left">mt_thresh</td>
+<td align="left">8.1805</td>
+<td align="left">Maximum threshold for percentage counts mitochondrial</td>
+</tr>
+<tr class="even">
+<td align="left">counts_mads</td>
+<td align="left">4</td>
+<td align="left">MADs for (log10) total counts threshold</td>
+</tr>
+<tr class="odd">
+<td align="left">features_mads</td>
+<td align="left">4</td>
+<td align="left">MADs for (log10) total features threshold</td>
+</tr>
+<tr class="even">
+<td align="left">mt_mads</td>
+<td align="left">4</td>
+<td align="left">MADs for percentage counts mitochondrial threshold</td>
+</tr>
+<tr class="odd">
+<td align="left">min_count</td>
+<td align="left">1</td>
+<td align="left">Minimum count per cell for gene filtering</td>
+</tr>
+<tr class="even">
+<td align="left">min_cells</td>
+<td align="left">2</td>
+<td align="left">Minimum cells with min_count counts for gene filtering</td>
+</tr>
+<tr class="odd">
+<td align="left">n_cells</td>
+<td align="left">8013</td>
+<td align="left">Number of cells in the filtered dataset</td>
+</tr>
+<tr class="even">
+<td align="left">n_genes</td>
+<td align="left">22745</td>
+<td align="left">Number of genes in the filtered dataset</td>
+</tr>
+<tr class="odd">
+<td align="left">median_genes</td>
+<td align="left">2519</td>
+<td align="left">Median number of expressed genes per cell in the filtered dataset</td>
+</tr>
+<tr class="even">
+<td align="left">median_counts</td>
+<td align="left">7899</td>
+<td align="left">Median number of counts per cell in the filtered dataset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="output-files" class="section level2">
+<h2>Output files</h2>
+<p>This table describes the output files produced by this document. Right click and <em>Save Link As…</em> to download the results.</p>
+<pre class="r"><code>write_rds(filtered, here::here(&quot;data/processed/02-filtered.Rds&quot;))</code></pre>
+<pre class="r"><code>dir.create(here::here(&quot;output&quot;, DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here(&quot;output&quot;, DOCNAME, &quot;parameters.json&quot;))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink(&quot;parameters.json&quot;, DOCNAME)
+    ),
+    Description = c(
+        &quot;Parameters set and used in this analysis&quot;
+    )
+))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/02-quality-control/parameters.json">parameters.json</a></td>
+<td align="left">Parameters set and used in this analysis</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>─ Session info ──────────────────────────────────────────────────────────
+ setting  value                       
+ version  R version 3.5.0 (2018-04-23)
+ os       CentOS release 6.7 (Final)  
+ system   x86_64, linux-gnu           
+ ui       X11                         
+ language (EN)                        
+ collate  en_US.UTF-8                 
+ ctype    en_US.UTF-8                 
+ tz       Australia/Melbourne         
+ date     2019-01-23                  
+
+─ Packages ──────────────────────────────────────────────────────────────
+ ! package              * version   date       lib source        
+   assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
+   backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
+   beeswarm               0.2.3     2016-04-25 [1] CRAN (R 3.5.0)
+   bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
+   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
+   BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
+   BiocNeighbors          1.0.0     2018-10-30 [1] Bioconductor  
+   BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
+   bitops                 1.0-6     2013-08-17 [1] CRAN (R 3.5.0)
+   broom                  0.5.1     2018-12-05 [1] CRAN (R 3.5.0)
+   callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
+   cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
+   cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
+   colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
+   cowplot              * 0.9.4     2019-01-08 [1] CRAN (R 3.5.0)
+   crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
+   DelayedArray         * 0.8.0     2018-10-30 [1] Bioconductor  
+   DelayedMatrixStats     1.4.0     2018-10-30 [1] Bioconductor  
+   desc                   1.2.0     2018-05-01 [1] CRAN (R 3.5.0)
+   devtools               2.0.1     2018-10-26 [1] CRAN (R 3.5.0)
+   digest                 0.6.18    2018-10-10 [1] CRAN (R 3.5.0)
+   dplyr                * 0.7.8     2018-11-10 [1] CRAN (R 3.5.0)
+   dynamicTreeCut         1.63-1    2016-03-11 [1] CRAN (R 3.5.0)
+   edgeR                * 3.24.3    2019-01-02 [1] Bioconductor  
+   evaluate               0.12      2018-10-09 [1] CRAN (R 3.5.0)
+   forcats              * 0.3.0     2018-02-19 [1] CRAN (R 3.5.0)
+   fs                     1.2.6     2018-08-23 [1] CRAN (R 3.5.0)
+   generics               0.0.2     2018-11-29 [1] CRAN (R 3.5.0)
+   GenomeInfoDb         * 1.18.1    2018-11-12 [1] Bioconductor  
+   GenomeInfoDbData       1.2.0     2019-01-15 [1] Bioconductor  
+   GenomicRanges        * 1.34.0    2018-10-30 [1] Bioconductor  
+   ggbeeswarm             0.6.0     2017-08-07 [1] CRAN (R 3.5.0)
+   ggplot2              * 3.1.0     2018-10-25 [1] CRAN (R 3.5.0)
+   git2r                  0.24.0    2019-01-07 [1] CRAN (R 3.5.0)
+   glue                   1.3.0     2018-07-17 [1] CRAN (R 3.5.0)
+   gridExtra              2.3       2017-09-09 [1] CRAN (R 3.5.0)
+   gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
+   haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
+   HDF5Array              1.10.1    2018-12-05 [1] Bioconductor  
+   here                   0.1       2017-05-28 [1] CRAN (R 3.5.0)
+   hms                    0.4.2     2018-03-10 [1] CRAN (R 3.5.0)
+   htmltools              0.3.6     2017-04-28 [1] CRAN (R 3.5.0)
+   httr                   1.4.0     2018-12-11 [1] CRAN (R 3.5.0)
+   igraph                 1.2.2     2018-07-27 [1] CRAN (R 3.5.0)
+   IRanges              * 2.16.0    2018-10-30 [1] Bioconductor  
+   jsonlite               1.6       2018-12-07 [1] CRAN (R 3.5.0)
+   knitr                  1.21      2018-12-10 [1] CRAN (R 3.5.0)
+ P lattice                0.20-35   2017-03-25 [5] CRAN (R 3.5.0)
+   lazyeval               0.2.1     2017-10-29 [1] CRAN (R 3.5.0)
+   limma                * 3.38.3    2018-12-02 [1] Bioconductor  
+   locfit                 1.5-9.1   2013-04-20 [1] CRAN (R 3.5.0)
+   lubridate              1.7.4     2018-04-11 [1] CRAN (R 3.5.0)
+   magrittr               1.5       2014-11-22 [1] CRAN (R 3.5.0)
+ P Matrix                 1.2-14    2018-04-09 [5] CRAN (R 3.5.0)
+   matrixStats          * 0.54.0    2018-07-23 [1] CRAN (R 3.5.0)
+   memoise                1.1.0     2017-04-21 [1] CRAN (R 3.5.0)
+   modelr                 0.1.2     2018-05-11 [1] CRAN (R 3.5.0)
+   munsell                0.5.0     2018-06-12 [1] CRAN (R 3.5.0)
+ P nlme                   3.1-137   2018-04-07 [5] CRAN (R 3.5.0)
+   pillar                 1.3.1     2018-12-15 [1] CRAN (R 3.5.0)
+   pkgbuild               1.0.2     2018-10-16 [1] CRAN (R 3.5.0)
+   pkgconfig              2.0.2     2018-08-16 [1] CRAN (R 3.5.0)
+   pkgload                1.0.2     2018-10-29 [1] CRAN (R 3.5.0)
+   plyr                   1.8.4     2016-06-08 [1] CRAN (R 3.5.0)
+   prettyunits            1.0.2     2015-07-13 [1] CRAN (R 3.5.0)
+   processx               3.2.1     2018-12-05 [1] CRAN (R 3.5.0)
+   ps                     1.3.0     2018-12-21 [1] CRAN (R 3.5.0)
+   purrr                * 0.2.5     2018-05-29 [1] CRAN (R 3.5.0)
+   R.methodsS3            1.7.1     2016-02-16 [1] CRAN (R 3.5.0)
+   R.oo                   1.22.0    2018-04-22 [1] CRAN (R 3.5.0)
+   R.utils                2.7.0     2018-08-27 [1] CRAN (R 3.5.0)
+   R6                     2.3.0     2018-10-04 [1] CRAN (R 3.5.0)
+   Rcpp                   1.0.0     2018-11-07 [1] CRAN (R 3.5.0)
+   RCurl                  1.95-4.11 2018-07-15 [1] CRAN (R 3.5.0)
+   readr                * 1.3.1     2018-12-21 [1] CRAN (R 3.5.0)
+   readxl                 1.2.0     2018-12-19 [1] CRAN (R 3.5.0)
+   remotes                2.0.2     2018-10-30 [1] CRAN (R 3.5.0)
+   reshape2               1.4.3     2017-12-11 [1] CRAN (R 3.5.0)
+   rhdf5                  2.26.2    2019-01-02 [1] Bioconductor  
+   Rhdf5lib               1.4.2     2018-12-03 [1] Bioconductor  
+   rlang                  0.3.1     2019-01-08 [1] CRAN (R 3.5.0)
+   rmarkdown              1.11      2018-12-08 [1] CRAN (R 3.5.0)
+   rprojroot              1.3-2     2018-01-03 [1] CRAN (R 3.5.0)
+   rstudioapi             0.9.0     2019-01-09 [1] CRAN (R 3.5.0)
+   rvest                  0.3.2     2016-06-17 [1] CRAN (R 3.5.0)
+   S4Vectors            * 0.20.1    2018-11-09 [1] Bioconductor  
+   scales                 1.0.0     2018-08-09 [1] CRAN (R 3.5.0)
+   scater               * 1.10.1    2019-01-04 [1] Bioconductor  
+   scran                * 1.10.2    2019-01-04 [1] Bioconductor  
+   sessioninfo            1.1.1     2018-11-05 [1] CRAN (R 3.5.0)
+   SingleCellExperiment * 1.4.1     2019-01-04 [1] Bioconductor  
+   statmod                1.4.30    2017-06-18 [1] CRAN (R 3.5.0)
+   stringi                1.2.4     2018-07-20 [1] CRAN (R 3.5.0)
+   stringr              * 1.3.1     2018-05-10 [1] CRAN (R 3.5.0)
+   SummarizedExperiment * 1.12.0    2018-10-30 [1] Bioconductor  
+   testthat               2.0.0     2017-12-13 [5] CRAN (R 3.5.0)
+   tibble               * 2.0.1     2019-01-12 [1] CRAN (R 3.5.0)
+   tidyr                * 0.8.2     2018-10-28 [1] CRAN (R 3.5.0)
+   tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
+   tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
+   usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
+   vipor                  0.4.5     2017-03-22 [1] CRAN (R 3.5.0)
+   viridis                0.5.1     2018-03-29 [1] CRAN (R 3.5.0)
+   viridisLite            0.3.0     2018-02-01 [1] CRAN (R 3.5.0)
+   whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
+   withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)
+   workflowr              1.1.1     2018-07-06 [1] CRAN (R 3.5.0)
+   xfun                   0.4       2018-10-23 [1] CRAN (R 3.5.0)
+   xml2                   1.2.0     2018-01-24 [1] CRAN (R 3.5.0)
+   XVector                0.22.0    2018-10-30 [1] Bioconductor  
+   yaml                   2.2.0     2018-07-25 [1] CRAN (R 3.5.0)
+   zlibbioc               1.28.0    2018-10-30 [1] Bioconductor  
+
+[1] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib/x86_64-pc-linux-gnu/3.5.0
+[2] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-ext/x86_64-pc-linux-gnu/3.5.0
+[3] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-R/x86_64-pc-linux-gnu/3.5.0
+[4] /home/luke.zappia/R/x86_64-pc-linux-gnu-library/3.5
+[5] /usr/local/installed/R/3.5.0/lib64/R/library
+
+ P ── Loaded and on-disk path mismatch.</code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
