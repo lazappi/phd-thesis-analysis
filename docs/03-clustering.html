@@ -392,6 +392,24 @@ div.tocify {
         <li>
   <a href="index.html">Home</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-preprocessing.html">Pre-processing</a>
+    </li>
+    <li>
+      <a href="02-quality-control.html">Quality control</a>
+    </li>
+    <li>
+      <a href="03-clustering.html">Clustering</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="about.html">About</a>
 </li>
@@ -435,7 +453,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-01-24</p>
+<p><strong>Last updated:</strong> 2019-01-25</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -459,7 +477,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/22f21798217252257721fc803e2a21f45b51184b" target="_blank">22f2179</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/4d90fc96f273f5d27b4f8b8cf6b8c93836b9d498" target="_blank">4d90fc9</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -472,9 +490,11 @@ Ignored files:
     Ignored:    packrat/lib/
     Ignored:    packrat/src/
 
-Untracked files:
-    Untracked:  docs/figure/03-clustering.Rmd/
-    Untracked:  output/03-clustering/
+Unstaged changes:
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/02-quality-control/parameters.json
+    Modified:   output/03-clustering/cluster_assignments.tsv.gz
+    Modified:   output/03-clustering/cluster_expression.tsv.gz
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -508,7 +528,41 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/22f21798217252257721fc803e2a21f45b51184b/analysis/03-clustering.Rmd" target="_blank">22f2179</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/4d90fc96f273f5d27b4f8b8cf6b8c93836b9d498/analysis/03-clustering.Rmd" target="_blank">4d90fc9</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-25
+</td>
+<td style="text-align:left;">
+Improve output and rebuild
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/analysis/03-clustering.Rmd" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+<td style="text-align:left;">
+Add clustering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/eaf03df91196666e8ba448576d09f5037e851c88/docs/03-clustering.html" target="_blank">eaf03df</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -598,7 +652,37 @@ ggplot(plot_data,
              colour = &quot;dodgerblue&quot;, size = 5,
              label = paste(length(seurat@var.genes), &quot;selected&quot;))</code></pre>
 <p><img src="figure/03-clustering.Rmd/var-genes-1.png" width="960" style="display: block; margin: auto;" /></p>
-<p>This approach has selected 2281 genes but it is difficult to know where to set the thresholds. Let’s have a look at another approach.</p>
+<details> <summary><em>Expand here to see past versions of var-genes-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/var-genes-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>This approach has selected 2233 genes but it is difficult to know where to set the thresholds. Let’s have a look at another approach.</p>
 </div>
 <div id="m3drop" class="section level2">
 <h2>M3Drop</h2>
@@ -622,6 +706,36 @@ ggplot(plot_data, aes(x = Observed, y = Fit)) +
     ggtitle(&quot;Gene dropout fit&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/m3drop-fit-genes-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of m3drop-fit-genes-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/m3drop-fit-genes-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="cells" class="section level4">
 <h4>Cells</h4>
@@ -636,6 +750,36 @@ ggplot(plot_data, aes(x = Observed, y = Fit)) +
     ggtitle(&quot;Cell dropout fit&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/m3drop-fit-cells-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of m3drop-fit-cells-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/m3drop-fit-cells-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="selection" class="section level3">
@@ -673,7 +817,37 @@ ggplot(m3drop_results) +
     ylab(&quot;Dropout rate&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/m3drop-select-1.png" width="960" style="display: block; margin: auto;" /></p>
-<p>This method identifies 1971 genes.</p>
+<details> <summary><em>Expand here to see past versions of m3drop-select-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/m3drop-select-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>This method identifies 1964 genes.</p>
 </div>
 </div>
 <div id="comparison" class="section level2 tabset">
@@ -715,6 +889,36 @@ plot_data_sel &lt;- plot_data %&gt;%
     theme(legend.position = &quot;none&quot;,
           axis.title = element_blank())</code></pre>
 <p><img src="figure/03-clustering.Rmd/genes-bar-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of genes-bar-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/genes-bar-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="seurat-1" class="section level3">
 <h3>Seurat</h3>
@@ -724,6 +928,36 @@ plot_data_sel &lt;- plot_data %&gt;%
     geom_point(data = plot_data_sel, aes(colour = Selected)) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/genes-seurat-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of genes-seurat-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/genes-seurat-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="m3drop-1" class="section level3">
 <h3>M3Drop</h3>
@@ -733,6 +967,36 @@ plot_data_sel &lt;- plot_data %&gt;%
     geom_point(data = plot_data_sel, aes(colour = Selected)) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/genes-m3drop-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of genes-m3drop-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/genes-m3drop-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="combined" class="section level3">
 <h3>Combined</h3>
@@ -742,6 +1006,36 @@ plot_data_sel &lt;- plot_data %&gt;%
     geom_point(data = plot_data_sel, aes(colour = Selected)) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/genes-combined-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of genes-combined-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/genes-combined-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-seurat" class="section level3">
 <h3>PCA (Seurat)</h3>
@@ -754,6 +1048,36 @@ ggplot(as.data.frame(seurat@dr$pca_seurat@cell.embeddings),
     geom_point(alpha = 0.5, colour = &quot;grey20&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/genes-pca-seurat-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of genes-pca-seurat-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/genes-pca-seurat-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-m3drop" class="section level3">
 <h3>PCA (M3Drop)</h3>
@@ -766,6 +1090,36 @@ ggplot(as.data.frame(seurat@dr$pca_m3drop@cell.embeddings),
     geom_point(alpha = 0.5, colour = &quot;grey20&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/genes-pca-m3drop-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of genes-pca-m3drop-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/genes-pca-m3drop-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="selection-1" class="section level2">
@@ -787,12 +1141,72 @@ ggplot(as.data.frame(seurat@dr$pca_m3drop@cell.embeddings),
 <p>Variance explained by each principal component.</p>
 <pre class="r"><code>PCElbowPlot(seurat, num.pc = 50)</code></pre>
 <p><img src="figure/03-clustering.Rmd/pca-elbow-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of pca-elbow-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/pca-elbow-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="gene-loadings" class="section level3">
 <h3>Gene loadings</h3>
 <p>PCA loadings of genes associated with some principal components.</p>
 <pre class="r"><code>VizPCA(seurat, pcs.use = 1:9, num.genes = 20, font.size = 1)</code></pre>
 <p><img src="figure/03-clustering.Rmd/pca-genes-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of pca-genes-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/pca-genes-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="heatmap" class="section level3">
 <h3>Heatmap</h3>
@@ -800,6 +1214,36 @@ ggplot(as.data.frame(seurat@dr$pca_m3drop@cell.embeddings),
 <pre class="r"><code>PCHeatmap(object = seurat, pc.use = 1:9, cells.use = 500, do.balanced = TRUE, 
           label.columns = FALSE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/pca-heatmap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of pca-heatmap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/pca-heatmap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="selection-2" class="section level2">
@@ -838,56 +1282,386 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 <h4>Res 0</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.1" class="section level4 unnumbered">
 <h4>Res 0.1</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.1&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.2" class="section level4 unnumbered">
 <h4>Res 0.2</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.2&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.3" class="section level4 unnumbered">
 <h4>Res 0.3</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.3&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.3-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.4" class="section level4 unnumbered">
 <h4>Res 0.4</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.4&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.4-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.4-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.5" class="section level4 unnumbered">
 <h4>Res 0.5</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.5&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.5-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.5-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.6" class="section level4 unnumbered">
 <h4>Res 0.6</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.6&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.6-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.7" class="section level4 unnumbered">
 <h4>Res 0.7</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.7&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.7-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.7-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.8" class="section level4 unnumbered">
 <h4>Res 0.8</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.8&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.8-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.8-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.9" class="section level4 unnumbered">
 <h4>Res 0.9</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.9&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-0.9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-0.9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-0.9-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-1" class="section level4 unnumbered">
 <h4>Res 1</h4>
 <pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.1&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-pca-1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-pca-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-pca-1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="t-sne" class="section level3 tabset">
@@ -908,56 +1682,386 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 <h4>Res 0</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.1-1" class="section level4 unnumbered">
 <h4>Res 0.1</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.1&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.2-1" class="section level4 unnumbered">
 <h4>Res 0.2</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.2&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.3-1" class="section level4 unnumbered">
 <h4>Res 0.3</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.3&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.3-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.4-1" class="section level4 unnumbered">
 <h4>Res 0.4</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.4&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.4-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.4-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.5-1" class="section level4 unnumbered">
 <h4>Res 0.5</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.5&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.5-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.5-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.6-1" class="section level4 unnumbered">
 <h4>Res 0.6</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.6&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.6-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.7-1" class="section level4 unnumbered">
 <h4>Res 0.7</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.7&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.7-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.7-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.8-1" class="section level4 unnumbered">
 <h4>Res 0.8</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.8&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.8-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.8-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-0.9-1" class="section level4 unnumbered">
 <h4>Res 0.9</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.9&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-0.9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-0.9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-0.9-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="res-1-1" class="section level4 unnumbered">
 <h4>Res 1</h4>
 <pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.1&#39;, do.label = TRUE)</code></pre>
 <p><img src="figure/03-clustering.Rmd/res-tSNE-1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of res-tSNE-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/res-tSNE-1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 </div>
@@ -969,12 +2073,72 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 <p>Coloured by clustering resolution.</p>
 <pre class="r"><code>clustree(seurat)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="stability" class="section level3">
 <h3>Stability</h3>
 <p>Coloured by the SC3 stability metric.</p>
 <pre class="r"><code>clustree(seurat, node_colour = &quot;sc3_stability&quot;)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-stability-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-stability-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-stability-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="genes-1" class="section level3 tabset">
 <h3>Genes</h3>
@@ -1019,6 +2183,36 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-TAGLN-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-TAGLN-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-TAGLN-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="acta2" class="section level4 unnumbered">
 <h4>ACTA2</h4>
@@ -1026,6 +2220,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-ACTA2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-ACTA2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-ACTA2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="mab21l2" class="section level4 unnumbered">
 <h4>MAB21L2</h4>
@@ -1033,6 +2257,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-MAB21L2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-MAB21L2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-MAB21L2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="dlk1" class="section level4 unnumbered">
 <h4>DLK1</h4>
@@ -1040,6 +2294,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-DLK1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-DLK1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-DLK1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="gata3" class="section level4 unnumbered">
 <h4>GATA3</h4>
@@ -1047,6 +2331,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-GATA3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-GATA3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-GATA3-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="col2a1" class="section level4 unnumbered">
 <h4>COL2A1</h4>
@@ -1054,6 +2368,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-COL2A1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-COL2A1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-COL2A1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="col9a3" class="section level4 unnumbered">
 <h4>COL9A3</h4>
@@ -1061,6 +2405,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-COL9A3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-COL9A3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-COL9A3-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="podxl" class="section level4 unnumbered">
 <h4>PODXL</h4>
@@ -1068,6 +2442,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-PODXL-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-PODXL-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-PODXL-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="nphs2" class="section level4 unnumbered">
 <h4>NPHS2</h4>
@@ -1075,6 +2479,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-NPHS2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-NPHS2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-NPHS2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="tcf21" class="section level4 unnumbered">
 <h4>TCF21</h4>
@@ -1082,6 +2516,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-TCF21-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-TCF21-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-TCF21-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="hist1h4c" class="section level4 unnumbered">
 <h4>HIST1H4C</h4>
@@ -1089,6 +2553,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-HIST1H4C-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-HIST1H4C-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-HIST1H4C-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pclaf" class="section level4 unnumbered">
 <h4>PCLAF</h4>
@@ -1096,6 +2590,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-PCLAF-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-PCLAF-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-PCLAF-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="cenpf" class="section level4 unnumbered">
 <h4>CENPF</h4>
@@ -1103,6 +2627,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-CENPF-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-CENPF-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-CENPF-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="hmgb2" class="section level4 unnumbered">
 <h4>HMGB2</h4>
@@ -1110,6 +2664,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-HMGB2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-HMGB2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-HMGB2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="cldn5" class="section level4 unnumbered">
 <h4>CLDN5</h4>
@@ -1117,6 +2701,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-CLDN5-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-CLDN5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-CLDN5-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pecam1" class="section level4 unnumbered">
 <h4>PECAM1</h4>
@@ -1124,6 +2738,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-PECAM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-PECAM1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-PECAM1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="kdr" class="section level4 unnumbered">
 <h4>KDR</h4>
@@ -1131,6 +2775,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-KDR-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-KDR-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-KDR-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="calm1" class="section level4 unnumbered">
 <h4>CALM1</h4>
@@ -1138,6 +2812,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-CALM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-CALM1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-CALM1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="ttyh1" class="section level4 unnumbered">
 <h4>TTYH1</h4>
@@ -1145,6 +2849,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-TTYH1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-TTYH1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-TTYH1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="sox2" class="section level4 unnumbered">
 <h4>SOX2</h4>
@@ -1152,6 +2886,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-SOX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-SOX2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-SOX2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="hes6" class="section level4 unnumbered">
 <h4>HES6</h4>
@@ -1159,6 +2923,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-HES6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-HES6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-HES6-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="stmn2" class="section level4 unnumbered">
 <h4>STMN2</h4>
@@ -1166,6 +2960,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-STMN2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-STMN2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-STMN2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pax2" class="section level4 unnumbered">
 <h4>PAX2</h4>
@@ -1173,6 +2997,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-PAX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-PAX2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-PAX2-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pax8" class="section level4 unnumbered">
 <h4>PAX8</h4>
@@ -1180,6 +3034,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-PAX8-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-PAX8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-PAX8-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="krt19" class="section level4 unnumbered">
 <h4>KRT19</h4>
@@ -1187,6 +3071,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-KRT19-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-KRT19-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-KRT19-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="myog" class="section level4 unnumbered">
 <h4>MYOG</h4>
@@ -1194,6 +3108,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-MYOG-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-MYOG-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-MYOG-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="myod1" class="section level4 unnumbered">
 <h4>MYOD1</h4>
@@ -1201,6 +3145,36 @@ scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
 scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
 <p><img src="figure/03-clustering.Rmd/clustree-MYOD1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clustree-MYOD1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/clustree-MYOD1-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 </div>
@@ -1237,6 +3211,36 @@ cell_data &lt;- as.data.frame(colData(sce))</code></pre>
     geom_bar() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cluster-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cluster-count-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cluster-count-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-1" class="section level3">
 <h3>PCA</h3>
@@ -1245,6 +3249,36 @@ cell_data &lt;- as.data.frame(colData(sce))</code></pre>
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cluster-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cluster-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cluster-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-1" class="section level3">
 <h3>t-SNE</h3>
@@ -1253,6 +3287,36 @@ cell_data &lt;- as.data.frame(colData(sce))</code></pre>
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cluster-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cluster-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cluster-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap" class="section level3">
 <h3>UMAP</h3>
@@ -1261,6 +3325,36 @@ cell_data &lt;- as.data.frame(colData(sce))</code></pre>
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cluster-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cluster-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cluster-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="sample" class="section level2 tabset">
@@ -1272,6 +3366,36 @@ cell_data &lt;- as.data.frame(colData(sce))</code></pre>
     geom_bar() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sample-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sample-count-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sample-count-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="proportion" class="section level3">
 <h3>Proportion</h3>
@@ -1285,6 +3409,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
     ylab(&quot;Proportion of cluster&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sample-prop-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sample-prop-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sample-prop-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-2" class="section level3">
 <h3>PCA</h3>
@@ -1293,6 +3447,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sample-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sample-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sample-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-2" class="section level3">
 <h3>t-SNE</h3>
@@ -1301,6 +3485,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sample-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sample-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sample-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-1" class="section level3">
 <h3>UMAP</h3>
@@ -1309,6 +3523,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sample-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sample-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sample-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="selection-method" class="section level2 tabset">
@@ -1320,6 +3564,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
     geom_bar() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sel-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sel-count-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sel-count-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="proportion-1" class="section level3">
 <h3>Proportion</h3>
@@ -1333,6 +3607,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
     ylab(&quot;Proportion of cluster&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sel-prop-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sel-prop-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sel-prop-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-3" class="section level3">
 <h3>PCA</h3>
@@ -1341,6 +3645,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sel-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sel-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sel-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-3" class="section level3">
 <h3>t-SNE</h3>
@@ -1349,6 +3683,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sel-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sel-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sel-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-2" class="section level3">
 <h3>UMAP</h3>
@@ -1357,6 +3721,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-sel-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-sel-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-sel-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="cell-cycle" class="section level2 tabset">
@@ -1368,6 +3762,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
     geom_bar() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cycle-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cycle-count-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cycle-count-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="proportion-2" class="section level3">
 <h3>Proportion</h3>
@@ -1381,6 +3805,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     ylab(&quot;Proportion of cluster&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cycle-prop-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cycle-prop-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cycle-prop-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-4" class="section level3">
 <h3>PCA</h3>
@@ -1389,6 +3843,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cycle-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cycle-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cycle-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-4" class="section level3">
 <h3>t-SNE</h3>
@@ -1397,6 +3881,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cycle-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cycle-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cycle-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-3" class="section level3">
 <h3>UMAP</h3>
@@ -1405,6 +3919,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_discrete() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-cycle-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-cycle-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-cycle-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="total-counts" class="section level2 tabset">
@@ -1418,6 +3962,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     theme_minimal() +
     theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-counts-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-counts-dist-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-counts-dist-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-5" class="section level3">
 <h3>PCA</h3>
@@ -1426,6 +4000,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-counts-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-counts-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-counts-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-5" class="section level3">
 <h3>t-SNE</h3>
@@ -1434,6 +4038,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-counts-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-counts-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-counts-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-4" class="section level3">
 <h3>UMAP</h3>
@@ -1442,6 +4076,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-counts-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-counts-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-counts-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="total-features" class="section level2 tabset">
@@ -1455,6 +4119,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     theme_minimal() +
     theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-features-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-features-dist-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-features-dist-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-6" class="section level3">
 <h3>PCA</h3>
@@ -1463,6 +4157,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-features-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-features-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-features-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-6" class="section level3">
 <h3>t-SNE</h3>
@@ -1471,6 +4195,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-features-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-features-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-features-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-5" class="section level3">
 <h3>UMAP</h3>
@@ -1479,6 +4233,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-features-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-features-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-features-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="mitochondrial-genes" class="section level2 tabset">
@@ -1492,6 +4276,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     theme_minimal() +
     theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-mt-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-mt-dist-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-mt-dist-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-7" class="section level3">
 <h3>PCA</h3>
@@ -1500,6 +4314,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-mt-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-mt-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-mt-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-7" class="section level3">
 <h3>t-SNE</h3>
@@ -1508,6 +4352,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-mt-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-mt-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-mt-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-6" class="section level3">
 <h3>UMAP</h3>
@@ -1516,6 +4390,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-mt-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-mt-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-mt-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="doublet-score" class="section level2 tabset">
@@ -1529,6 +4433,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     theme_minimal() +
     theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-doublets-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-doublets-dist-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-doublets-dist-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pca-8" class="section level3">
 <h3>PCA</h3>
@@ -1537,6 +4471,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-doublets-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-doublets-pca-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-doublets-pca-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="t-sne-8" class="section level3">
 <h3>t-SNE</h3>
@@ -1545,6 +4509,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-doublets-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-doublets-tSNE-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-doublets-tSNE-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="umap-7" class="section level3">
 <h3>UMAP</h3>
@@ -1553,6 +4547,36 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
     scale_fill_viridis_c() +
     theme_minimal()</code></pre>
 <p><img src="figure/03-clustering.Rmd/val-doublets-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of val-doublets-umap-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/eaf03df91196666e8ba448576d09f5037e851c88/docs/figure/03-clustering.Rmd/val-doublets-umap-1.png" target="_blank">eaf03df</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 </div>
@@ -1562,7 +4586,12 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
 <div id="parameters" class="section level2">
 <h2>Parameters</h2>
 <p>This table describes parameters used and set in this document.</p>
-<pre class="r"><code>params &lt;- jsonlite::toJSON(list(
+<pre class="r"><code>params &lt;- list(
+    list(
+        Parameter = &quot;sel_genes&quot;,
+        Value = length(seurat@var.genes),
+        Description = &quot;Number of selected genes&quot;
+    ),
     list(
         Parameter = &quot;resolutions&quot;,
         Value = resolutions,
@@ -1578,8 +4607,11 @@ ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
         Value = n_clusts,
         Description = &quot;Number of clusters produced by selected resolution&quot;
     )
-), pretty = TRUE)
+)
 
+metadata(sce)$Params[DOCNAME] &lt;- params
+
+params &lt;- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <table>
 <thead>
@@ -1591,16 +4623,21 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">sel_genes</td>
+<td align="left">1964</td>
+<td align="left">Number of selected genes</td>
+</tr>
+<tr class="even">
 <td align="left">resolutions</td>
 <td align="left">c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)</td>
 <td align="left">Range of possible clustering resolutions</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">res</td>
 <td align="left">0.3</td>
 <td align="left">Selected resolution parameter for clustering</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">n_clusts</td>
 <td align="left">12</td>
 <td align="left">Number of clusters produced by selected resolution</td>
@@ -1686,7 +4723,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-01-24                  
+ date     2019-01-25                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version    date       lib
@@ -1699,7 +4736,7 @@ knitr::kable(data.frame(
    beeswarm               0.2.3      2016-04-25 [1]
    bibtex                 0.4.2      2017-06-30 [1]
    bindr                  0.1.1      2018-03-13 [1]
-   bindrcpp               0.2.2      2018-03-29 [1]
+   bindrcpp             * 0.2.2      2018-03-29 [1]
    Biobase              * 2.42.0     2018-10-30 [1]
    BiocGenerics         * 0.28.0     2018-10-30 [1]
    BiocParallel         * 1.16.5     2019-01-04 [1]
@@ -1762,6 +4799,7 @@ knitr::kable(data.frame(
    HDF5Array              1.10.1     2018-12-05 [1]
    hdf5r                  1.0.1      2018-10-07 [1]
    here                   0.1        2017-05-28 [1]
+   highr                  0.7        2018-06-09 [1]
    Hmisc                  4.1-1      2018-01-03 [1]
    hms                    0.4.2      2018-03-10 [1]
    htmlTable              1.13.1     2019-01-07 [1]
@@ -1948,6 +4986,7 @@ knitr::kable(data.frame(
  CRAN (R 3.5.0)                       
  CRAN (R 3.5.0)                       
  Bioconductor                         
+ CRAN (R 3.5.0)                       
  CRAN (R 3.5.0)                       
  CRAN (R 3.5.0)                       
  CRAN (R 3.5.0)                       

@@ -1,5 +1,10 @@
 [
   {
+    "Parameter": ["sel_genes"],
+    "Value": [1964],
+    "Description": ["Number of selected genes"]
+  },
+  {
     "Parameter": ["resolutions"],
     "Value": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
     "Description": ["Range of possible clustering resolutions"]

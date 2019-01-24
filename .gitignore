@@ -26,3 +26,5 @@ analysis/site_libs
 # Data
 data/
 
+# Output
+!output/*/*.gz

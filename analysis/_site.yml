@@ -5,6 +5,14 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "Analysis"
+      menu:
+        - text: "Pre-processing"
+          href: 01-preprocessing.html
+        - text: "Quality control"
+          href: 02-quality-control.html
+        - text: "Clustering"
+          href: 03-clustering.html
     - text: "About"
       href: about.html
     - text: "License"

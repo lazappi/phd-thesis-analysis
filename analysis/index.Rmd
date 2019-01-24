@@ -6,4 +6,8 @@ output:
     toc: false
 ---
 
-Welcome to my research website.
+Analysis steps:
+
+* [Pre-processing](01-preprocessing.html)
+* [Quality control](02-quality-control.html)
+* [Clustering](03-clustering.html)

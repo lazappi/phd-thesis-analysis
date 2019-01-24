@@ -4,17 +4,33 @@ title: "Pre-processing"
 
 ```{r knitr, include = FALSE}
 DOCNAME = "01-preprocessing"
-knitr::opts_chunk$set(autodep        = TRUE,
-                      cache          = TRUE,
-                      cache.path     = paste0("cache/", DOCNAME, "/"),
-                      cache.comments = FALSE,
-                      echo           = TRUE,
-                      error          = FALSE,
-                      fig.align      = "center",
-                      fig.width      = 10,
-                      fig.height     = 8,
-                      message        = FALSE,
-                      warning        = FALSE)
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+    if (before) {
+        print(paste("Start:", Sys.time()))
+        NOW <- Sys.time()
+    } else {
+        print(paste("Stop:", Sys.time()))
+        print(Sys.time() - NOW)
+    }
+})  
+
+knitr::opts_chunk$set(
+    autodep        = TRUE,
+    cache          = TRUE,
+    cache.path     = paste0("cache/", DOCNAME, "/"),
+    cache.comments = FALSE,
+    echo           = TRUE,
+    error          = FALSE,
+    fig.align      = "center",
+    fig.width      = 10,
+    fig.height     = 8,
+    message        = FALSE,
+    warning        = FALSE,
+    timeit         = TRUE
+)
 ```
 
 ```{r libaries, cache = FALSE}
@@ -278,7 +294,7 @@ Parameters
 This table describes parameters used and set in this document.
 
 ```{r parameters}
-params <- jsonlite::toJSON(list(
+params <- list(
      list(
         Parameter = "empty_thresh",
         Value = empty_thresh,
@@ -299,8 +315,12 @@ params <- jsonlite::toJSON(list(
         Value = ncol(selected),
         Description = "Number of cells selected"
     )
-), pretty = TRUE)
+)
 
+metadata(selected)$Params <- list()
+metadata(selected)$Params[DOCNAME] <- params
+
+params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
 

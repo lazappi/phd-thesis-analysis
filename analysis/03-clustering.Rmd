@@ -4,17 +4,33 @@ title: "Clustering"
 
 ```{r knitr, include = FALSE}
 DOCNAME = "03-clustering"
-knitr::opts_chunk$set(autodep        = TRUE,
-                      cache          = TRUE,
-                      cache.path     = paste0("cache/", DOCNAME, "/"),
-                      cache.comments = FALSE,
-                      echo           = TRUE,
-                      error          = FALSE,
-                      fig.align      = "center",
-                      fig.width      = 10,
-                      fig.height     = 8,
-                      message        = FALSE,
-                      warning        = FALSE)
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+    if (before) {
+        print(paste("Start:", Sys.time()))
+        NOW <- Sys.time()
+    } else {
+        print(paste("Stop:", Sys.time()))
+        print(Sys.time() - NOW)
+    }
+})  
+
+knitr::opts_chunk$set(
+    autodep        = TRUE,
+    cache          = TRUE,
+    cache.path     = paste0("cache/", DOCNAME, "/"),
+    cache.comments = FALSE,
+    echo           = TRUE,
+    error          = FALSE,
+    fig.align      = "center",
+    fig.width      = 10,
+    fig.height     = 8,
+    message        = FALSE,
+    warning        = FALSE,
+    timeit         = TRUE
+)
 ```
 
 ```{r libaries, cache = FALSE}
@@ -931,7 +947,12 @@ Parameters
 This table describes parameters used and set in this document.
 
 ```{r parameters}
-params <- jsonlite::toJSON(list(
+params <- list(
+    list(
+        Parameter = "sel_genes",
+        Value = length(seurat@var.genes),
+        Description = "Number of selected genes"
+    ),
     list(
         Parameter = "resolutions",
         Value = resolutions,
@@ -947,8 +968,11 @@ params <- jsonlite::toJSON(list(
         Value = n_clusts,
         Description = "Number of clusters produced by selected resolution"
     )
-), pretty = TRUE)
+)
 
+metadata(sce)$Params[DOCNAME] <- params
+
+params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
 
