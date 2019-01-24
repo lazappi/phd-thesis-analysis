@@ -1,5 +1,5 @@
 PackratFormat: 1.4
-PackratVersion: 0.5.0
+PackratVersion: 0.5.0.5
 RVersion: 3.5.0
 Repos: CRAN=https://mirror.aarnet.edu.au/pub/CRAN
 
@@ -123,6 +123,22 @@ Source: Bioconductor
 Version: 2.16.0
 Hash: 492e2296be390ecfcf6cda02d41112b7
 Requires: BiocGenerics, S4Vectors
+
+Package: M3Drop
+Source: github
+Version: 3.10.3
+Hash: 2b60179f7b8d6336de65a7a140fef791
+Requires: Hmisc, RColorBrewer, bbmle, gplots, irlba, matrixStats,
+    numDeriv, reldist, statmod
+GithubRepo: M3Drop
+GithubUsername: tallulandrews
+GithubRef: master
+GithubSha1: d825b911f60a43457badabade685d9a3f497ca9c
+RemoteHost: api.github.com
+RemoteRepo: M3Drop
+RemoteUsername: tallulandrews
+RemoteRef: master
+RemoteSha: d825b911f60a43457badabade685d9a3f497ca9c
 
 Package: MatrixModels
 Source: CRAN
@@ -318,6 +334,12 @@ Source: CRAN
 Version: 0.1-3
 Hash: c590d29e555926af053055e23ee79efb
 
+Package: bbmle
+Source: CRAN
+Version: 1.0.20
+Hash: 820dc4693f7cd98d0fbbb0e0be801db5
+Requires: numDeriv
+
 Package: beachmat
 Source: Bioconductor
 Version: 1.4.0
@@ -433,11 +455,20 @@ Version: 1.2.0
 Hash: a76a309884277a4fd8a5d741965fbef5
 
 Package: clustree
-Source: CRAN
-Version: 0.2.2
-Hash: 0f3ca09dcc2c20231b525b6b1310e1b9
+Source: github
+Version: 0.2.2.9001
+Hash: 3ea1180440a2a0c9f014fb25fb4246e9
 Requires: checkmate, dplyr, ggplot2, ggraph, ggrepel, igraph, rlang,
     tidygraph, viridis
+GithubRepo: clustree
+GithubUsername: lazappi
+GithubRef: develop
+GithubSha1: 63cc1ebf5e0b3ac617b3379a09007d90a9a1b1ca
+RemoteHost: api.github.com
+RemoteRepo: clustree
+RemoteUsername: lazappi
+RemoteRef: develop
+RemoteSha: 63cc1ebf5e0b3ac617b3379a09007d90a9a1b1ca
 
 Package: colorspace
 Source: CRAN
@@ -983,6 +1014,11 @@ Version: 0.4-0
 Hash: 77b7bda41e5847df3e8c2ac5161e063a
 Requires: lsei
 
+Package: numDeriv
+Source: CRAN
+Version: 2016.8-1
+Hash: 3a9d0fc99ba2f6aaa500b3d584962be2
+
 Package: openssl
 Source: CRAN
 Version: 1.1
@@ -995,9 +1031,18 @@ Hash: 84d09647d3f99cc47baaf97d401d7b2f
 Requires: Rcpp, zip
 
 Package: packrat
-Source: CRAN
-Version: 0.5.0
-Hash: 498643e765d1442ba7b1160a1df3abf9
+Source: github
+Version: 0.5.0-5
+Hash: 2a2ec7e0a215de065709e1cddccc348a
+GithubRepo: packrat
+GithubUsername: rstudio
+GithubRef: master
+GithubSha1: 9dee5d88ee41e82382af5acea14107f4eeb8d283
+RemoteHost: api.github.com
+RemoteRepo: packrat
+RemoteUsername: rstudio
+RemoteRef: master
+RemoteSha: 9dee5d88ee41e82382af5acea14107f4eeb8d283
 
 Package: pbapply
 Source: CRAN
@@ -1139,6 +1184,12 @@ Source: CRAN
 Version: 1.2.0
 Hash: 3d49de1375021e909463ce4bdb613327
 Requires: Rcpp, cellranger, progress, tibble
+
+Package: reldist
+Source: CRAN
+Version: 1.6-6
+Hash: b351bb10d4a8f3b3492a9f31d1bb7285
+Requires: Hmisc
 
 Package: rematch
 Source: CRAN

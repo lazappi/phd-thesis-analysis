@@ -1,0 +1,17 @@
+[
+  {
+    "Parameter": ["resolutions"],
+    "Value": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+    "Description": ["Range of possible clustering resolutions"]
+  },
+  {
+    "Parameter": ["res"],
+    "Value": [0.3],
+    "Description": ["Selected resolution parameter for clustering"]
+  },
+  {
+    "Parameter": ["n_clusts"],
+    "Value": [12],
+    "Description": ["Number of clusters produced by selected resolution"]
+  }
+]

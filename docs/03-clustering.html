@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Clustering</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD Thesis Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/lazappi/phd-thesis-analysis">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Clustering</h1>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-01-24</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20190110)</code> </summary></p>
+<p>The command <code>set.seed(20190110)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/22f21798217252257721fc803e2a21f45b51184b" target="_blank">22f2179</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/cache/
+    Ignored:    data/
+    Ignored:    packrat/lib-R/
+    Ignored:    packrat/lib-ext/
+    Ignored:    packrat/lib/
+    Ignored:    packrat/src/
+
+Untracked files:
+    Untracked:  docs/figure/03-clustering.Rmd/
+    Untracked:  output/03-clustering/
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/22f21798217252257721fc803e2a21f45b51184b/analysis/03-clustering.Rmd" target="_blank">22f2179</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-24
+</td>
+<td style="text-align:left;">
+Add clustering
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code># scRNA-seq
+library(&quot;SingleCellExperiment&quot;)
+library(&quot;scater&quot;)
+library(&quot;Seurat&quot;)
+library(&quot;M3Drop&quot;)
+
+# Clustering trees
+library(&quot;clustree&quot;)
+
+# Plotting
+library(&quot;viridis&quot;)
+library(&quot;ggforce&quot;)
+
+# Presentation
+library(&quot;knitr&quot;)
+
+# Tidyverse
+library(&quot;tidyverse&quot;)</code></pre>
+<pre class="r"><code>source(here::here(&quot;R/output.R&quot;))</code></pre>
+<pre class="r"><code>filt_path &lt;- here::here(&quot;data/processed/02-filtered.Rds&quot;)</code></pre>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this document we are going to perform clustering on the high-quality filtered dataset using <code>Seurat</code>.</p>
+<pre class="r"><code>if (file.exists(filt_path)) {
+    sce &lt;- read_rds(filt_path)
+} else {
+    stop(&quot;Filtered dataset is missing. &quot;,
+         &quot;Please run &#39;02-quality-control.Rmd&#39; first.&quot;,
+         call. = FALSE)
+}</code></pre>
+<p>To use this package we need to convert our <code>SingleCellExperiment</code> object to a <code>seurat</code> object.</p>
+<pre class="r"><code>seurat &lt;- as.seurat(sce)
+seurat@dr$TSNE@key &lt;- &quot;TSNE&quot;
+colnames(seurat@dr$TSNE@cell.embeddings) &lt;- c(&quot;TSNE1&quot;, &quot;TSNE2&quot;)
+seurat@dr$UMAP@key &lt;- &quot;UMAP&quot;
+colnames(seurat@dr$UMAP@cell.embeddings) &lt;- c(&quot;UMAP1&quot;, &quot;UMAP2&quot;)
+
+seurat &lt;- NormalizeData(seurat, display.progress = FALSE)
+seurat &lt;- ScaleData(seurat, display.progress = FALSE)</code></pre>
+</div>
+<div id="gene-selection" class="section level1">
+<h1>Gene selection</h1>
+<p>Before we begin clustering we need to select a set of genes to perform analysis on. This should capture most of the variability in the dataset and differences between cell types. We will do this using a couple of different methods.</p>
+<div id="seurat" class="section level2">
+<h2>Seurat</h2>
+<p>Seurat’s default method identifies genes that are outliers on a plot between mean expression and variability of a gene based on cutoff thresholds. Let’s see what that looks like.</p>
+<pre class="r"><code>x_low  &lt;- 0.0125
+x_high &lt;- 3.5
+y_low  &lt;- 1
+y_high &lt;- Inf
+
+seurat &lt;- FindVariableGenes(seurat, mean.function = ExpMean,
+                            dispersion.function = LogVMR, 
+                            x.low.cutoff = x_low, x.high.cutoff = x_high,
+                            y.cutoff = y_low, y.high.cutoff = y_high,
+                            do.plot = FALSE)
+
+plot_data &lt;- seurat@hvg.info %&gt;%
+    rownames_to_column(&quot;Gene&quot;) %&gt;%
+    mutate(Selected = Gene %in% seurat@var.genes)
+
+ggplot(plot_data,
+       aes(x = gene.mean, y = gene.dispersion.scaled, colour = Selected)) +
+    geom_point(size = 1, alpha = 0.5) +
+    geom_vline(xintercept = x_low, colour = &quot;red&quot;) +
+    geom_vline(xintercept = x_high, colour = &quot;red&quot;) +
+    geom_hline(yintercept = y_low, colour = &quot;red&quot;) +
+    geom_hline(yintercept = y_low, colour = &quot;red&quot;) +
+    scale_colour_manual(values = c(&quot;black&quot;, &quot;dodgerblue&quot;)) +
+    annotate(&quot;text&quot;, x = x_low + 0.5 * (x_high - x_low), y = 10,
+             colour = &quot;dodgerblue&quot;, size = 5,
+             label = paste(length(seurat@var.genes), &quot;selected&quot;))</code></pre>
+<p><img src="figure/03-clustering.Rmd/var-genes-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>This approach has selected 2281 genes but it is difficult to know where to set the thresholds. Let’s have a look at another approach.</p>
+</div>
+<div id="m3drop" class="section level2">
+<h2>M3Drop</h2>
+<p>M3Drop implements an alternative approach that considers the expected number of zeros rather than gene dispersion. For UMI data a library-size adjusted negative binomial model is fitted and we look for genes that have more zeros than expected.</p>
+<div id="fitting" class="section level3 tabset">
+<h3>Fitting</h3>
+<pre class="r"><code>DANB_fit  &lt;- NBumiFitModel(seurat@raw.data)
+fit_stats &lt;- NBumiCheckFitFS(seurat@raw.data, DANB_fit, suppress.plot = TRUE)
+names(fit_stats$rowPs) &lt;- rownames(seurat@raw.data)</code></pre>
+<p>Comparison between fitted expected number of zeros and actual observed number of zeros.</p>
+<div id="genes" class="section level4">
+<h4>Genes</h4>
+<pre class="r"><code>plot_data &lt;- tibble(
+    Observed = DANB_fit$vals$djs,
+    Fit = fit_stats$rowPs
+)
+
+ggplot(plot_data, aes(x = Observed, y = Fit)) +
+    geom_point() +
+    geom_abline(slope = 1, intercept = 0, colour = &quot;red&quot;) +
+    ggtitle(&quot;Gene dropout fit&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/m3drop-fit-genes-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cells" class="section level4">
+<h4>Cells</h4>
+<pre class="r"><code>plot_data &lt;- tibble(
+    Observed = DANB_fit$vals$dis,
+    Fit = fit_stats$colPs
+)
+
+ggplot(plot_data, aes(x = Observed, y = Fit)) +
+    geom_point() +
+    geom_abline(slope = 1, intercept = 0, colour = &quot;red&quot;) +
+    ggtitle(&quot;Cell dropout fit&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/m3drop-fit-cells-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="selection" class="section level3">
+<h3>Selection</h3>
+<p>Selected genes are those that have significantly more zeros than expected based on the fitted distribution. This plot shows all of the genes in the dataset (light points coloured according to local density), selected genes (dark, outlined points) and the fitted distribution (red line).</p>
+<pre class="r"><code>m3drop_q &lt;- 0.01
+
+drop_features &lt;- NBumiFeatureSelectionCombinedDrop(DANB_fit,
+                                                   method = &quot;fdr&quot;,
+                                                   qval.thres = 1,
+                                                   suppress.plot = TRUE) %&gt;%
+    mutate(Gene = as.character(Gene))
+
+m3drop_results &lt;- tibble(
+    Gene = names(DANB_fit$sizes),
+    AvgExpr = log10(DANB_fit$vals$tjs / DANB_fit$vals$nc),
+    DropoutRate = DANB_fit$vals$djs / DANB_fit$vals$nc
+) %&gt;%
+    mutate(DensCol = densCols(AvgExpr, DropoutRate, colramp = viridis)) %&gt;%
+    mutate(DropoutExp = fit_stats$rowPs[Gene] / DANB_fit$vals$nc) %&gt;%
+    left_join(drop_features, by = &quot;Gene&quot;)
+
+m3drop_top &lt;- filter(m3drop_results, q.value &lt; m3drop_q)
+
+ggplot(m3drop_results) +
+    geom_point(aes(x = AvgExpr, y = DropoutRate,
+                   colour = colorspace::lighten(DensCol, amount = 0.4))) +
+    scale_colour_identity() +
+    geom_point(data = m3drop_top,
+               aes(x = AvgExpr, y = DropoutRate, fill = DensCol),
+               colour = &quot;dodgerblue&quot;, shape = 21) +
+    scale_fill_identity() +
+    geom_line(aes(x = AvgExpr, y = DropoutExp), colour = &quot;red&quot;) +
+    xlab(&quot;log10(average expression)&quot;) +
+    ylab(&quot;Dropout rate&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/m3drop-select-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>This method identifies 1971 genes.</p>
+</div>
+</div>
+<div id="comparison" class="section level2 tabset">
+<h2>Comparison</h2>
+<pre class="r"><code>seurat_hvg                    &lt;- seurat@hvg.info[rownames(sce), ]
+rowData(sce)$SeuratMean       &lt;- seurat_hvg$gene.mean
+rowData(sce)$SeuratDisp       &lt;- seurat_hvg$gene.dispersion
+rowData(sce)$SeuratDispScaled &lt;- seurat_hvg$gene.dispersion.scaled
+rowData(sce)$SeuratSelected   &lt;- rownames(sce) %in% seurat@var.genes
+
+rowData(sce)$M3DropAvgExpr     &lt;- m3drop_results$AvgExpr
+rowData(sce)$M3DropDropoutRate &lt;- m3drop_results$DropoutRate
+rowData(sce)$M3DropDropoutExp  &lt;- m3drop_results$DropoutExp
+rowData(sce)$M3DropEffect      &lt;- m3drop_results$effect_size
+rowData(sce)$M3DropPValue      &lt;- m3drop_results$p.value
+rowData(sce)$M3DropFDR         &lt;- m3drop_results$q.value
+rowData(sce)$M3DropSelected    &lt;- rownames(sce) %in% m3drop_top$Gene
+
+rowData(sce)$Selected &lt;- &quot;False&quot;
+rowData(sce)$Selected[rowData(sce)$SeuratSelected] &lt;- &quot;Seurat only&quot;
+rowData(sce)$Selected[rowData(sce)$M3DropSelected] &lt;- &quot;M3Drop only&quot;
+rowData(sce)$Selected[rowData(sce)$SeuratSelected &amp;
+                          rowData(sce)$M3DropSelected] &lt;- &quot;Both&quot;
+
+plot_data &lt;- rowData(sce) %&gt;%
+    as.data.frame() %&gt;%
+    select(SeuratMean, SeuratDispScaled, M3DropAvgExpr, M3DropDropoutRate,
+           Selected)
+
+plot_data_sel &lt;- plot_data %&gt;%
+    filter(Selected != &quot;False&quot;)</code></pre>
+<p>Let’s briefly compare the results from the two methods.</p>
+<div id="number" class="section level3">
+<h3>Number</h3>
+<p>Number of genes identified by each method.</p>
+<pre class="r"><code>ggplot(plot_data_sel, aes(x = Selected, fill = Selected)) +
+    geom_bar() +
+    theme_minimal() +
+    theme(legend.position = &quot;none&quot;,
+          axis.title = element_blank())</code></pre>
+<p><img src="figure/03-clustering.Rmd/genes-bar-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="seurat-1" class="section level3">
+<h3>Seurat</h3>
+<p>Seurat selection plot coloured by selection method.</p>
+<pre class="r"><code>ggplot(plot_data, aes(x = SeuratMean, y = SeuratDispScaled)) +
+    geom_point(alpha = 0.5, colour = &quot;grey&quot;) +
+    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/genes-seurat-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="m3drop-1" class="section level3">
+<h3>M3Drop</h3>
+<p>M3Drop selection plot coloured by selection method.</p>
+<pre class="r"><code>ggplot(plot_data, aes(x = M3DropAvgExpr, y = M3DropDropoutRate)) +
+    geom_point(alpha = 0.5, colour = &quot;grey&quot;) +
+    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/genes-m3drop-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="combined" class="section level3">
+<h3>Combined</h3>
+<p>M3Drop dropout rate against Seurat dispersion coloured by selection method.</p>
+<pre class="r"><code>ggplot(plot_data, aes(x = SeuratDispScaled, y = M3DropDropoutRate)) +
+    geom_point(alpha = 0.5, colour = &quot;grey&quot;) +
+    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/genes-combined-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-seurat" class="section level3">
+<h3>PCA (Seurat)</h3>
+<p>PCA of cells using genes selected by the Seurat method.</p>
+<pre class="r"><code>seurat &lt;- RunPCA(seurat, pc.genes = seurat@var.genes, pcs.compute = 2,
+                 do.print = FALSE, reduction.name = &quot;pca_seurat&quot;)
+
+ggplot(as.data.frame(seurat@dr$pca_seurat@cell.embeddings),
+       aes(x = PC1, y = PC2)) +
+    geom_point(alpha = 0.5, colour = &quot;grey20&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/genes-pca-seurat-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-m3drop" class="section level3">
+<h3>PCA (M3Drop)</h3>
+<p>PCA of cells using genes selected by the M3Drop method.</p>
+<pre class="r"><code>seurat &lt;- RunPCA(seurat, pc.genes = m3drop_top$Gene, pcs.compute = 2,
+                 do.print = FALSE, reduction.name = &quot;pca_m3drop&quot;)
+
+ggplot(as.data.frame(seurat@dr$pca_m3drop@cell.embeddings),
+       aes(x = PC1, y = PC2)) +
+    geom_point(alpha = 0.5, colour = &quot;grey20&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/genes-pca-m3drop-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="selection-1" class="section level2">
+<h2>Selection</h2>
+<p>For the rest of the analysis we will use the M3Drop genes.</p>
+<pre class="r"><code>seurat@var.genes &lt;- m3drop_top$Gene</code></pre>
+</div>
+</div>
+<div id="dimensionality-reduction" class="section level1">
+<h1>Dimensionality reduction</h1>
+<p>The next step in the Seurat workflow is to select a set of principal components that capture the variance in the dataset using the selected genes.</p>
+<pre class="r"><code>seurat &lt;- RunPCA(seurat, pc.genes = seurat@var.genes, pcs.compute = 50,
+                 do.print = FALSE)</code></pre>
+<p>These plots show the genes and variance associated with the principal components and help use to select how many to use.</p>
+<div id="plots" class="section level2 tabset">
+<h2>Plots</h2>
+<div id="elbow" class="section level3">
+<h3>Elbow</h3>
+<p>Variance explained by each principal component.</p>
+<pre class="r"><code>PCElbowPlot(seurat, num.pc = 50)</code></pre>
+<p><img src="figure/03-clustering.Rmd/pca-elbow-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gene-loadings" class="section level3">
+<h3>Gene loadings</h3>
+<p>PCA loadings of genes associated with some principal components.</p>
+<pre class="r"><code>VizPCA(seurat, pcs.use = 1:9, num.genes = 20, font.size = 1)</code></pre>
+<p><img src="figure/03-clustering.Rmd/pca-genes-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="heatmap" class="section level3">
+<h3>Heatmap</h3>
+<p>Heatmap of genes associated with some principal components.</p>
+<pre class="r"><code>PCHeatmap(object = seurat, pc.use = 1:9, cells.use = 500, do.balanced = TRUE, 
+          label.columns = FALSE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/pca-heatmap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="selection-2" class="section level2">
+<h2>Selection</h2>
+<pre class="r"><code>n_pcs &lt;- 15
+seurat &lt;- RunTSNE(seurat, dims.use = 1:n_pcs)</code></pre>
+<p>Based on these plots we will use the first 15 principal components.</p>
+</div>
+</div>
+<div id="resolution" class="section level1">
+<h1>Resolution</h1>
+<p>Now that we have a set of principal components we can perform clustering. <code>Seurat</code> uses a graph-based clustering method which has a resolution parameter that controls the number of clusters that are produced. We are going to cluster at a range of resolutions and select one that gives a reasonable division of this dataset.</p>
+<pre class="r"><code>resolutions &lt;- seq(0, 1, 0.1)
+
+seurat &lt;- FindClusters(seurat, reduction.type = &quot;pca&quot;, dims.use = 1:n_pcs,
+                       resolution = resolutions, save.SNN = TRUE,
+                       print.output = FALSE)</code></pre>
+<div id="dimensionlity-reduction" class="section level2 tabset">
+<h2>Dimensionlity reduction</h2>
+<p>Dimensionality reduction plots showing clusters at different resolutions.</p>
+<div id="pca" class="section level3 tabset">
+<h3>PCA</h3>
+<pre class="r"><code>src_list &lt;- lapply(resolutions, function(res) {
+    src &lt;- c(
+        &quot;#### Res {{res}} {.unnumbered}&quot;,
+        &quot;```{r res-pca-{{res}}}&quot;,
+        &quot;PCAPlot(seurat, group.by = &#39;res.{{res}}&#39;, do.label = TRUE)&quot;,  
+        &quot;```&quot;,
+        &quot;&quot;
+    )
+    knit_expand(text = src)
+})
+
+out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</code></pre>
+<div id="res-0" class="section level4 unnumbered">
+<h4>Res 0</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.1" class="section level4 unnumbered">
+<h4>Res 0.1</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.1&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.2" class="section level4 unnumbered">
+<h4>Res 0.2</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.2&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.3" class="section level4 unnumbered">
+<h4>Res 0.3</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.3&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.4" class="section level4 unnumbered">
+<h4>Res 0.4</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.4&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.4-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.5" class="section level4 unnumbered">
+<h4>Res 0.5</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.5&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.5-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.6" class="section level4 unnumbered">
+<h4>Res 0.6</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.6&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.6-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.7" class="section level4 unnumbered">
+<h4>Res 0.7</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.7&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.7-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.8" class="section level4 unnumbered">
+<h4>Res 0.8</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.8&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.9" class="section level4 unnumbered">
+<h4>Res 0.9</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.0.9&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-0.9-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-1" class="section level4 unnumbered">
+<h4>Res 1</h4>
+<pre class="r"><code>PCAPlot(seurat, group.by = &#39;res.1&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-pca-1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="t-sne" class="section level3 tabset">
+<h3>t-SNE</h3>
+<pre class="r"><code>src_list &lt;- lapply(resolutions, function(res) {
+    src &lt;- c(
+        &quot;#### Res {{res}} {.unnumbered}&quot;,
+        &quot;```{r res-tSNE-{{res}}}&quot;,
+        &quot;TSNEPlot(seurat, group.by = &#39;res.{{res}}&#39;, do.label = TRUE)&quot;,  
+        &quot;```&quot;,
+        &quot;&quot;
+    )
+    knit_expand(text = src)
+})
+
+out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</code></pre>
+<div id="res-0-1" class="section level4 unnumbered">
+<h4>Res 0</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.1-1" class="section level4 unnumbered">
+<h4>Res 0.1</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.1&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.2-1" class="section level4 unnumbered">
+<h4>Res 0.2</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.2&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.3-1" class="section level4 unnumbered">
+<h4>Res 0.3</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.3&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.4-1" class="section level4 unnumbered">
+<h4>Res 0.4</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.4&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.4-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.5-1" class="section level4 unnumbered">
+<h4>Res 0.5</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.5&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.5-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.6-1" class="section level4 unnumbered">
+<h4>Res 0.6</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.6&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.6-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.7-1" class="section level4 unnumbered">
+<h4>Res 0.7</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.7&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.7-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.8-1" class="section level4 unnumbered">
+<h4>Res 0.8</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.8&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-0.9-1" class="section level4 unnumbered">
+<h4>Res 0.9</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.0.9&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-0.9-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="res-1-1" class="section level4 unnumbered">
+<h4>Res 1</h4>
+<pre class="r"><code>TSNEPlot(seurat, group.by = &#39;res.1&#39;, do.label = TRUE)</code></pre>
+<p><img src="figure/03-clustering.Rmd/res-tSNE-1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="clustering-trees" class="section level2 tabset">
+<h2>Clustering trees</h2>
+<p>Clustering trees show the relationship between clusterings at adjacent resolutions. Each cluster is represented as a node in a graph and the edges show the overlap between clusters.</p>
+<div id="standard" class="section level3">
+<h3>Standard</h3>
+<p>Coloured by clustering resolution.</p>
+<pre class="r"><code>clustree(seurat)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="stability" class="section level3">
+<h3>Stability</h3>
+<p>Coloured by the SC3 stability metric.</p>
+<pre class="r"><code>clustree(seurat, node_colour = &quot;sc3_stability&quot;)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-stability-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="genes-1" class="section level3 tabset">
+<h3>Genes</h3>
+<p>Coloured by the expression of known marker genes.</p>
+<pre class="r"><code>known_genes &lt;-  c(
+    # Stroma
+    &quot;TAGLN&quot;, &quot;ACTA2&quot;, &quot;MAB21L2&quot;, &quot;DLK1&quot;, &quot;GATA3&quot;, &quot;COL2A1&quot;, &quot;COL9A3&quot;,
+    # Podocyte
+    &quot;PODXL&quot;, &quot;NPHS2&quot;, &quot;TCF21&quot;,
+    # Cell cycle
+    &quot;HIST1H4C&quot;, &quot;PCLAF&quot;, &quot;CENPF&quot;, &quot;HMGB2&quot;,
+    # Endothelium
+    &quot;CLDN5&quot;, &quot;PECAM1&quot;, &quot;KDR&quot;, &quot;CALM1&quot;,
+    # Neural
+    &quot;TTYH1&quot;, &quot;SOX2&quot;, &quot;HES6&quot;, &quot;STMN2&quot;,
+    # Epithelium
+    &quot;PAX2&quot;, &quot;PAX8&quot;, &quot;KRT19&quot;,
+    # Muscle
+    &quot;MYOG&quot;, &quot;MYOD1&quot;
+)
+
+
+is_present &lt;- known_genes %in% rownames(seurat@data)</code></pre>
+<blockquote>
+<p>The following genes aren’t present in this dataset and will be skipped:</p>
+</blockquote>
+<pre class="r"><code>src_list &lt;- lapply(known_genes[is_present], function(gene) {
+    src &lt;- c(&quot;#### {{gene}} {.unnumbered}&quot;,
+             &quot;```{r clustree-{{gene}}}&quot;,
+             &quot;clustree(seurat, node_colour = &#39;{{gene}}&#39;,&quot;,
+                      &quot;node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +&quot;,
+             &quot;scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)&quot;,
+             &quot;```&quot;,
+             &quot;&quot;)
+    knit_expand(text = src)
+})
+
+out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</code></pre>
+<div id="tagln" class="section level4 unnumbered">
+<h4>TAGLN</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;TAGLN&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-TAGLN-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="acta2" class="section level4 unnumbered">
+<h4>ACTA2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;ACTA2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-ACTA2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="mab21l2" class="section level4 unnumbered">
+<h4>MAB21L2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;MAB21L2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-MAB21L2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dlk1" class="section level4 unnumbered">
+<h4>DLK1</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;DLK1&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-DLK1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gata3" class="section level4 unnumbered">
+<h4>GATA3</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;GATA3&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-GATA3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="col2a1" class="section level4 unnumbered">
+<h4>COL2A1</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;COL2A1&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-COL2A1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="col9a3" class="section level4 unnumbered">
+<h4>COL9A3</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;COL9A3&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-COL9A3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="podxl" class="section level4 unnumbered">
+<h4>PODXL</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;PODXL&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-PODXL-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="nphs2" class="section level4 unnumbered">
+<h4>NPHS2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;NPHS2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-NPHS2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tcf21" class="section level4 unnumbered">
+<h4>TCF21</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;TCF21&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-TCF21-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hist1h4c" class="section level4 unnumbered">
+<h4>HIST1H4C</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;HIST1H4C&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-HIST1H4C-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pclaf" class="section level4 unnumbered">
+<h4>PCLAF</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;PCLAF&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-PCLAF-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cenpf" class="section level4 unnumbered">
+<h4>CENPF</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;CENPF&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-CENPF-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hmgb2" class="section level4 unnumbered">
+<h4>HMGB2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;HMGB2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-HMGB2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cldn5" class="section level4 unnumbered">
+<h4>CLDN5</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;CLDN5&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-CLDN5-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pecam1" class="section level4 unnumbered">
+<h4>PECAM1</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;PECAM1&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-PECAM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="kdr" class="section level4 unnumbered">
+<h4>KDR</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;KDR&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-KDR-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="calm1" class="section level4 unnumbered">
+<h4>CALM1</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;CALM1&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-CALM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ttyh1" class="section level4 unnumbered">
+<h4>TTYH1</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;TTYH1&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-TTYH1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sox2" class="section level4 unnumbered">
+<h4>SOX2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;SOX2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-SOX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hes6" class="section level4 unnumbered">
+<h4>HES6</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;HES6&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-HES6-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="stmn2" class="section level4 unnumbered">
+<h4>STMN2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;STMN2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-STMN2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pax2" class="section level4 unnumbered">
+<h4>PAX2</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;PAX2&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-PAX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pax8" class="section level4 unnumbered">
+<h4>PAX8</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;PAX8&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-PAX8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="krt19" class="section level4 unnumbered">
+<h4>KRT19</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;KRT19&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-KRT19-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="myog" class="section level4 unnumbered">
+<h4>MYOG</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;MYOG&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-MYOG-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="myod1" class="section level4 unnumbered">
+<h4>MYOD1</h4>
+<pre class="r"><code>clustree(seurat, node_colour = &#39;MYOD1&#39;,
+node_colour_aggr = &#39;mean&#39;, exprs = &#39;scale.data&#39;) +
+scale_colour_viridis_c(option = &#39;plasma&#39;, begin = 0.3)</code></pre>
+<p><img src="figure/03-clustering.Rmd/clustree-MYOD1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="selection-3" class="section level2">
+<h2>Selection</h2>
+<pre class="r"><code>res &lt;- 0.3
+seurat &lt;- SetIdent(seurat, ident.use = seurat@meta.data[, paste0(&quot;res.&quot;, res)])
+n_clusts &lt;- length(unique(seurat@ident))
+
+colData(sce)$Cluster &lt;- seurat@ident
+reducedDim(sce, &quot;SeuratPCA&quot;) &lt;- seurat@dr$pca@cell.embeddings
+reducedDim(sce, &quot;SeuratGenesPCA&quot;) &lt;- seurat@dr$pca_seurat@cell.embeddings
+reducedDim(sce, &quot;M3DropPCA&quot;) &lt;- seurat@dr$pca_m3drop@cell.embeddings
+reducedDim(sce, &quot;SeuratTSNE&quot;) &lt;- seurat@dr$tsne@cell.embeddings
+
+umap &lt;- reducedDim(sce, &quot;UMAP&quot;)
+sce &lt;- runUMAP(sce, use_dimred = &quot;SeuratPCA&quot;, n_dimred = n_pcs)
+reducedDim(sce, &quot;SeuratUMAP&quot;) &lt;- reducedDim(sce, &quot;UMAP&quot;)
+reducedDim(sce, &quot;UMAP&quot;) &lt;- umap
+
+cell_data &lt;- as.data.frame(colData(sce))</code></pre>
+<p>Based on these plots we will use a resolution of 0.3 which gives us 12 clusters.</p>
+</div>
+</div>
+<div id="validation" class="section level1 tabset">
+<h1>Validation</h1>
+<p>To validate the clusters we will repeat some of our quality control plots separated by cluster. At this stage we just want to check that none of the clusters are obviously the result of technical factors.</p>
+<div id="cluster" class="section level2 tabset">
+<h2>Cluster</h2>
+<p>Clusters assigned by <code>Seurat</code>.</p>
+<div id="count" class="section level3">
+<h3>Count</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, fill = Cluster)) +
+    geom_bar() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cluster-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-1" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;Cluster&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cluster-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-1" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;Cluster&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cluster-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;Cluster&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cluster-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="sample" class="section level2 tabset">
+<h2>Sample</h2>
+<p>Biological sample.</p>
+<div id="count-1" class="section level3">
+<h3>Count</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, fill = Sample)) +
+    geom_bar() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sample-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="proportion" class="section level3">
+<h3>Proportion</h3>
+<pre class="r"><code>plot_data &lt;- cell_data %&gt;%
+    group_by(Cluster, Sample) %&gt;%
+    summarise(Count = n()) %&gt;%
+    mutate(Prop = Count / sum(Count))
+
+ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
+    geom_col() +
+    ylab(&quot;Proportion of cluster&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sample-prop-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-2" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;Sample&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sample-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-2" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;Sample&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sample-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-1" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;Sample&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sample-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="selection-method" class="section level2 tabset">
+<h2>Selection method</h2>
+<p>Method used to select droplet-containing cells.</p>
+<div id="count-2" class="section level3">
+<h3>Count</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, fill = SelMethod)) +
+    geom_bar() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sel-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="proportion-1" class="section level3">
+<h3>Proportion</h3>
+<pre class="r"><code>plot_data &lt;- cell_data %&gt;%
+    group_by(Cluster, SelMethod) %&gt;%
+    summarise(Count = n()) %&gt;%
+    mutate(Prop = Count / sum(Count))
+
+ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
+    geom_col() +
+    ylab(&quot;Proportion of cluster&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sel-prop-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-3" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;SelMethod&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sel-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-3" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;SelMethod&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sel-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-2" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;SelMethod&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-sel-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cell-cycle" class="section level2 tabset">
+<h2>Cell cycle</h2>
+<p>Cell cycle phases assigned by <code>scran</code>.</p>
+<div id="count-3" class="section level3">
+<h3>Count</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, fill = CellCycle)) +
+    geom_bar() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cycle-count-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="proportion-2" class="section level3">
+<h3>Proportion</h3>
+<pre class="r"><code>plot_data &lt;- cell_data %&gt;%
+    group_by(Cluster, CellCycle) %&gt;%
+    summarise(Count = n()) %&gt;%
+    mutate(Prop = Count / sum(Count))
+
+ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
+    geom_col() +
+    ylab(&quot;Proportion of cluster&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cycle-prop-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-4" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;CellCycle&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cycle-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-4" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;CellCycle&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cycle-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-3" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;CellCycle&quot;, add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-cycle-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="total-counts" class="section level2 tabset">
+<h2>Total counts</h2>
+<p>Total counts per cell.</p>
+<div id="distribution" class="section level3">
+<h3>Distribution</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, y = log10_total_counts)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-counts-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-5" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;log10_total_counts&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-counts-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-5" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;log10_total_counts&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-counts-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-4" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;log10_total_counts&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-counts-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="total-features" class="section level2 tabset">
+<h2>Total features</h2>
+<p>Total number of expressed features per cell.</p>
+<div id="distribution-1" class="section level3">
+<h3>Distribution</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, y = log10_total_features_by_counts)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-features-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-6" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;log10_total_features_by_counts&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-features-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-6" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;log10_total_features_by_counts&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-features-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-5" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;log10_total_features_by_counts&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-features-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="mitochondrial-genes" class="section level2 tabset">
+<h2>Mitochondrial genes</h2>
+<p>Percentage of counts assigned to mitochondrial genes per cell.</p>
+<div id="distribution-2" class="section level3">
+<h3>Distribution</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, y = pct_counts_MT)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-mt-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-7" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;pct_counts_MT&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-mt-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-7" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;pct_counts_MT&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-mt-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-6" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;pct_counts_MT&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-mt-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="doublet-score" class="section level2 tabset">
+<h2>Doublet score</h2>
+<p>Doublet score assigned by <code>scran</code> per cell.</p>
+<div id="distribution-3" class="section level3">
+<h3>Distribution</h3>
+<pre class="r"><code>ggplot(cell_data, aes(x = Cluster, y = DoubletScore)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-doublets-dist-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pca-8" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratPCA&quot;, colour_by = &quot;DoubletScore&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-doublets-pca-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="t-sne-8" class="section level3">
+<h3>t-SNE</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratTSNE&quot;, colour_by = &quot;DoubletScore&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-doublets-tSNE-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap-7" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce, &quot;SeuratUMAP&quot;, colour_by = &quot;DoubletScore&quot;,
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()</code></pre>
+<p><img src="figure/03-clustering.Rmd/val-doublets-umap-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>We performed graph based clustering using <code>Seurat</code> and identified 12 clusters.</p>
+<div id="parameters" class="section level2">
+<h2>Parameters</h2>
+<p>This table describes parameters used and set in this document.</p>
+<pre class="r"><code>params &lt;- jsonlite::toJSON(list(
+    list(
+        Parameter = &quot;resolutions&quot;,
+        Value = resolutions,
+        Description = &quot;Range of possible clustering resolutions&quot;
+    ),
+    list(
+        Parameter = &quot;res&quot;,
+        Value = res,
+        Description = &quot;Selected resolution parameter for clustering&quot;
+    ),
+    list(
+        Parameter = &quot;n_clusts&quot;,
+        Value = n_clusts,
+        Description = &quot;Number of clusters produced by selected resolution&quot;
+    )
+), pretty = TRUE)
+
+knitr::kable(jsonlite::fromJSON(params))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">resolutions</td>
+<td align="left">c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)</td>
+<td align="left">Range of possible clustering resolutions</td>
+</tr>
+<tr class="even">
+<td align="left">res</td>
+<td align="left">0.3</td>
+<td align="left">Selected resolution parameter for clustering</td>
+</tr>
+<tr class="odd">
+<td align="left">n_clusts</td>
+<td align="left">12</td>
+<td align="left">Number of clusters produced by selected resolution</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="output-files" class="section level2">
+<h2>Output files</h2>
+<p>This table describes the output files produced by this document. Right click and <em>Save Link As…</em> to download the results.</p>
+<pre class="r"><code>write_rds(sce, here::here(&quot;data/processed/03-clustered.Rds&quot;))
+write_rds(seurat, here::here(&quot;data/processed/03-seurat.Rds&quot;))</code></pre>
+<pre class="r"><code>avg_expr &lt;- AverageExpression(seurat, show.progress = FALSE) %&gt;%
+    rename_all(function(x) {paste0(&quot;MeanC&quot;, x)}) %&gt;%
+    rownames_to_column(&quot;Gene&quot;)
+
+prop_expr &lt;- AverageDetectionRate(seurat) %&gt;%
+    rename_all(function(x) {paste0(&quot;PropC&quot;, x)}) %&gt;%
+    rownames_to_column(&quot;Gene&quot;)
+
+alt_cols &lt;- c(rbind(colnames(prop_expr), colnames(avg_expr)))[-1]
+
+cluster_expr &lt;- avg_expr %&gt;%
+    left_join(prop_expr, by = &quot;Gene&quot;) %&gt;%
+    select(alt_cols)
+
+cluster_assign &lt;- colData(sce) %&gt;%
+    as.data.frame() %&gt;%
+    select(Cell, Dataset, Sample, Barcode, Cluster)</code></pre>
+<pre class="r"><code>dir.create(here::here(&quot;output&quot;, DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here(&quot;output&quot;, DOCNAME, &quot;parameters.json&quot;))
+readr::write_tsv(cluster_assign,
+                 here::here(&quot;output&quot;, DOCNAME, &quot;cluster_assignments.tsv.gz&quot;))
+readr::write_tsv(cluster_expr,
+                 here::here(&quot;output&quot;, DOCNAME, &quot;cluster_expression.tsv.gz&quot;))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink(&quot;parameters.json&quot;, DOCNAME),
+        getDownloadLink(&quot;cluster_assignments.tsv.gz&quot;),
+        getDownloadLink(&quot;cluster_expression.tsv.gz&quot;)
+    ),
+    Description = c(
+        &quot;Parameters set and used in this analysis&quot;,
+        &quot;Cluster assignments for each cell (gzipped TSV)&quot;,
+        &quot;Cluster expression for each gene (gzipped TSV)&quot;
+    )
+))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/03-clustering/parameters.json">parameters.json</a></td>
+<td align="left">Parameters set and used in this analysis</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/cluster_assignments.tsv.gz">cluster_assignments.tsv.gz</a></td>
+<td align="left">Cluster assignments for each cell (gzipped TSV)</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/cluster_expression.tsv.gz">cluster_expression.tsv.gz</a></td>
+<td align="left">Cluster expression for each gene (gzipped TSV)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>─ Session info ──────────────────────────────────────────────────────────
+ setting  value                       
+ version  R version 3.5.0 (2018-04-23)
+ os       CentOS release 6.7 (Final)  
+ system   x86_64, linux-gnu           
+ ui       X11                         
+ language (EN)                        
+ collate  en_US.UTF-8                 
+ ctype    en_US.UTF-8                 
+ tz       Australia/Melbourne         
+ date     2019-01-24                  
+
+─ Packages ──────────────────────────────────────────────────────────────
+ ! package              * version    date       lib
+   acepack                1.4.1      2016-10-29 [1]
+   ape                    5.2        2018-09-24 [1]
+   assertthat             0.2.0      2017-04-11 [1]
+   backports              1.1.3      2018-12-14 [1]
+   base64enc              0.1-3      2015-07-28 [1]
+   bbmle                  1.0.20     2017-10-30 [1]
+   beeswarm               0.2.3      2016-04-25 [1]
+   bibtex                 0.4.2      2017-06-30 [1]
+   bindr                  0.1.1      2018-03-13 [1]
+   bindrcpp               0.2.2      2018-03-29 [1]
+   Biobase              * 2.42.0     2018-10-30 [1]
+   BiocGenerics         * 0.28.0     2018-10-30 [1]
+   BiocParallel         * 1.16.5     2019-01-04 [1]
+   bit                    1.1-14     2018-05-29 [1]
+   bit64                  0.9-7      2017-05-08 [1]
+   bitops                 1.0-6      2013-08-17 [1]
+   broom                  0.5.1      2018-12-05 [1]
+   callr                  3.1.1      2018-12-21 [1]
+   caTools                1.17.1.1   2018-07-20 [1]
+   cellranger             1.1.0      2016-07-27 [1]
+   checkmate              1.9.1      2019-01-15 [1]
+ P class                  7.3-14     2015-08-30 [5]
+   cli                    1.0.1      2018-09-25 [1]
+ P cluster                2.0.7-1    2018-04-13 [5]
+   clustree             * 0.2.2.9001 2019-01-24 [1]
+ P codetools              0.2-15     2016-10-05 [5]
+   colorspace             1.4-0      2019-01-13 [1]
+   cowplot              * 0.9.4      2019-01-08 [1]
+   crayon                 1.3.4      2017-09-16 [1]
+   data.table             1.12.0     2019-01-13 [1]
+   DelayedArray         * 0.8.0      2018-10-30 [1]
+   DelayedMatrixStats     1.4.0      2018-10-30 [1]
+   DEoptimR               1.0-8      2016-11-19 [1]
+   desc                   1.2.0      2018-05-01 [1]
+   devtools               2.0.1      2018-10-26 [1]
+   digest                 0.6.18     2018-10-10 [1]
+   diptest                0.75-7     2016-12-05 [1]
+   doSNOW                 1.0.16     2017-12-13 [1]
+   dplyr                * 0.7.8      2018-11-10 [1]
+   dtw                    1.20-1     2018-05-18 [1]
+   evaluate               0.12       2018-10-09 [1]
+   farver                 1.1.0      2018-11-20 [1]
+   fitdistrplus           1.0-11     2018-09-10 [1]
+   flexmix                2.3-14     2017-04-28 [1]
+   forcats              * 0.3.0      2018-02-19 [1]
+   foreach                1.4.4      2017-12-12 [1]
+ P foreign                0.8-71     2018-07-20 [5]
+   Formula                1.2-3      2018-05-03 [1]
+   fpc                    2.1-11.1   2018-07-20 [1]
+   fs                     1.2.6      2018-08-23 [1]
+   gbRd                   0.4-11     2012-10-01 [1]
+   gdata                  2.18.0     2017-06-06 [1]
+   generics               0.0.2      2018-11-29 [1]
+   GenomeInfoDb         * 1.18.1     2018-11-12 [1]
+   GenomeInfoDbData       1.2.0      2019-01-15 [1]
+   GenomicRanges        * 1.34.0     2018-10-30 [1]
+   ggbeeswarm             0.6.0      2017-08-07 [1]
+   ggforce              * 0.1.3      2018-07-07 [1]
+   ggplot2              * 3.1.0      2018-10-25 [1]
+   ggraph               * 1.0.2      2018-07-07 [1]
+   ggrepel                0.8.0      2018-05-09 [1]
+   ggridges               0.5.1      2018-09-27 [1]
+   git2r                  0.24.0     2019-01-07 [1]
+   glue                   1.3.0      2018-07-17 [1]
+   gplots                 3.0.1      2016-03-30 [1]
+   gridExtra              2.3        2017-09-09 [1]
+   gtable                 0.2.0      2016-02-26 [1]
+   gtools                 3.8.1      2018-06-26 [1]
+   haven                  2.0.0      2018-11-22 [1]
+   HDF5Array              1.10.1     2018-12-05 [1]
+   hdf5r                  1.0.1      2018-10-07 [1]
+   here                   0.1        2017-05-28 [1]
+   Hmisc                  4.1-1      2018-01-03 [1]
+   hms                    0.4.2      2018-03-10 [1]
+   htmlTable              1.13.1     2019-01-07 [1]
+   htmltools              0.3.6      2017-04-28 [1]
+   htmlwidgets            1.3        2018-09-30 [1]
+   httr                   1.4.0      2018-12-11 [1]
+   ica                    1.0-2      2018-05-24 [1]
+   igraph                 1.2.2      2018-07-27 [1]
+   IRanges              * 2.16.0     2018-10-30 [1]
+   irlba                  2.3.2      2018-01-11 [1]
+   iterators              1.0.10     2018-07-13 [1]
+   jsonlite               1.6        2018-12-07 [1]
+   kernlab                0.9-27     2018-08-10 [1]
+ P KernSmooth             2.23-15    2015-06-29 [5]
+   knitr                * 1.21       2018-12-10 [1]
+   lars                   1.2        2013-04-24 [1]
+ P lattice                0.20-35    2017-03-25 [5]
+   latticeExtra           0.6-28     2016-02-09 [1]
+   lazyeval               0.2.1      2017-10-29 [1]
+   lmtest                 0.9-36     2018-04-04 [1]
+   lsei                   1.2-0      2017-10-23 [1]
+   lubridate              1.7.4      2018-04-11 [1]
+   M3Drop               * 3.10.3     2019-01-23 [1]
+   magrittr               1.5        2014-11-22 [1]
+ P MASS                   7.3-50     2018-04-30 [5]
+ P Matrix               * 1.2-14     2018-04-09 [5]
+   matrixStats          * 0.54.0     2018-07-23 [1]
+   mclust                 5.4.2      2018-11-17 [1]
+   memoise                1.1.0      2017-04-21 [1]
+   metap                  1.0        2018-07-25 [1]
+ P mgcv                   1.8-24     2018-06-18 [5]
+   mixtools               1.1.0      2017-03-10 [1]
+   modelr                 0.1.2      2018-05-11 [1]
+   modeltools             0.2-22     2018-07-16 [1]
+   munsell                0.5.0      2018-06-12 [1]
+   mvtnorm                1.0-8      2018-05-31 [1]
+ P nlme                   3.1-137    2018-04-07 [5]
+ P nnet                   7.3-12     2016-02-02 [5]
+   npsurv                 0.4-0      2017-10-14 [1]
+   numDeriv             * 2016.8-1   2016-08-27 [1]
+   pbapply                1.3-4      2018-01-10 [1]
+   pillar                 1.3.1      2018-12-15 [1]
+   pkgbuild               1.0.2      2018-10-16 [1]
+   pkgconfig              2.0.2      2018-08-16 [1]
+   pkgload                1.0.2      2018-10-29 [1]
+   plyr                   1.8.4      2016-06-08 [1]
+   png                    0.1-7      2013-12-03 [1]
+   prabclus               2.2-6      2015-01-14 [1]
+   prettyunits            1.0.2      2015-07-13 [1]
+   processx               3.2.1      2018-12-05 [1]
+   proxy                  0.4-22     2018-04-08 [1]
+   ps                     1.3.0      2018-12-21 [1]
+   purrr                * 0.2.5      2018-05-29 [1]
+   R.methodsS3            1.7.1      2016-02-16 [1]
+   R.oo                   1.22.0     2018-04-22 [1]
+   R.utils                2.7.0      2018-08-27 [1]
+   R6                     2.3.0      2018-10-04 [1]
+   RANN                   2.6.1      2019-01-08 [1]
+   RColorBrewer           1.1-2      2014-12-07 [1]
+   Rcpp                   1.0.0      2018-11-07 [1]
+   RCurl                  1.95-4.11  2018-07-15 [1]
+   Rdpack                 0.10-1     2018-10-04 [1]
+   readr                * 1.3.1      2018-12-21 [1]
+   readxl                 1.2.0      2018-12-19 [1]
+   reldist                1.6-6      2016-10-09 [1]
+   remotes                2.0.2      2018-10-30 [1]
+   reshape2               1.4.3      2017-12-11 [1]
+   reticulate             1.10       2018-08-05 [1]
+   rhdf5                  2.26.2     2019-01-02 [1]
+   Rhdf5lib               1.4.2      2018-12-03 [1]
+   rlang                  0.3.1      2019-01-08 [1]
+   rmarkdown              1.11       2018-12-08 [1]
+   robustbase             0.93-3     2018-09-21 [1]
+   ROCR                   1.0-7      2015-03-26 [1]
+ P rpart                  4.1-13     2018-02-23 [5]
+   rprojroot              1.3-2      2018-01-03 [1]
+   rstudioapi             0.9.0      2019-01-09 [1]
+   Rtsne                  0.15       2018-11-10 [1]
+   rvest                  0.3.2      2016-06-17 [1]
+   S4Vectors            * 0.20.1     2018-11-09 [1]
+   scales                 1.0.0      2018-08-09 [1]
+   scater               * 1.10.1     2019-01-04 [1]
+   SDMTools               1.1-221    2014-08-05 [1]
+   segmented              0.5-3.0    2017-11-30 [1]
+   sessioninfo            1.1.1      2018-11-05 [1]
+   Seurat               * 2.3.4      2018-07-20 [1]
+   SingleCellExperiment * 1.4.1      2019-01-04 [1]
+   snow                   0.4-3      2018-09-14 [1]
+   statmod                1.4.30     2017-06-18 [1]
+   stringi                1.2.4      2018-07-20 [1]
+   stringr              * 1.3.1      2018-05-10 [1]
+   SummarizedExperiment * 1.12.0     2018-10-30 [1]
+ P survival               2.42-6     2018-07-13 [5]
+   testthat               2.0.0      2017-12-13 [5]
+   tibble               * 2.0.1      2019-01-12 [1]
+   tidyr                * 0.8.2      2018-10-28 [1]
+   tidyselect             0.2.5      2018-10-11 [1]
+   tidyverse            * 1.2.1      2017-11-14 [1]
+   trimcluster            0.1-2.1    2018-07-20 [1]
+   tsne                   0.1-3      2016-07-15 [1]
+   tweenr                 1.0.1      2018-12-14 [1]
+   units                  0.6-2      2018-12-05 [1]
+   usethis                1.4.0      2018-08-14 [1]
+   vipor                  0.4.5      2017-03-22 [1]
+   viridis              * 0.5.1      2018-03-29 [1]
+   viridisLite          * 0.3.0      2018-02-01 [1]
+   whisker                0.3-2      2013-04-28 [1]
+   withr                  2.1.2      2018-03-15 [1]
+   workflowr              1.1.1      2018-07-06 [1]
+   xfun                   0.4        2018-10-23 [1]
+   xml2                   1.2.0      2018-01-24 [1]
+   XVector                0.22.0     2018-10-30 [1]
+   yaml                   2.2.0      2018-07-25 [1]
+   zlibbioc               1.28.0     2018-10-30 [1]
+   zoo                    1.8-4      2018-09-19 [1]
+ source                               
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ Bioconductor                         
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Github (lazappi/clustree@63cc1eb)    
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ Bioconductor                         
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Github (tallulandrews/M3Drop@d825b91)
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+ Bioconductor                         
+ CRAN (R 3.5.0)                       
+
+[1] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib/x86_64-pc-linux-gnu/3.5.0
+[2] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-ext/x86_64-pc-linux-gnu/3.5.0
+[3] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-R/x86_64-pc-linux-gnu/3.5.0
+[4] /home/luke.zappia/R/x86_64-pc-linux-gnu-library/3.5
+[5] /usr/local/installed/R/3.5.0/lib64/R/library
+
+ P ── Loaded and on-disk path mismatch.</code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

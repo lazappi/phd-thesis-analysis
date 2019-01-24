@@ -1,0 +1,1014 @@
+---
+title: "Clustering"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "03-clustering"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = TRUE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = FALSE,
+                      echo           = TRUE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.width      = 10,
+                      fig.height     = 8,
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("SingleCellExperiment")
+library("scater")
+library("Seurat")
+library("M3Drop")
+
+# Clustering trees
+library("clustree")
+
+# Plotting
+library("viridis")
+library("ggforce")
+
+# Presentation
+library("knitr")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/output.R"))
+```
+
+```{r depends-paths}
+filt_path <- here::here("data/processed/02-filtered.Rds")
+```
+
+```{r bpparam, cache = FALSE}
+
+```
+
+Introduction
+============
+
+In this document we are going to perform clustering on the high-quality filtered 
+dataset using `Seurat`.
+
+```{r load, cache.extra = tools::md5sum(filt_path)}
+if (file.exists(filt_path)) {
+    sce <- read_rds(filt_path)
+} else {
+    stop("Filtered dataset is missing. ",
+         "Please run '02-quality-control.Rmd' first.",
+         call. = FALSE)
+}
+```
+
+To use this package we need to convert our `SingleCellExperiment` object to a
+`seurat` object.
+
+```{r convert}
+seurat <- as.seurat(sce)
+seurat@dr$TSNE@key <- "TSNE"
+colnames(seurat@dr$TSNE@cell.embeddings) <- c("TSNE1", "TSNE2")
+seurat@dr$UMAP@key <- "UMAP"
+colnames(seurat@dr$UMAP@cell.embeddings) <- c("UMAP1", "UMAP2")
+
+seurat <- NormalizeData(seurat, display.progress = FALSE)
+seurat <- ScaleData(seurat, display.progress = FALSE)
+```
+
+Gene selection
+==============
+
+Before we begin clustering we need to select a set of genes to perform analysis
+on. This should capture most of the variability in the dataset and differences
+between cell types. We will do this using a couple of different methods.
+
+Seurat
+------
+
+Seurat's default method identifies genes that are outliers on a plot between
+mean expression and variability of a gene based on cutoff thresholds. Let's see
+what that looks like.
+
+```{r var-genes}
+x_low  <- 0.0125
+x_high <- 3.5
+y_low  <- 1
+y_high <- Inf
+
+seurat <- FindVariableGenes(seurat, mean.function = ExpMean,
+                            dispersion.function = LogVMR, 
+                            x.low.cutoff = x_low, x.high.cutoff = x_high,
+                            y.cutoff = y_low, y.high.cutoff = y_high,
+                            do.plot = FALSE)
+
+plot_data <- seurat@hvg.info %>%
+    rownames_to_column("Gene") %>%
+    mutate(Selected = Gene %in% seurat@var.genes)
+
+ggplot(plot_data,
+       aes(x = gene.mean, y = gene.dispersion.scaled, colour = Selected)) +
+    geom_point(size = 1, alpha = 0.5) +
+    geom_vline(xintercept = x_low, colour = "red") +
+    geom_vline(xintercept = x_high, colour = "red") +
+    geom_hline(yintercept = y_low, colour = "red") +
+    geom_hline(yintercept = y_low, colour = "red") +
+    scale_colour_manual(values = c("black", "dodgerblue")) +
+    annotate("text", x = x_low + 0.5 * (x_high - x_low), y = 10,
+             colour = "dodgerblue", size = 5,
+             label = paste(length(seurat@var.genes), "selected"))
+```
+
+This approach has selected `r length(seurat@var.genes)` genes but it is
+difficult to know where to set the thresholds. Let's have a look at another
+approach.
+
+M3Drop
+------
+
+M3Drop implements an alternative approach that considers the expected number
+of zeros rather than gene dispersion. For UMI data a library-size adjusted
+negative binomial model is fitted and we look for genes that have more zeros
+than expected.
+
+### Fitting {.tabset}
+
+```{r m3drop-fit}
+DANB_fit  <- NBumiFitModel(seurat@raw.data)
+fit_stats <- NBumiCheckFitFS(seurat@raw.data, DANB_fit, suppress.plot = TRUE)
+names(fit_stats$rowPs) <- rownames(seurat@raw.data)
+```
+
+Comparison between fitted expected number of zeros and actual observed number
+of zeros.
+
+#### Genes
+
+```{r m3drop-fit-genes}
+plot_data <- tibble(
+    Observed = DANB_fit$vals$djs,
+    Fit = fit_stats$rowPs
+)
+
+ggplot(plot_data, aes(x = Observed, y = Fit)) +
+    geom_point() +
+    geom_abline(slope = 1, intercept = 0, colour = "red") +
+    ggtitle("Gene dropout fit") +
+    theme_minimal()
+```
+
+#### Cells
+
+```{r m3drop-fit-cells}
+plot_data <- tibble(
+    Observed = DANB_fit$vals$dis,
+    Fit = fit_stats$colPs
+)
+
+ggplot(plot_data, aes(x = Observed, y = Fit)) +
+    geom_point() +
+    geom_abline(slope = 1, intercept = 0, colour = "red") +
+    ggtitle("Cell dropout fit") +
+    theme_minimal()
+```
+
+### Selection
+
+Selected genes are those that have significantly more zeros than expected based
+on the fitted distribution. This plot shows all of the genes in the dataset
+(light points coloured according to local density), selected genes (dark,
+outlined points) and the fitted distribution (red line).
+
+```{r m3drop-select}
+m3drop_q <- 0.01
+
+drop_features <- NBumiFeatureSelectionCombinedDrop(DANB_fit,
+                                                   method = "fdr",
+                                                   qval.thres = 1,
+                                                   suppress.plot = TRUE) %>%
+    mutate(Gene = as.character(Gene))
+
+m3drop_results <- tibble(
+    Gene = names(DANB_fit$sizes),
+    AvgExpr = log10(DANB_fit$vals$tjs / DANB_fit$vals$nc),
+    DropoutRate = DANB_fit$vals$djs / DANB_fit$vals$nc
+) %>%
+    mutate(DensCol = densCols(AvgExpr, DropoutRate, colramp = viridis)) %>%
+    mutate(DropoutExp = fit_stats$rowPs[Gene] / DANB_fit$vals$nc) %>%
+    left_join(drop_features, by = "Gene")
+
+m3drop_top <- filter(m3drop_results, q.value < m3drop_q)
+
+ggplot(m3drop_results) +
+    geom_point(aes(x = AvgExpr, y = DropoutRate,
+                   colour = colorspace::lighten(DensCol, amount = 0.4))) +
+    scale_colour_identity() +
+    geom_point(data = m3drop_top,
+               aes(x = AvgExpr, y = DropoutRate, fill = DensCol),
+               colour = "dodgerblue", shape = 21) +
+    scale_fill_identity() +
+    geom_line(aes(x = AvgExpr, y = DropoutExp), colour = "red") +
+    xlab("log10(average expression)") +
+    ylab("Dropout rate") +
+    theme_minimal()
+```
+
+This method identifies `r nrow(m3drop_top)` genes.
+
+Comparison {.tabset}
+----------
+
+```{r compare-genes}
+seurat_hvg                    <- seurat@hvg.info[rownames(sce), ]
+rowData(sce)$SeuratMean       <- seurat_hvg$gene.mean
+rowData(sce)$SeuratDisp       <- seurat_hvg$gene.dispersion
+rowData(sce)$SeuratDispScaled <- seurat_hvg$gene.dispersion.scaled
+rowData(sce)$SeuratSelected   <- rownames(sce) %in% seurat@var.genes
+
+rowData(sce)$M3DropAvgExpr     <- m3drop_results$AvgExpr
+rowData(sce)$M3DropDropoutRate <- m3drop_results$DropoutRate
+rowData(sce)$M3DropDropoutExp  <- m3drop_results$DropoutExp
+rowData(sce)$M3DropEffect      <- m3drop_results$effect_size
+rowData(sce)$M3DropPValue      <- m3drop_results$p.value
+rowData(sce)$M3DropFDR         <- m3drop_results$q.value
+rowData(sce)$M3DropSelected    <- rownames(sce) %in% m3drop_top$Gene
+
+rowData(sce)$Selected <- "False"
+rowData(sce)$Selected[rowData(sce)$SeuratSelected] <- "Seurat only"
+rowData(sce)$Selected[rowData(sce)$M3DropSelected] <- "M3Drop only"
+rowData(sce)$Selected[rowData(sce)$SeuratSelected &
+                          rowData(sce)$M3DropSelected] <- "Both"
+
+plot_data <- rowData(sce) %>%
+    as.data.frame() %>%
+    select(SeuratMean, SeuratDispScaled, M3DropAvgExpr, M3DropDropoutRate,
+           Selected)
+
+plot_data_sel <- plot_data %>%
+    filter(Selected != "False")
+```
+
+Let's briefly compare the results from the two methods.
+
+### Number
+
+Number of genes identified by each method.
+
+```{r genes-bar}
+ggplot(plot_data_sel, aes(x = Selected, fill = Selected)) +
+    geom_bar() +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.title = element_blank())
+```
+
+### Seurat
+
+Seurat selection plot coloured by selection method.
+
+```{r genes-seurat}
+ggplot(plot_data, aes(x = SeuratMean, y = SeuratDispScaled)) +
+    geom_point(alpha = 0.5, colour = "grey") +
+    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    theme_minimal()
+```
+
+### M3Drop
+
+M3Drop selection plot coloured by selection method.
+
+```{r genes-m3drop}
+ggplot(plot_data, aes(x = M3DropAvgExpr, y = M3DropDropoutRate)) +
+    geom_point(alpha = 0.5, colour = "grey") +
+    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    theme_minimal()
+```
+
+### Combined
+
+M3Drop dropout rate against Seurat dispersion coloured by selection method.
+
+```{r genes-combined}
+ggplot(plot_data, aes(x = SeuratDispScaled, y = M3DropDropoutRate)) +
+    geom_point(alpha = 0.5, colour = "grey") +
+    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    theme_minimal()
+```
+
+### PCA (Seurat)
+
+PCA of cells using genes selected by the Seurat method.
+
+```{r genes-pca-seurat}
+seurat <- RunPCA(seurat, pc.genes = seurat@var.genes, pcs.compute = 2,
+                 do.print = FALSE, reduction.name = "pca_seurat")
+
+ggplot(as.data.frame(seurat@dr$pca_seurat@cell.embeddings),
+       aes(x = PC1, y = PC2)) +
+    geom_point(alpha = 0.5, colour = "grey20") +
+    theme_minimal()
+```
+
+### PCA (M3Drop)
+
+PCA of cells using genes selected by the M3Drop method.
+
+```{r genes-pca-m3drop}
+seurat <- RunPCA(seurat, pc.genes = m3drop_top$Gene, pcs.compute = 2,
+                 do.print = FALSE, reduction.name = "pca_m3drop")
+
+ggplot(as.data.frame(seurat@dr$pca_m3drop@cell.embeddings),
+       aes(x = PC1, y = PC2)) +
+    geom_point(alpha = 0.5, colour = "grey20") +
+    theme_minimal()
+```
+
+Selection
+---------
+
+For the rest of the analysis we will use the M3Drop genes.
+
+```{r selection}
+seurat@var.genes <- m3drop_top$Gene
+```
+
+Dimensionality reduction
+========================
+
+The next step in the Seurat workflow is to select a set of principal components
+that capture the variance in the dataset using the selected genes.
+
+```{r pca}
+seurat <- RunPCA(seurat, pc.genes = seurat@var.genes, pcs.compute = 50,
+                 do.print = FALSE)
+```
+
+These plots show the genes and variance associated with the principal components
+and help use to select how many to use.
+
+Plots {.tabset}
+-----
+
+### Elbow
+
+Variance explained by each principal component.
+
+```{r pca-elbow}
+PCElbowPlot(seurat, num.pc = 50)
+```
+
+### Gene loadings
+
+PCA loadings of genes associated with some principal components.
+
+```{r pca-genes, fig.height = 10}
+VizPCA(seurat, pcs.use = 1:9, num.genes = 20, font.size = 1)
+```
+
+### Heatmap
+
+Heatmap of genes associated with some principal components.
+
+```{r pca-heatmap, fig.height = 10}
+PCHeatmap(object = seurat, pc.use = 1:9, cells.use = 500, do.balanced = TRUE, 
+          label.columns = FALSE)
+```
+
+Selection
+---------
+
+```{r pca-selection}
+n_pcs <- 15
+seurat <- RunTSNE(seurat, dims.use = 1:n_pcs)
+```
+
+Based on these plots we will use the first `r n_pcs` principal components. 
+
+Resolution
+==========
+
+Now that we have a set of principal components we can perform clustering.
+`Seurat` uses a graph-based clustering method which has a resolution parameter
+that controls the number of clusters that are produced. We are going to cluster
+at a range of resolutions and select one that gives a reasonable division of
+this dataset.
+
+```{r cluster}
+resolutions <- seq(0, 1, 0.1)
+
+seurat <- FindClusters(seurat, reduction.type = "pca", dims.use = 1:n_pcs,
+                       resolution = resolutions, save.SNN = TRUE,
+                       print.output = FALSE)
+```
+
+Dimensionlity reduction {.tabset}
+-----------------------
+
+Dimensionality reduction plots showing clusters at different resolutions.
+
+### PCA {.tabset}
+
+```{r pca-res, results = "hide"}
+src_list <- lapply(resolutions, function(res) {
+    src <- c(
+        "#### Res {{res}} {.unnumbered}",
+        "```{r res-pca-{{res}}}",
+        "PCAPlot(seurat, group.by = 'res.{{res}}', do.label = TRUE)",  
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+### t-SNE {.tabset}
+
+```{r tSNE-res, results = "hide"}
+src_list <- lapply(resolutions, function(res) {
+    src <- c(
+        "#### Res {{res}} {.unnumbered}",
+        "```{r res-tSNE-{{res}}}",
+        "TSNEPlot(seurat, group.by = 'res.{{res}}', do.label = TRUE)",  
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Clustering trees {.tabset}
+----------------
+
+Clustering trees show the relationship between clusterings at adjacent
+resolutions. Each cluster is represented as a node in a graph and the edges show
+the overlap between clusters.
+
+### Standard
+
+Coloured by clustering resolution.
+
+```{r clustree}
+clustree(seurat)
+```
+
+### Stability
+
+Coloured by the SC3 stability metric.
+
+```{r clustree-stability}
+clustree(seurat, node_colour = "sc3_stability")
+```
+
+### Genes {.tabset}
+
+Coloured by the expression of known marker genes.
+
+```{r known-genes}
+known_genes <-  c(
+    # Stroma
+    "TAGLN", "ACTA2", "MAB21L2", "DLK1", "GATA3", "COL2A1", "COL9A3",
+    # Podocyte
+    "PODXL", "NPHS2", "TCF21",
+    # Cell cycle
+    "HIST1H4C", "PCLAF", "CENPF", "HMGB2",
+    # Endothelium
+    "CLDN5", "PECAM1", "KDR", "CALM1",
+    # Neural
+    "TTYH1", "SOX2", "HES6", "STMN2",
+    # Epithelium
+    "PAX2", "PAX8", "KRT19",
+    # Muscle
+    "MYOG", "MYOD1"
+)
+
+
+is_present <- known_genes %in% rownames(seurat@data)
+```
+
+> The following genes aren't present in this dataset and will be skipped:
+> `r known_genes[!is_present]`
+
+```{r clustree-genes, results = "hide"}
+src_list <- lapply(known_genes[is_present], function(gene) {
+    src <- c("#### {{gene}} {.unnumbered}",
+             "```{r clustree-{{gene}}}",
+             "clustree(seurat, node_colour = '{{gene}}',",
+                      "node_colour_aggr = 'mean', exprs = 'scale.data') +",
+             "scale_colour_viridis_c(option = 'plasma', begin = 0.3)",
+             "```",
+             "")
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Selection
+---------
+
+```{r select-res}
+res <- 0.3
+seurat <- SetIdent(seurat, ident.use = seurat@meta.data[, paste0("res.", res)])
+n_clusts <- length(unique(seurat@ident))
+
+colData(sce)$Cluster <- seurat@ident
+reducedDim(sce, "SeuratPCA") <- seurat@dr$pca@cell.embeddings
+reducedDim(sce, "SeuratGenesPCA") <- seurat@dr$pca_seurat@cell.embeddings
+reducedDim(sce, "M3DropPCA") <- seurat@dr$pca_m3drop@cell.embeddings
+reducedDim(sce, "SeuratTSNE") <- seurat@dr$tsne@cell.embeddings
+
+umap <- reducedDim(sce, "UMAP")
+sce <- runUMAP(sce, use_dimred = "SeuratPCA", n_dimred = n_pcs)
+reducedDim(sce, "SeuratUMAP") <- reducedDim(sce, "UMAP")
+reducedDim(sce, "UMAP") <- umap
+
+cell_data <- as.data.frame(colData(sce))
+```
+
+Based on these plots we will use a resolution of `r res` which gives us
+`r n_clusts` clusters.
+
+Validation {.tabset}
+==========
+
+To validate the clusters we will repeat some of our quality control plots
+separated by cluster. At this stage we just want to check that none of the
+clusters are obviously the result of technical factors.
+
+Cluster {.tabset}
+-------
+
+Clusters assigned by `Seurat`.
+
+### Count
+
+```{r val-cluster-count}
+ggplot(cell_data, aes(x = Cluster, fill = Cluster)) +
+    geom_bar() +
+    theme_minimal()
+```
+
+### PCA
+
+```{r val-cluster-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "Cluster", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-cluster-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "Cluster", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-cluster-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "Cluster", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+Sample {.tabset}
+------
+
+Biological sample.
+
+### Count
+
+```{r val-sample-count}
+ggplot(cell_data, aes(x = Cluster, fill = Sample)) +
+    geom_bar() +
+    theme_minimal()
+```
+
+### Proportion
+
+```{r val-sample-prop}
+plot_data <- cell_data %>%
+    group_by(Cluster, Sample) %>%
+    summarise(Count = n()) %>%
+    mutate(Prop = Count / sum(Count))
+
+ggplot(plot_data, aes(x = Cluster, y = Prop, fill = Sample)) +
+    geom_col() +
+    ylab("Proportion of cluster") +
+    theme_minimal()
+```
+
+### PCA
+
+```{r val-sample-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "Sample", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-sample-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "Sample", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-sample-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "Sample", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+Selection method {.tabset}
+----------------
+
+Method used to select droplet-containing cells.
+
+### Count
+
+```{r val-sel-count}
+ggplot(cell_data, aes(x = Cluster, fill = SelMethod)) +
+    geom_bar() +
+    theme_minimal()
+```
+
+### Proportion
+
+```{r val-sel-prop}
+plot_data <- cell_data %>%
+    group_by(Cluster, SelMethod) %>%
+    summarise(Count = n()) %>%
+    mutate(Prop = Count / sum(Count))
+
+ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
+    geom_col() +
+    ylab("Proportion of cluster") +
+    theme_minimal()
+```
+
+### PCA
+
+```{r val-sel-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "SelMethod", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-sel-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "SelMethod", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-sel-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "SelMethod", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+Cell cycle {.tabset}
+----------
+
+Cell cycle phases assigned by `scran`.
+
+### Count
+
+```{r val-cycle-count}
+ggplot(cell_data, aes(x = Cluster, fill = CellCycle)) +
+    geom_bar() +
+    theme_minimal()
+```
+
+### Proportion
+
+```{r val-cycle-prop}
+plot_data <- cell_data %>%
+    group_by(Cluster, CellCycle) %>%
+    summarise(Count = n()) %>%
+    mutate(Prop = Count / sum(Count))
+
+ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
+    geom_col() +
+    ylab("Proportion of cluster") +
+    theme_minimal()
+```
+
+### PCA
+
+```{r val-cycle-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "CellCycle", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-cycle-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "CellCycle", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-cycle-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "CellCycle", add_ticks = FALSE,
+               point_alpha = 1) +
+    scale_fill_discrete() +
+    theme_minimal()
+```
+
+Total counts {.tabset}
+------------
+
+Total counts per cell.
+
+### Distribution
+
+```{r val-counts-dist}
+ggplot(cell_data, aes(x = Cluster, y = log10_total_counts)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = "none")
+```
+
+### PCA
+
+```{r val-counts-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "log10_total_counts",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-counts-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "log10_total_counts",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-counts-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "log10_total_counts",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+Total features {.tabset}
+--------------
+
+Total number of expressed features per cell.
+
+### Distribution
+
+```{r val-features-dist}
+ggplot(cell_data, aes(x = Cluster, y = log10_total_features_by_counts)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = "none")
+```
+
+### PCA
+
+```{r val-features-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "log10_total_features_by_counts",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-features-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "log10_total_features_by_counts",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-features-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "log10_total_features_by_counts",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+Mitochondrial genes {.tabset}
+-------------------
+
+Percentage of counts assigned to mitochondrial genes per cell.
+
+### Distribution
+
+```{r val-mt-dist}
+ggplot(cell_data, aes(x = Cluster, y = pct_counts_MT)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = "none")
+```
+
+### PCA
+
+```{r val-mt-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "pct_counts_MT",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-mt-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "pct_counts_MT",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-mt-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "pct_counts_MT",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+Doublet score {.tabset}
+-------------
+
+Doublet score assigned by `scran` per cell.
+
+### Distribution
+
+```{r val-doublets-dist}
+ggplot(cell_data, aes(x = Cluster, y = DoubletScore)) +
+    geom_violin() +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    theme_minimal() +
+    theme(legend.position = "none")
+```
+
+### PCA
+
+```{r val-doublets-pca}
+plotReducedDim(sce, "SeuratPCA", colour_by = "DoubletScore",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### t-SNE
+
+```{r val-doublets-tSNE}
+plotReducedDim(sce, "SeuratTSNE", colour_by = "DoubletScore",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+### UMAP
+
+```{r val-doublets-umap}
+plotReducedDim(sce, "SeuratUMAP", colour_by = "DoubletScore",
+               add_ticks = FALSE, point_alpha = 1) +
+    scale_fill_viridis_c() +
+    theme_minimal()
+```
+
+Summary
+=======
+
+We performed graph based clustering using `Seurat` and identified `r n_clusts`
+clusters.
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters}
+params <- jsonlite::toJSON(list(
+    list(
+        Parameter = "resolutions",
+        Value = resolutions,
+        Description = "Range of possible clustering resolutions"
+    ),
+    list(
+        Parameter = "res",
+        Value = res,
+        Description = "Selected resolution parameter for clustering"
+    ),
+    list(
+        Parameter = "n_clusts",
+        Value = n_clusts,
+        Description = "Number of clusters produced by selected resolution"
+    )
+), pretty = TRUE)
+
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+write_rds(sce, here::here("data/processed/03-clustered.Rds"))
+write_rds(seurat, here::here("data/processed/03-seurat.Rds"))
+```
+
+```{r output-data}
+avg_expr <- AverageExpression(seurat, show.progress = FALSE) %>%
+    rename_all(function(x) {paste0("MeanC", x)}) %>%
+    rownames_to_column("Gene")
+
+prop_expr <- AverageDetectionRate(seurat) %>%
+    rename_all(function(x) {paste0("PropC", x)}) %>%
+    rownames_to_column("Gene")
+
+alt_cols <- c(rbind(colnames(prop_expr), colnames(avg_expr)))[-1]
+
+cluster_expr <- avg_expr %>%
+    left_join(prop_expr, by = "Gene") %>%
+    select(alt_cols)
+
+cluster_assign <- colData(sce) %>%
+    as.data.frame() %>%
+    select(Cell, Dataset, Sample, Barcode, Cluster)
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
+readr::write_tsv(cluster_assign,
+                 here::here("output", DOCNAME, "cluster_assignments.tsv.gz"))
+readr::write_tsv(cluster_expr,
+                 here::here("output", DOCNAME, "cluster_expression.tsv.gz"))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("cluster_assignments.tsv.gz"),
+        getDownloadLink("cluster_expression.tsv.gz")
+    ),
+    Description = c(
+        "Parameters set and used in this analysis",
+        "Cluster assignments for each cell (gzipped TSV)",
+        "Cluster expression for each gene (gzipped TSV)"
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```
