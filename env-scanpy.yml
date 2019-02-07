@@ -19,6 +19,7 @@ dependencies:
   - gmp=6.1.2=hf484d3e_1000
   - gst-plugins-base=1.14.0=hbbd80ab_1
   - gstreamer=1.14.0=hb453b48_1
+  - hdf5=1.10.4=nompi_h11e915b_1105
   - icu=58.2=hf484d3e_1000
   - igraph=0.7.1=h2166141_1005
   - intel-openmp=2019.1=144
@@ -34,6 +35,7 @@ dependencies:
   - libxcb=1.13=h14c3975_1002
   - libxml2=2.9.8=h143f9aa_1005
   - llvmlite=0.26.0=py36hdbcaa40_1000
+  - loompy=2.0.10=py_0
   - louvain=0.6.1=py36hf484d3e_2
   - matplotlib=3.0.2=py36_1002
   - matplotlib-base=3.0.2=py36h167e16e_1002
@@ -71,6 +73,7 @@ dependencies:
   - statsmodels=0.9.0=py36h3010b51_1000
   - tk=8.6.9=h84994c4_1000
   - tornado=5.1.1=py36h14c3975_1000
+  - typing=3.6.4=py36_0
   - wheel=0.32.3=py36_0
   - xorg-kbproto=1.0.7=h14c3975_1002
   - xorg-libice=1.0.9=h14c3975_1004
