@@ -1,0 +1,466 @@
+---
+title: "Marker genes"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "04-marker-genes"
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+    if (before) {
+        print(paste("Start:", Sys.time()))
+        NOW <<- Sys.time()
+    } else {
+        print(paste("Stop:", Sys.time()))
+        print(Sys.time() - NOW)
+    }
+})
+
+knitr::opts_chunk$set(
+    autodep        = TRUE,
+    cache          = TRUE,
+    cache.path     = paste0("cache/", DOCNAME, "/"),
+    cache.comments = FALSE,
+    echo           = TRUE,
+    error          = FALSE,
+    fig.align      = "center",
+    fig.width      = 10,
+    fig.height     = 8,
+    message        = FALSE,
+    warning        = FALSE,
+    timeit         = TRUE
+)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("SingleCellExperiment")
+library("zinbwave")
+
+# Differential expression
+library("edgeR")
+
+# Presentation
+library("knitr")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/output.R"))
+```
+
+```{r depends-paths}
+clust_path <- here::here("data/processed/03-clustered.Rds")
+```
+
+```{r bpparam, cache = FALSE}
+bpparam5 <- BiocParallel::MulticoreParam(workers = 5)
+bpparam3 <- BiocParallel::MulticoreParam(workers = 3)
+```
+
+Introduction
+============
+
+In this document we are going to identify marker genes for the clusters
+previously defined using `Seurat` using the `edgeR` package and use these genes
+to assign cell type labels to the clusters.
+
+```{r load, cache.extra = tools::md5sum(clust_path)}
+if (file.exists(clust_path)) {
+    sce <- read_rds(clust_path)
+} else {
+    stop("Clustered dataset is missing. ",
+         "Please run '03-clustering.Rmd' first.",
+         call. = FALSE)
+}
+```
+
+Fitting
+=======
+
+We will use `edgeR` for differential expression testing to identify marker
+genes for our clusters. Although originally designed for bulk RNA-seq comparisons
+have shown that `edgeR` also has good performance for scRNA-seq. We will test
+each cluster against all the other cells in the dataset. This may miss subtler 
+differences between similar cell types but should identify key markers for each 
+cluster and is computationally easier than completing every pairwise comparison.
+
+First we construct a design matrix and `DGEList` object then we calculate
+normalisation factors, estimate dispersions and fit the model.
+
+```{r fit, cache.lazy = FALSE}
+# Cell detection rate
+det_rate <- scale(Matrix::colMeans(counts(sce) > 0))
+
+# Create design matrix
+n_clusts <- length(unique(colData(sce)$Cluster))
+design <- model.matrix(~ 0 + det_rate + colData(sce)$Cluster)
+colnames(design) <- c("DetRate", paste0("C", seq_len(n_clusts) - 1))
+
+# Create DGEList
+dge <- DGEList(counts(sce))
+# Add gene annotation
+dge$genes <- rowData(sce)[, c("Name", "ID", "entrezgene", "description")]
+# Calculate norm factors
+dge <- calcNormFactors(dge)
+# Estimate dispersions
+dge <- estimateDisp(dge, design)
+# Fit model
+de_fit <- glmQLFit(dge, design = design)
+```
+
+Before we perform the tests let's check how good the fit is.
+
+Mean
+----
+
+```{r mean-fit}
+plot_data <- tibble(Observed = log1p(Matrix::rowMeans(counts(sce))),
+                    Expected = log1p(rowMeans(de_fit$fitted.values))) %>%
+    mutate(Mean = 0.5 * (Observed + Expected),
+           Difference = Observed - Expected)
+
+ggplot(plot_data, aes(x = Mean, y = Difference)) +
+    geom_point() +
+    geom_smooth(method = "loess") +
+    geom_hline(yintercept = 0, colour = "red") +
+    xlab("0.5 * (Observed + Expected)") +
+    ylab("Observed - Expected") +
+    ggtitle("Fit of gene means") +
+    theme_minimal()
+```
+
+Zeros
+-----
+
+```{r zeros-fit}
+plot_data <- tibble(Observed = Matrix::rowMeans(counts(sce) == 0),
+                    Expected = rowMeans(
+                        (1 + de_fit$fitted.values * dge$tagwise.dispersion) ^ 
+                            (-1 / dge$tagwise.dispersion)
+                    )) %>%
+    mutate(Mean = 0.5 * (Observed + Expected),
+           Difference = Observed - Expected)
+
+ggplot(plot_data, aes(x = Mean, y = Difference)) +
+    geom_point() +
+    geom_smooth(method = "loess") +
+    geom_hline(yintercept = 0, colour = "red") +
+    xlab("0.5 * (Observed + Expected)") +
+    ylab("Observed - Expected") +
+    ggtitle("Fit of gene proportion of zeros") +
+    theme_minimal()
+```
+
+BCV
+---
+
+```{r bcv}
+plotBCV(dge)
+```
+
+QL Dispersions
+--------------
+
+```{r qldisp}
+plotQLDisp(de_fit)
+```
+
+
+These plots suggest that the fit is fairly good and there isn't an excessive
+amount of zero inflation we would need to account for using other methods.
+
+Testing
+=======
+
+Once we have a fitted model we can test each of our contrasts.
+
+```{r test, cache.lazy = FALSE}
+de_tests <- bplapply(seq_len(n_clusts), function(idx) {
+    contrast <- rep(-1 / (n_clusts - 1), n_clusts)
+    contrast[idx] <- 1
+    contrast <- c(0, contrast)
+    glmQLFTest(de_fit, contrast = contrast)
+}, BPPARAM = bpparam3)
+```
+
+```{r summarise-tests}
+de_list <- lapply(seq_len(n_clusts), function(idx) {
+    topTags(de_tests[[idx]], n = Inf, sort.by = "logFC")$table %>%
+        as.data.frame() %>%
+        mutate(Cluster = idx - 1) %>%
+        select(Cluster, everything())
+})
+names(de_list) <- paste("Cluster", 0:(n_clusts - 1))
+
+markers_list <- lapply(de_list, function(de) {
+    de %>%
+        filter(PValue < 0.05, logFC > 1) %>%
+        select(Name, logFC, PValue, FDR)
+})
+```
+
+Before we look at the gene lists let's check some diagnostic plots.
+
+P-values {.tabset}
+--------
+
+Distribution of p-values for each cluster should be uniform with a peak near
+zero.
+
+```{r pvals, results = "hide"}
+src_list <- lapply(seq_len(n_clusts) - 1, function(clust) {
+    src <- c(
+        "### Cluster {{clust}} {.unnumbered}",
+        "```{r pvals-{{clust}}}",
+        "ggplot(de_list[[{{clust}} + 1]], aes(x = PValue)) +",
+        "geom_histogram() +",
+        "theme_minimal()",  
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Mean-difference {.tabset}
+---------------
+
+Mean-difference plot highlighting significant genes.
+
+```{r md, results = "hide"}
+src_list <- lapply(seq_len(n_clusts) - 1, function(clust) {
+    src <- c(
+        "### Cluster {{clust}} {.unnumbered}",
+        "```{r md-{{clust}}}",
+        "plotMD(de_tests[[{{clust}} + 1]])",  
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Summary
+-------
+
+```{r de-summary}
+plot_data <- de_list %>%
+    bind_rows() %>%
+    mutate(IsUp = logFC > 0) %>%
+    group_by(Cluster) %>%
+    summarise(Up = sum(IsUp), Down = sum(!IsUp)) %>%
+    mutate(Down = -Down) %>%
+    gather(key = "Direction", value = "Count", -Cluster) %>%
+    mutate(Cluster = factor(Cluster, levels = 0:(n_clusts - 1)))
+
+ggplot(plot_data,
+       aes(x = fct_rev(Cluster), y = Count, fill = Direction)) +
+    geom_col() +
+    geom_text(aes(y = Count + sign(Count) * max(abs(Count)) * 0.07,
+                  label = abs(Count)),
+              size = 6, colour = "grey25") +
+    coord_flip() +
+    scale_fill_manual(values = c("#377eb8", "#e41a1c")) +
+    ggtitle("Number of identified genes") +
+    theme(axis.title = element_blank(),
+          axis.line = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.x = element_blank(),
+          legend.position = "bottom")
+```
+
+Table {.tabset}
+-----
+
+Table of significant genes for each cluster with log fold-change greater than
+one.
+
+```{r table, results = "hide"}
+src_list <- lapply(seq_len(n_clusts) - 1, function(clust) {
+    src <- c(
+        "### Cluster {{clust}} {.unnumbered}",
+        "```{r table-{{clust}}}",
+        "markers_list[[{{clust}} + 1]]",
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Known genes {.tabset}
+===========
+
+To help with identifying clusters we will look at some previously identified
+marker genes.
+
+```{r known-genes}
+known_genes <- c(
+    # Stroma
+    "TAGLN", "ACTA2", "MAB21L2", "DLK1", "GATA3", "COL2A1", "COL9A3",
+    # Podocyte
+    "PODXL", "NPHS2", "TCF21",
+    # Cell cycle
+    "HIST1H4C", "PCLAF", "CENPF", "HMGB2",
+    # Endothelium
+    "CLDN5", "PECAM1", "KDR", "CALM1",
+    # Neural
+    "TTYH1", "SOX2", "HES6", "STMN2",
+    # Epithelium
+    "PAX2", "PAX8", "KRT19",
+    # Muscle
+    "MYOG", "MYOD1"
+)
+
+known_types <- factor(c(
+    rep("Stroma", 7),
+    rep("Podocyte", 3),
+    rep("Cell cycle", 4),
+    rep("Endothelium", 4),
+    rep("Neural", 4),
+    rep("Epithelium", 3),
+    rep("Muscle", 2)
+))
+names(known_types) <- known_genes
+```
+
+Expression
+----------
+
+Size indicates (scaled) mean expression level, transparency indicate proportion
+of cells expressing the gene.
+
+```{r known-genes-expr}
+plot_data <- map_df(seq_len(n_clusts), function(idx) {
+    clust_cells <- colData(sce)$Cluster == idx - 1
+    means <- Matrix::rowMeans(logcounts(sce)[known_genes, clust_cells])
+    props <- Matrix::rowSums(counts(sce)[known_genes, clust_cells] > 0) /
+                                 sum(clust_cells)
+    tibble(Cluster = idx - 1,
+           Gene = known_genes,
+           Type = known_types,
+           Mean = means,
+           Prop = props)
+}) %>%
+    mutate(Cluster = factor(Cluster, levels = (n_clusts - 1):0),
+           Gene = factor(Gene, levels = known_genes),
+           Type = factor(Type, levels = unique(known_types))) %>%
+    group_by(Gene) %>%
+    mutate(Mean = scale(Mean))
+
+ggplot(plot_data,
+       aes(x = Gene, y = Cluster, size = Prop, alpha = Mean, colour = Type)) +
+    geom_point() +
+    guides(size = FALSE, alpha = FALSE) +
+    facet_grid(~ Type, scales = "free_x", space = "free_x") +
+    theme_minimal() +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          legend.position = "none")
+```
+
+Significance
+------------
+
+Size indicates log fold-change and transparency indicates significance. As we
+are only interested in marker genes negative fold-changes have been set to zero
+and significance for those cases has been set to one.
+
+```{r known-genes-sig}
+plot_data <- map_df(seq_len(n_clusts), function(idx) {
+    de_list[[idx]] %>%
+        filter(Name %in% known_genes)
+}) %>%
+    mutate(FDR = if_else(logFC < 0, 1, FDR)) %>%
+    mutate(logFC = if_else(logFC < 0, 0, logFC)) %>%
+    mutate(Type = known_types[Name]) %>%
+    mutate(Cluster = factor(Cluster, levels = (n_clusts - 1):0),
+           Gene = factor(Name, levels = known_genes),
+           Type = factor(Type, levels = unique(known_types)))
+
+ggplot(plot_data,
+       aes(x = Gene, y = Cluster, size = logFC, alpha = -FDR, colour = Type)) +
+    geom_point() +
+    facet_grid(~ Type, scales = "free_x", space = "free_x") +
+    theme_minimal() +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          legend.position = "none")
+```
+
+Summary
+=======
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters, cache.lazy = FALSE}
+params <- list(
+
+)
+
+names(params) <- map_chr(params, magrittr::extract2, "Parameter")
+metadata(sce)$Params[[DOCNAME]] <- params
+
+names(params) <- NULL
+params <- jsonlite::toJSON(params, pretty = TRUE)
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+write_rds(de_fit, here::here("data/processed/04-DGEGLM.Rds"))
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
+writeGeneTable(de_list, here::here("output", DOCNAME, "de_genes.xlsx"))
+writeGeneTable(bind_rows(de_list),
+               here::here("output", DOCNAME, "de_genes.csv"))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("de_genes.xlsx", DOCNAME),
+        getDownloadLink("de_genes.csv.zip", DOCNAME)
+    ),
+    Description = c(
+        "Parameters set and used in this analysis",
+        paste("Results of marker gene testing in XLSX format with one tab",
+              "per cluster"),
+        "Results of marker gene testing in zipped CSV format"
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```
