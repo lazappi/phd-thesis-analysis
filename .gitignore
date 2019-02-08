@@ -26,5 +26,8 @@ analysis/site_libs
 # Data
 data/
 
+# Build
+build-logs/
+
 # Output
 !output/*/*.gz

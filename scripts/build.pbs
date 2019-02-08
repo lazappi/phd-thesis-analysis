@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N workflowr-build
+#PBS -q bioinf
+#PBS -l nodes=1:ppn=10
+#PBS -l mem=200GB
+#PBS -l walltime=100:00:00
+#PBS -A bioinf
+#PBS -m abe
+#PBS -M luke.zappia@mcri.edu.au
+
+#### Run:
+module load R
+
+cd /group/bioi1/luke/analysis/phd-thesis-analysis
+
+Rscript -e " \
+    workflowr::wflow_build( \
+        files = c( \
+            'analysis/01-preprocessing.Rmd', \
+            'analysis/01B-alevin.Rmd' \
+            'analysis/02-quality-control.Rmd', \
+            'analysis/03-clustering.Rmd', \
+            'analysis/04-marker-genes.Rmd', \
+            'analysis/index.Rmd' \
+        ), \
+        log_dir = 'build-logs', \
+    ) \
+    "
+

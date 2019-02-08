@@ -10,12 +10,12 @@ NOW <- Sys.time()
 knitr::knit_hooks$set(timeit = function(before) {
     if (before) {
         print(paste("Start:", Sys.time()))
-        NOW <- Sys.time()
+        NOW <<- Sys.time()
     } else {
         print(paste("Stop:", Sys.time()))
         print(Sys.time() - NOW)
     }
-})  
+})
 
 knitr::opts_chunk$set(
     autodep        = TRUE,
@@ -39,6 +39,7 @@ library("SingleCellExperiment")
 library("scater")
 library("Seurat")
 library("M3Drop")
+library("LoomExperiment")
 
 # Clustering trees
 library("clustree")
@@ -253,19 +254,19 @@ rowData(sce)$M3DropPValue      <- m3drop_results$p.value
 rowData(sce)$M3DropFDR         <- m3drop_results$q.value
 rowData(sce)$M3DropSelected    <- rownames(sce) %in% m3drop_top$Gene
 
-rowData(sce)$Selected <- "False"
-rowData(sce)$Selected[rowData(sce)$SeuratSelected] <- "Seurat only"
-rowData(sce)$Selected[rowData(sce)$M3DropSelected] <- "M3Drop only"
-rowData(sce)$Selected[rowData(sce)$SeuratSelected &
-                          rowData(sce)$M3DropSelected] <- "Both"
+rowData(sce)$SelMethod <- "False"
+rowData(sce)$SelMethod[rowData(sce)$SeuratSelected] <- "Seurat only"
+rowData(sce)$SelMethod[rowData(sce)$M3DropSelected] <- "M3Drop only"
+rowData(sce)$SelMethod[rowData(sce)$SeuratSelected &
+                           rowData(sce)$M3DropSelected] <- "Both"
 
 plot_data <- rowData(sce) %>%
     as.data.frame() %>%
     select(SeuratMean, SeuratDispScaled, M3DropAvgExpr, M3DropDropoutRate,
-           Selected)
+           SelMethod)
 
 plot_data_sel <- plot_data %>%
-    filter(Selected != "False")
+    filter(SelMethod != "False")
 ```
 
 Let's briefly compare the results from the two methods.
@@ -275,7 +276,7 @@ Let's briefly compare the results from the two methods.
 Number of genes identified by each method.
 
 ```{r genes-bar}
-ggplot(plot_data_sel, aes(x = Selected, fill = Selected)) +
+ggplot(plot_data_sel, aes(x = SelMethod, fill = SelMethod)) +
     geom_bar() +
     theme_minimal() +
     theme(legend.position = "none",
@@ -289,7 +290,7 @@ Seurat selection plot coloured by selection method.
 ```{r genes-seurat}
 ggplot(plot_data, aes(x = SeuratMean, y = SeuratDispScaled)) +
     geom_point(alpha = 0.5, colour = "grey") +
-    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    geom_point(data = plot_data_sel, aes(colour = SelMethod)) +
     theme_minimal()
 ```
 
@@ -300,7 +301,7 @@ M3Drop selection plot coloured by selection method.
 ```{r genes-m3drop}
 ggplot(plot_data, aes(x = M3DropAvgExpr, y = M3DropDropoutRate)) +
     geom_point(alpha = 0.5, colour = "grey") +
-    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    geom_point(data = plot_data_sel, aes(colour = SelMethod)) +
     theme_minimal()
 ```
 
@@ -311,7 +312,7 @@ M3Drop dropout rate against Seurat dispersion coloured by selection method.
 ```{r genes-combined}
 ggplot(plot_data, aes(x = SeuratDispScaled, y = M3DropDropoutRate)) +
     geom_point(alpha = 0.5, colour = "grey") +
-    geom_point(data = plot_data_sel, aes(colour = Selected)) +
+    geom_point(data = plot_data_sel, aes(colour = SelMethod)) +
     theme_minimal()
 ```
 
@@ -349,7 +350,17 @@ Selection
 For the rest of the analysis we will use the M3Drop genes.
 
 ```{r selection}
+rowData(sce)$Selected <- rowData(sce)$M3DropSelected
 seurat@var.genes <- m3drop_top$Gene
+
+sel_genes <- rowData(sce) %>%
+    as.data.frame() %>%
+    filter(Selected) %>%
+    select(Name, ID, entrezgene, description, starts_with("M3Drop"),
+           -M3DropSelected) %>%
+    arrange(-M3DropEffect)
+
+sel_genes
 ```
 
 Dimensionality reduction
@@ -415,9 +426,13 @@ this dataset.
 
 ```{r cluster}
 resolutions <- seq(0, 1, 0.1)
+knn <- 30
 
-seurat <- FindClusters(seurat, reduction.type = "pca", dims.use = 1:n_pcs,
-                       resolution = resolutions, save.SNN = TRUE,
+seurat <- FindClusters(seurat,
+                       reduction.type = "pca", dims.use = 1:n_pcs,
+                       k.param = knn,
+                       resolution = resolutions,
+                       save.SNN = TRUE,
                        print.output = FALSE)
 ```
 
@@ -492,7 +507,7 @@ clustree(seurat, node_colour = "sc3_stability")
 Coloured by the expression of known marker genes.
 
 ```{r known-genes}
-known_genes <-  c(
+known_genes <- c(
     # Stroma
     "TAGLN", "ACTA2", "MAB21L2", "DLK1", "GATA3", "COL2A1", "COL9A3",
     # Podocyte
@@ -508,7 +523,6 @@ known_genes <-  c(
     # Muscle
     "MYOG", "MYOD1"
 )
-
 
 is_present <- known_genes %in% rownames(seurat@data)
 ```
@@ -954,6 +968,16 @@ params <- list(
         Description = "Number of selected genes"
     ),
     list(
+        Parameter = "n_pcs",
+        Value = n_pcs,
+        Description = "Selected number of principal components for clustering"
+    ),
+    list(
+        Parameter = "knn",
+        Value = knn,
+        Description = "Number of neighbours for SNN graph"
+    ),
+    list(
         Parameter = "resolutions",
         Value = resolutions,
         Description = "Range of possible clustering resolutions"
@@ -970,8 +994,10 @@ params <- list(
     )
 )
 
-metadata(sce)$Params[DOCNAME] <- params
+names(params) <- map_chr(params, magrittr::extract2, "Parameter")
+metadata(sce)$Params[[DOCNAME]] <- params
 
+names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
@@ -985,6 +1011,19 @@ and _Save Link As..._ to download the results.
 ```{r save}
 write_rds(sce, here::here("data/processed/03-clustered.Rds"))
 write_rds(seurat, here::here("data/processed/03-seurat.Rds"))
+```
+
+```{r save-loom}
+counts_sel <- as.matrix(counts(sce)[sel_genes$Name, ])
+sce_sel <- SingleCellExperiment(assays = list(counts = counts_sel),
+                                colData = colData(sce))
+scle_sel <- LoomExperiment(sce_sel)
+
+loom_path <- here::here("data/processed/03-clustered-sel.loom")
+if (file.exists(loom_path)) {
+    file.remove(loom_path)
+}
+export(scle_sel, loom_path)
 ```
 
 ```{r output-data}
@@ -1011,6 +1050,7 @@ cluster_assign <- colData(sce) %>%
 dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
 
 readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
+writeGeneTable(sel_genes, here::here("output", DOCNAME, "selected_genes.csv"))
 readr::write_tsv(cluster_assign,
                  here::here("output", DOCNAME, "cluster_assignments.tsv.gz"))
 readr::write_tsv(cluster_expr,
@@ -1019,11 +1059,13 @@ readr::write_tsv(cluster_expr,
 knitr::kable(data.frame(
     File = c(
         getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("selected_genes.csv.zip", DOCNAME),
         getDownloadLink("cluster_assignments.tsv.gz"),
         getDownloadLink("cluster_expression.tsv.gz")
     ),
     Description = c(
         "Parameters set and used in this analysis",
+        "Selected genes (zipped CSV)",
         "Cluster assignments for each cell (gzipped TSV)",
         "Cluster expression for each gene (gzipped TSV)"
     )

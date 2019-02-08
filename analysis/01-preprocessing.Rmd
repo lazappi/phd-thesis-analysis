@@ -10,12 +10,12 @@ NOW <- Sys.time()
 knitr::knit_hooks$set(timeit = function(before) {
     if (before) {
         print(paste("Start:", Sys.time()))
-        NOW <- Sys.time()
+        NOW <<- Sys.time()
     } else {
         print(paste("Stop:", Sys.time()))
         print(Sys.time() - NOW)
     }
-})  
+})
 
 knitr::opts_chunk$set(
     autodep        = TRUE,
@@ -317,9 +317,10 @@ params <- list(
     )
 )
 
-metadata(selected)$Params <- list()
-metadata(selected)$Params[DOCNAME] <- params
+names(params) <- map_chr(params, magrittr::extract2, "Parameter")
+metadata(selected)$Params[[DOCNAME]] <- params
 
+names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
@@ -334,17 +335,38 @@ and _Save Link As..._ to download the results.
 write_rds(selected, here::here("data/processed/01-selected.Rds"))
 ```
 
-```{r output}
+```{r output-barcodes, results = "hide"}
 dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
 
+for (sample in unique(colData(selected)$Sample)) {
+    barcodes <- colData(selected) %>%
+        as.data.frame() %>%
+        filter(Sample == sample) %>%
+        select(Barcode) %>%
+        mutate(Barcode = paste0(Barcode, "-1"))
+    
+    readr::write_tsv(barcodes,
+                     print(here::here("output", DOCNAME,
+                                glue::glue("barcodes_Org{sample}.tsv"))),
+                     col_names = FALSE)
+}
+```
+
+```{r output}
 readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
 
 knitr::kable(data.frame(
     File = c(
-        getDownloadLink("parameters.json", DOCNAME)
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("barcodes_Org1.tsv", DOCNAME),
+        getDownloadLink("barcodes_Org2.tsv", DOCNAME),
+        getDownloadLink("barcodes_Org3.tsv", DOCNAME)
     ),
     Description = c(
-        "Parameters set and used in this analysis"
+        "Parameters set and used in this analysis",
+        "Selected barcodes for organoid 1",
+        "Selected barcodes for organoid 2",
+        "Selected barcodes for organoid 3"
     )
 ))
 ```

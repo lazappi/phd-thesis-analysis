@@ -9,5 +9,7 @@ output:
 Analysis steps:
 
 * [Pre-processing](01-preprocessing.html)
+* [Alevin](01B-alevin.html)
 * [Quality control](02-quality-control.html)
 * [Clustering](03-clustering.html)
+* [Marker genes](04-marker-genes.html)
