@@ -16,7 +16,7 @@
   },
   {
     "Parameter": ["n_cells"],
-    "Value": [9750],
+    "Value": [9848],
     "Description": ["Number of cells selected"]
   }
 ]

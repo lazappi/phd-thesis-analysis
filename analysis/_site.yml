@@ -9,10 +9,14 @@ navbar:
       menu:
         - text: "Pre-processing"
           href: 01-preprocessing.html
+        - text: "Alevin"
+          href: 01B-alevin.html
         - text: "Quality control"
           href: 02-quality-control.html
         - text: "Clustering"
           href: 03-clustering.html
+        - text: "Marker genes"
+          href: 04-marker-genes.html
     - text: "About"
       href: about.html
     - text: "License"

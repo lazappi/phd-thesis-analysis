@@ -1,8 +1,18 @@
 [
   {
     "Parameter": ["sel_genes"],
-    "Value": [1964],
+    "Value": [1954],
     "Description": ["Number of selected genes"]
+  },
+  {
+    "Parameter": ["n_pcs"],
+    "Value": [15],
+    "Description": ["Selected number of principal components for clustering"]
+  },
+  {
+    "Parameter": ["knn"],
+    "Value": [30],
+    "Description": ["Number of neighbours for SNN graph"]
   },
   {
     "Parameter": ["resolutions"],

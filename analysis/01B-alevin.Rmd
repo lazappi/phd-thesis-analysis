@@ -1,0 +1,455 @@
+---
+title: "Alevin"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "01B-alevin"
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+    if (before) {
+        print(paste("Start:", Sys.time()))
+        NOW <<- Sys.time()
+    } else {
+        print(paste("Stop:", Sys.time()))
+        print(Sys.time() - NOW)
+    }
+})
+
+knitr::opts_chunk$set(
+    autodep        = TRUE,
+    cache          = TRUE,
+    cache.path     = paste0("cache/", DOCNAME, "/"),
+    cache.comments = FALSE,
+    echo           = TRUE,
+    error          = FALSE,
+    fig.align      = "center",
+    fig.width      = 10,
+    fig.height     = 8,
+    message        = FALSE,
+    warning        = FALSE,
+    timeit         = TRUE
+)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("SingleCellExperiment")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/load.R"))
+source(here::here("R/annotate.R"))
+source(here::here("R/output.R"))
+```
+
+```{r depends-paths}
+sel_path <- here::here("data/processed/01-selected.Rds")
+```
+
+```{r bpparam, cache = FALSE}
+bpparam <- BiocParallel::MulticoreParam(workers = 10)
+```
+
+Introduction
+============
+
+The standard way to quanitfy 10x Chromium scRNA-seq data is using the Cell
+Ranger platform that performs traditional alignment to a reference genome and
+counts the reads overlapping annotated genes. An alternative appraoch is to
+estimate expression levels directly against the transcriptome. We have done that
+using an approach designed for scRNA-seq data called Alevin available in the
+Salmon package. In this document we are going to compare the results of this
+approach to what we get from Cell Ranger and our previous processing.
+
+```{r load-sel, cache.extra = tools::md5sum(sel_path)}
+if (file.exists(sel_path)) {
+    selected <- read_rds(sel_path)
+} else {
+    stop("Selected dataset is missing. ",
+         "Please run '01-preprocessing.Rmd' first.",
+         call. = FALSE)
+}
+
+colData(selected)$BarcodeSample <- paste(
+    colData(selected)$Barcode, 
+    colData(selected)$Sample,
+    sep = "-"
+)
+```
+
+```{r load-alevin, cache.extra = tools::md5sum(sel_path)}
+alevin_paths <- c(
+    here::here("data/alevin/Org1"),
+    here::here("data/alevin/Org2"),
+    here::here("data/alevin/Org3")
+)
+
+alevin <- readAlevin(alevin_paths, dataset = "Orgs123Alevin")
+alevin <- annotateSCE(alevin, calc_qc = TRUE, BPPARAM = bpparam)
+
+colData(alevin)$BarcodeSample <- paste(
+    colData(alevin)$Barcode, 
+    colData(alevin)$Sample,
+    sep = "-"
+)
+```
+
+```{r combine}
+cell_data <- full_join(as.data.frame(colData(selected)),
+                       as.data.frame(colData(alevin)),
+                       by = "BarcodeSample",
+                       suffix = c(".Trad", ".Alevin")) %>%
+    mutate(Sample = Sample.Trad) %>%
+    mutate(Sample = if_else(is.na(Sample), Sample.Alevin, Sample)) %>%
+    select(BarcodeSample, Sample, contains("_"),
+           -contains("control"), -contains("endogenous"), -contains("_MT")) %>%
+    mutate(SelBy = "Both") %>%
+    mutate(SelBy = if_else(!is.na(total_counts.Trad) &
+                               is.na(total_counts.Alevin),
+                           "Trad only", SelBy),
+           SelBy = if_else(is.na(total_counts.Trad) &
+                               !is.na(total_counts.Alevin),
+                           "Alevin only", SelBy)) %>%
+    mutate(SelBy = factor(SelBy,
+                          levels = c("Both", "Trad only", "Alevin only")))
+
+feat_data <- full_join(as.data.frame(rowData(selected)),
+                       as.data.frame(rowData(alevin)),
+                       by = "ID",
+                       suffix = c(".Trad", ".Alevin")) %>%
+    mutate(Annot = "Both") %>%
+    mutate(Annot = if_else(!is.na(total_counts.Trad) &
+                               is.na(total_counts.Alevin),
+                           "Trad only", Annot),
+           Annot = if_else(is.na(total_counts.Trad) &
+                               !is.na(total_counts.Alevin),
+                           "Alevin only", Annot)) %>%
+    mutate(Annot = factor(Annot,
+                          levels = c("Both", "Trad only", "Alevin only")))
+```
+
+Cell selection
+==============
+
+Alevin has it's own method of selecting cell-containing droplets. Let's see how
+that compares to what we have done previously.
+
+```{r cell-selection}
+ggplot(cell_data, aes(x = SelBy, fill = Sample)) +
+    geom_bar() +
+    theme_minimal() +
+    theme(axis.title.x = element_blank())
+```
+
+Cell counts {.tabset}
+===========
+
+Standard
+--------
+
+```{r cell-counts}
+plot_data <- cell_data %>%
+    mutate(Traditional = total_counts.Trad,
+           Alevin = total_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, SelBy == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("total_counts") +
+    theme_minimal()
+```
+
+Logged
+------
+
+```{r cell-counts-log}
+plot_data <- cell_data %>%
+    mutate(Traditional = log10_total_counts.Trad,
+           Alevin = log10_total_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, SelBy == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("log10(total_counts)") +
+    theme_minimal()
+```
+
+Cell features {.tabset}
+=============
+
+Standard
+--------
+
+```{r cell-features}
+plot_data <- cell_data %>%
+    mutate(Traditional = total_features_by_counts.Trad,
+           Alevin = total_features_by_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, SelBy == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("total_features_by_counts") +
+    theme_minimal()
+```
+
+Logged
+------
+
+```{r cell-features-log}
+plot_data <- cell_data %>%
+    mutate(Traditional = log10_total_features_by_counts.Trad,
+           Alevin = log10_total_features_by_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, SelBy == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("log10(total_features_by_counts)") +
+    theme_minimal()
+```
+
+Top 100 {.tabset}
+=======
+
+Percent counts in top 100 most expressed features.
+
+```{r top-100}
+plot_data <- cell_data %>%
+    mutate(Traditional = pct_counts_in_top_100_features.Trad,
+           Alevin = pct_counts_in_top_100_features.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, SelBy == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("pct_counts_in_top_100_features") +
+    theme_minimal()
+```
+
+Gene counts {.tabset}
+===========
+
+Standard
+--------
+
+```{r gene-counts}
+plot_data <- feat_data %>%
+    mutate(Traditional = total_counts.Trad,
+           Alevin = total_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -1e5),
+           Alevin = replace_na(Alevin, -1e5))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("total_counts") +
+    theme_minimal()
+```
+
+Logged
+------
+
+```{r gene-counts-log}
+plot_data <- feat_data %>%
+    mutate(Traditional = log10_total_counts.Trad,
+           Alevin = log10_total_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -1),
+           Alevin = replace_na(Alevin, -1))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("log10(total_counts)") +
+    theme_minimal()
+```
+
+Gene cells {.tabset}
+==========
+
+```{r gene-cells}
+plot_data <- feat_data %>%
+    mutate(Traditional = n_cells_by_counts.Trad,
+           Alevin = n_cells_by_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -500),
+           Alevin = replace_na(Alevin, -500))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("n_cells_by_counts") +
+    theme_minimal()
+```
+
+Logged
+------
+
+```{r gene-cells-log}
+plot_data <- feat_data %>%
+    mutate(Traditional = log10_total_counts.Trad,
+           Alevin = log10_total_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -1),
+           Alevin = replace_na(Alevin, -1))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("log10(total_counts)") +
+    theme_minimal()
+```
+
+Gene means {.tabset}
+==========
+
+Standard
+--------
+
+```{r gene-means}
+plot_data <- feat_data %>%
+    mutate(Traditional = mean_counts.Trad,
+           Alevin = mean_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -5),
+           Alevin = replace_na(Alevin, -5))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("mean_counts") +
+    theme_minimal()
+```
+
+Logged
+------
+
+```{r gene-means-log}
+plot_data <- feat_data %>%
+    mutate(Traditional = log10_mean_counts.Trad,
+           Alevin = log10_mean_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -0.1),
+           Alevin = replace_na(Alevin, -0.1))
+
+ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "red") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "blue") +
+    ggtitle("log10(mean_counts)") +
+    theme_minimal()
+```
+
+Counts-cells
+============
+
+```{r counts-zeros}
+counts_data <- feat_data %>%
+    filter(Annot == "Both") %>%
+    select(ID, starts_with("log10_total_counts")) %>%
+    gather(key = "Method", value = "log10_total_counts", -ID) %>%
+    mutate(Method = str_split(Method, "\\.", simplify = TRUE)[, 2])
+
+zeros_data <- feat_data %>%
+    filter(Annot == "Both") %>%
+    select(ID, starts_with("n_cells_by_counts")) %>%
+    gather(key = "Method", value = "n_cells_by_counts", -ID) %>%
+    mutate(Method = str_split(Method, "\\.", simplify = TRUE)[, 2])
+
+plot_data <- left_join(counts_data, zeros_data, by = c("ID", "Method"))
+
+ggplot(plot_data,
+       aes(x = log10_total_counts, y = n_cells_by_counts, colour = Method)) +
+    geom_point() +
+    geom_smooth(aes(group = Method), colour = "blue") +
+    facet_wrap(~ Method) +
+    theme_minimal()
+```
+
+Summary
+=======
+
+Overall the two approaches seem to produce similar results. There are
+differences between them but it is difficult to tell if one approach is
+inaccurate. For the rest of this analysis we will stick with the traditional
+approach as it is more familiar.
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters}
+params <- list(
+    
+)
+
+params <- jsonlite::toJSON(params, pretty = TRUE)
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+write_rds(alevin, here::here("data/processed/01B-alevin.Rds"))
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME)
+    ),
+    Description = c(
+        "Parameters set and used in this analysis"
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```

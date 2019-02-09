@@ -10,12 +10,12 @@ NOW <- Sys.time()
 knitr::knit_hooks$set(timeit = function(before) {
     if (before) {
         print(paste("Start:", Sys.time()))
-        NOW <- Sys.time()
+        NOW <<- Sys.time()
     } else {
         print(paste("Stop:", Sys.time()))
         print(Sys.time() - NOW)
     }
-})  
+})
 
 knitr::opts_chunk$set(
     autodep        = TRUE,
@@ -729,8 +729,10 @@ params <- list(
     )
 )
 
-metadata(filtered)$Params[DOCNAME] <- params
+names(params) <- map_chr(params, magrittr::extract2, "Parameter")
+metadata(filtered)$Params[[DOCNAME]] <- params
 
+names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
