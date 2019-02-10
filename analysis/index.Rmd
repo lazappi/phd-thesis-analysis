@@ -13,3 +13,4 @@ Analysis steps:
 * [Quality control](02-quality-control.html)
 * [Clustering](03-clustering.html)
 * [Marker genes](04-marker-genes.html)
+* [PAGA](05-paga.html)

@@ -91,6 +91,7 @@ dependencies:
   - pip:
     - anndata==0.6.18
     - decorator==4.3.2
+    - fa2==0.3.5
     - h5py==2.9.0
     - joblib==0.13.1
     - natsort==6.0.0
@@ -98,5 +99,6 @@ dependencies:
     - numexpr==2.6.9
     - scanpy==1.4
     - tables==3.4.4
+    - tqdm==4.30.0
 prefix: /group/bioi1/luke/miniconda2/envs/scanpy
 

@@ -1,0 +1,309 @@
+---
+title: "PAGA"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "05-paga"
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+    if (before) {
+        print(paste("Start:", Sys.time()))
+        NOW <<- Sys.time()
+    } else {
+        print(paste("Stop:", Sys.time()))
+        print(Sys.time() - NOW)
+    }
+})
+
+knitr::opts_chunk$set(
+    autodep        = TRUE,
+    cache          = TRUE,
+    cache.path     = paste0("cache/", DOCNAME, "/"),
+    cache.comments = FALSE,
+    echo           = TRUE,
+    error          = FALSE,
+    fig.align      = "center",
+    fig.width      = 10,
+    fig.height     = 8,
+    message        = FALSE,
+    warning        = FALSE,
+    timeit         = TRUE
+)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("SingleCellExperiment")
+
+# System
+library("processx")
+
+# Presentation
+library("knitr")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/output.R"))
+source(here::here("R/plotting.R"))
+```
+
+```{r depends-paths}
+clust_path <- here::here("data/processed/03-clustered.Rds")
+paga_path <- here::here("scripts/paga.py")
+```
+
+```{r bpparam, cache = FALSE}
+
+```
+
+Introduction
+============
+
+```{r load-sce, cache.extra = tools::md5sum(clust_path)}
+if (file.exists(clust_path)) {
+    sce <- read_rds(clust_path)
+} else {
+    stop("Clustered dataset is missing. ",
+         "Please run '03-clustering.Rmd' first.",
+         call. = FALSE)
+}
+```
+
+PAGA
+====
+
+```{r paga, comment = "", cache.extra = c(tools::md5sum(paga_path), tools::md5sum(clust_path))}
+cat(readLines(paga_path), sep = "\n")
+
+paga_out <- run(here::here("scripts/run_paga.sh"))
+```
+
+```{r load-paga}
+clust_embedding <- read_csv(
+    here::here("output/05-paga/cluster_embedding.csv"),
+    col_types = cols(
+        .default = col_double()
+    )
+) %>%
+    mutate(Size = as.numeric(table(colData(sce)$Cluster))) %>%
+    mutate(Cluster = factor(Cluster, levels = levels(colData(sce)$Cluster)))
+
+clust_edges <- read_csv(
+    here::here("output/05-paga/cluster_edges.csv"),
+    col_types = cols(
+        .default = col_double()
+    )
+) %>%
+    mutate(To = factor(To, levels = levels(colData(sce)$Cluster)),
+           From = factor(From, levels = levels(colData(sce)$Cluster))) %>%
+    left_join(clust_embedding, by = c("From" = "Cluster")) %>%
+    rename(FromX = X, FromY = Y) %>%
+    select(-Size) %>%
+    left_join(clust_embedding, by = c("To" = "Cluster")) %>%
+    rename(ToX = X, ToY = Y) %>%
+    select(-Size)
+
+cell_embedding <- read_csv(
+    here::here("output/05-paga/cell_embedding.csv"),
+    col_types = cols(
+        .default = col_double(),
+        Cell = col_character()
+    )
+) %>%
+    mutate(Cluster = colData(sce)$Cluster)
+
+cell_edges <- read_csv(
+    here::here("output/05-paga/cell_edges.csv"),
+    col_types = cols(
+        .default = col_double(),
+        From = col_character(),
+        To = col_character()
+    )
+) %>%
+    left_join(cell_embedding, by = c("From" = "Cell")) %>%
+    rename(FromX = X, FromY = Y) %>%
+    select(-Cluster) %>%
+    left_join(cell_embedding, by = c("To" = "Cell")) %>%
+    rename(ToX = X, ToY = Y) %>%
+    select(-Cluster)
+```
+
+Cluster graph
+=============
+
+Thresholds {.tabset}
+----------
+
+```{r clust-paga, results = "hide"}
+src_list <- lapply(seq(0, 0.9, 0.1), function(thresh) {
+    src <- c(
+        "### Con {{thresh}} {.unnumbered}",
+        "```{r clust-paga-{{thresh}}}",
+        "plotPAGAClustGraph(clust_embedding, clust_edges, thresh = {{thresh}})",  
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Edges by threshold
+------------------
+
+```{r thresh-edges}
+plot_data <- tibble(
+    Threshold = seq(0, 1, 0.01)
+) %>%
+    mutate(Edges = map_int(Threshold, function(thresh) {
+        sum(clust_edges$Connectivity > thresh)
+    }))
+
+con_thresh <- 0.7
+
+ggplot(plot_data, aes(x = Threshold, y = Edges)) +
+    geom_point() +
+    geom_line() +
+    geom_vline(xintercept = con_thresh, colour = "red") +
+    xlab("Connectivity threshold") +
+    ylab("Number of edges") +
+    theme_minimal()
+```
+
+Cell graph
+==========
+
+```{r cell-paga}
+plotPAGACellGraph(cell_embedding, cell_edges, thresh = 0.1)
+```
+
+Compare
+=======
+
+```{r compare-paga}
+plotPAGACompare(clust_embedding, clust_edges, clust_thresh = con_thresh,
+                cell_embedding, cell_edges, cell_thresh = 0.1)
+```
+
+Genes {.tabset}
+-----
+
+```{r compare-genes, results = "hide"}
+known_genes <- c(
+    # Stroma
+    "TAGLN", "ACTA2", "MAB21L2", "DLK1", "GATA3", "COL2A1", "COL9A3",
+    # Podocyte
+    "PODXL", "NPHS2", "TCF21",
+    # Cell cycle
+    "HIST1H4C", "PCLAF", "CENPF", "HMGB2",
+    # Endothelium
+    "CLDN5", "PECAM1", "KDR", "CALM1",
+    # Neural
+    "TTYH1", "SOX2", "HES6", "STMN2",
+    # Epithelium
+    "PAX2", "PAX8", "KRT19",
+    # Muscle
+    "MYOG", "MYOD1"
+)
+
+for (gene in known_genes) {
+    cell_embedding[[gene]] <- logcounts(sce)[gene, ]
+}
+
+clust_genes <- cell_embedding %>%
+    select(-Cell, -X, -Y) %>%
+    group_by(Cluster) %>%
+    summarise_all(mean)
+
+clust_embedding <- left_join(clust_embedding, clust_genes, by = "Cluster")
+
+src_list <- lapply(known_genes, function(gene) {
+    src <- c(
+        "### {{gene}} {.unnumbered}",
+        "```{r compare-{{gene}}}",
+        "plotPAGACompare(clust_embedding, clust_edges,",
+        "clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = '{{gene}}')",  
+        "```",
+        ""
+    )
+    knit_expand(text = src)
+})
+
+out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
+```
+
+`r out`
+
+Summary
+=======
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters, cache.lazy = FALSE}
+params <- list(
+    list(
+        Parameter = "col_thresh",
+        Value = con_thresh,
+        Description = "Connectivity threshold for PAGA graph"
+    )
+)
+
+names(params) <- map_chr(params, magrittr::extract2, "Parameter")
+metadata(sce)$Params[[DOCNAME]] <- params
+
+names(params) <- NULL
+params <- jsonlite::toJSON(params, pretty = TRUE)
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("cluster_embedding.csv", DOCNAME),
+        getDownloadLink("cluster_edges.csv", DOCNAME),
+        getDownloadLink("cluster_tree_edges.csv", DOCNAME),
+        getDownloadLink("cell_embedding.csv", DOCNAME),
+        getDownloadLink("cell_edges.csv", DOCNAME)
+    ),
+    Description = c(
+        "Parameters set and used in this analysis",
+        "Embedding for clusters from PAGA",
+        "Edges for PAGA cluster graph",
+        "Tree edges for PAGA cluster graph",
+        "Embedding for cells from PAGA",
+        "Edges for cell graph" 
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```

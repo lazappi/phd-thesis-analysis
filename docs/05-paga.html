@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>PAGA</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD Thesis Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-preprocessing.html">Pre-processing</a>
+    </li>
+    <li>
+      <a href="01B-alevin.html">Alevin</a>
+    </li>
+    <li>
+      <a href="02-quality-control.html">Quality control</a>
+    </li>
+    <li>
+      <a href="03-clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="04-marker-genes.html">Marker genes</a>
+    </li>
+    <li>
+      <a href="05-paga.html">PAGA</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/lazappi/phd-thesis-analysis">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">PAGA</h1>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-02-10</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20190110)</code> </summary></p>
+<p>The command <code>set.seed(20190110)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/6861a898260b3deb3acd28406ab824a7a506e720" target="_blank">6861a89</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    ._.DS_Store
+    Ignored:    analysis/cache/
+    Ignored:    build-logs/
+    Ignored:    data/
+    Ignored:    output/03-clustering/selected_genes.csv.zip
+    Ignored:    output/04-marker-genes/de_genes.csv.zip
+    Ignored:    packrat/.DS_Store
+    Ignored:    packrat/._.DS_Store
+    Ignored:    packrat/lib-R/
+    Ignored:    packrat/lib-ext/
+    Ignored:    packrat/lib/
+    Ignored:    packrat/src/
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/6861a898260b3deb3acd28406ab824a7a506e720/analysis/05-paga.Rmd" target="_blank">6861a89</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-10
+</td>
+<td style="text-align:left;">
+Add PAGA
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code># scRNA-seq
+library(&quot;SingleCellExperiment&quot;)
+
+# System
+library(&quot;processx&quot;)
+
+# Presentation
+library(&quot;knitr&quot;)
+
+# Tidyverse
+library(&quot;tidyverse&quot;)</code></pre>
+<pre class="r"><code>source(here::here(&quot;R/output.R&quot;))
+source(here::here(&quot;R/plotting.R&quot;))</code></pre>
+<pre class="r"><code>clust_path &lt;- here::here(&quot;data/processed/03-clustered.Rds&quot;)
+paga_path &lt;- here::here(&quot;scripts/paga.py&quot;)</code></pre>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<pre class="r"><code>if (file.exists(clust_path)) {
+    sce &lt;- read_rds(clust_path)
+} else {
+    stop(&quot;Clustered dataset is missing. &quot;,
+         &quot;Please run &#39;03-clustering.Rmd&#39; first.&quot;,
+         call. = FALSE)
+}</code></pre>
+</div>
+<div id="paga" class="section level1">
+<h1>PAGA</h1>
+<pre class="r"><code>cat(readLines(paga_path), sep = &quot;\n&quot;)</code></pre>
+<pre><code>#!/usr/bin/env python3
+
+import os
+import json
+import numpy
+import pandas as pd
+import loompy
+import anndata
+import scanpy as sc
+
+# Show errors (0), warnings (1), info (2) and hints (3)
+sc.settings.verbosity = 3
+
+print(&#39;Reading clustering parameters...&#39;)
+params_path = &#39;output/03-clustering/parameters.json&#39;
+
+with open(params_path) as params_file:
+    params = json.load(params_file)
+
+for param in params:
+    if param[&#39;Parameter&#39;][0] == &#39;n_pcs&#39;:
+        n_pcs = param[&#39;Value&#39;][0]
+
+    if param[&#39;Parameter&#39;][0] == &#39;knn&#39;:
+        knn = param[&#39;Value&#39;][0]
+
+print(&#39;Reading Loom file...&#39;)
+loom_path = &#39;data/processed/03-clustered-sel.loom&#39;
+
+col_names = [&#39;Cell&#39;, &#39;Barcode&#39;, &#39;Dataset&#39;, &#39;Sample&#39;, &#39;Cluster&#39;]
+obs = dict()
+
+with loompy.connect(loom_path) as loom_con:
+    X = loom_con.layers[&#39;&#39;][()].T
+
+    for col in col_names:
+        obs[col] = loom_con.col_attrs[col]
+
+print(&#39;Converting to AnnData...&#39;)
+adata = anndata.AnnData(X=X, obs=obs)
+
+print(&#39;Calculating PCs...&#39;)
+sc.tl.pca(adata, svd_solver=&#39;arpack&#39;)
+
+print(&#39;Calculating neighbour graph...&#39;)
+sc.pp.neighbors(adata, n_neighbors=30, n_pcs=15)
+
+print(&#39;Perfoming PAGA...&#39;)
+sc.tl.paga(adata, groups=&#39;Cluster&#39;)
+
+print(&#39;Calculating cluster graph layout...&#39;)
+sc.pl.paga(adata, plot=False)
+
+print(&#39;Calculating cell graph layout...&#39;)
+sc.tl.draw_graph(adata, init_pos=&#39;paga&#39;)
+
+out_dir = &#39;output/05-paga&#39;
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
+
+def con2edges(con, names=None, sparse=True):
+    print(&#39;Converting connectivity matrix to edges...&#39;)
+    n = con.shape[0]
+    edges = pd.DataFrame(columns=[&#39;From&#39;, &#39;To&#39;, &#39;Connectivity&#39;])
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if names is not None:
+                fr = names[i]
+                to = names[j]
+            else:
+                fr = str(i)
+                to = str(j)
+
+            connectivity = con[i, j]
+            if sparse and connectivity == 0:
+                continue
+
+            entry = {&#39;From&#39; : fr, &#39;To&#39; : to,
+                     &#39;Connectivity&#39; : con[i, j]}
+            edges = edges.append(entry, ignore_index=True)
+
+    return edges
+
+print(&#39;Outputting cluster edges...&#39;)
+clust_con = adata.uns[&#39;paga&#39;][&#39;connectivities&#39;].toarray()
+clust_edges = con2edges(clust_con)
+clust_edges.to_csv(os.path.join(out_dir, &#39;cluster_edges.csv&#39;),
+                   index=False)
+
+print(&#39;Outputting cluster tree edges...&#39;)
+clust_tree_con = adata.uns[&#39;paga&#39;][&#39;connectivities_tree&#39;].toarray()
+clust_tree_edges = con2edges(clust_tree_con)
+clust_tree_edges.to_csv(os.path.join(out_dir, &#39;cluster_tree_edges.csv&#39;),
+                        index=False)
+
+print(&#39;Outputting cluster embedding...&#39;)
+clust_embedding = pd.DataFrame(adata.uns[&#39;paga&#39;][&#39;pos&#39;], columns=[&#39;X&#39;, &#39;Y&#39;])
+clust_embedding[&#39;Cluster&#39;] = range(clust_embedding.shape[0])
+clust_embedding = clust_embedding[[&#39;Cluster&#39;, &#39;X&#39;, &#39;Y&#39;]]
+
+clust_embedding.to_csv(os.path.join(out_dir, &#39;cluster_embedding.csv&#39;),
+                       index=False)
+
+print(&#39;Outputting cell edges...&#39;)
+cells = adata.obs[&#39;Cell&#39;]
+cell_con = adata.uns[&#39;neighbors&#39;][&#39;connectivities&#39;]
+cell_edges = pd.DataFrame(columns=[&#39;From&#39;, &#39;To&#39;, &#39;Connectivity&#39;])
+n_rows = len(cell_con.indptr)
+
+for i in range(len(cell_con.indptr) - 1):
+    row_ind = cell_con.indices[cell_con.indptr[i]:cell_con.indptr[i + 1]]
+    print(f&#39;\r\tRow {i} of {n_rows}&#39;, end=&#39;&#39;)
+    for k, j in enumerate(row_ind):
+        if j &gt; i:
+            con = cell_con.data[cell_con.indptr[i] + k]
+            fr = cells[i]
+            to = cells[j]
+            entry = {&#39;From&#39; : fr, &#39;To&#39; : to, &#39;Connectivity&#39; : con}
+            cell_edges = cell_edges.append(entry, ignore_index=True)
+print(&#39;\n&#39;)
+
+cell_edges.to_csv(os.path.join(out_dir, &#39;cell_edges.csv&#39;),
+                  index=False)
+
+print(&#39;Outputting cell embedding...&#39;)
+x = adata.obsm[&#39;X_draw_graph_fa&#39;][:, 0]
+y = adata.obsm[&#39;X_draw_graph_fa&#39;][:, 1]
+cell_embedding = pd.DataFrame({&#39;Cell&#39; : cells, &#39;X&#39; : x, &#39;Y&#39; : y})
+cell_embedding.to_csv(os.path.join(out_dir, &#39;cell_embedding.csv&#39;),
+                      index=False)
+
+print(&#39;Done!&#39;)</code></pre>
+<pre class="r"><code>paga_out &lt;- run(here::here(&quot;scripts/run_paga.sh&quot;))</code></pre>
+<pre class="r"><code>clust_embedding &lt;- read_csv(
+    here::here(&quot;output/05-paga/cluster_embedding.csv&quot;),
+    col_types = cols(
+        .default = col_double()
+    )
+) %&gt;%
+    mutate(Size = as.numeric(table(colData(sce)$Cluster))) %&gt;%
+    mutate(Cluster = factor(Cluster, levels = levels(colData(sce)$Cluster)))
+
+clust_edges &lt;- read_csv(
+    here::here(&quot;output/05-paga/cluster_edges.csv&quot;),
+    col_types = cols(
+        .default = col_double()
+    )
+) %&gt;%
+    mutate(To = factor(To, levels = levels(colData(sce)$Cluster)),
+           From = factor(From, levels = levels(colData(sce)$Cluster))) %&gt;%
+    left_join(clust_embedding, by = c(&quot;From&quot; = &quot;Cluster&quot;)) %&gt;%
+    rename(FromX = X, FromY = Y) %&gt;%
+    select(-Size) %&gt;%
+    left_join(clust_embedding, by = c(&quot;To&quot; = &quot;Cluster&quot;)) %&gt;%
+    rename(ToX = X, ToY = Y) %&gt;%
+    select(-Size)
+
+cell_embedding &lt;- read_csv(
+    here::here(&quot;output/05-paga/cell_embedding.csv&quot;),
+    col_types = cols(
+        .default = col_double(),
+        Cell = col_character()
+    )
+) %&gt;%
+    mutate(Cluster = colData(sce)$Cluster)
+
+cell_edges &lt;- read_csv(
+    here::here(&quot;output/05-paga/cell_edges.csv&quot;),
+    col_types = cols(
+        .default = col_double(),
+        From = col_character(),
+        To = col_character()
+    )
+) %&gt;%
+    left_join(cell_embedding, by = c(&quot;From&quot; = &quot;Cell&quot;)) %&gt;%
+    rename(FromX = X, FromY = Y) %&gt;%
+    select(-Cluster) %&gt;%
+    left_join(cell_embedding, by = c(&quot;To&quot; = &quot;Cell&quot;)) %&gt;%
+    rename(ToX = X, ToY = Y) %&gt;%
+    select(-Cluster)</code></pre>
+</div>
+<div id="cluster-graph" class="section level1">
+<h1>Cluster graph</h1>
+<div id="thresholds" class="section level2 tabset">
+<h2>Thresholds</h2>
+<pre class="r"><code>src_list &lt;- lapply(seq(0, 0.9, 0.1), function(thresh) {
+    src &lt;- c(
+        &quot;### Con {{thresh}} {.unnumbered}&quot;,
+        &quot;```{r clust-paga-{{thresh}}}&quot;,
+        &quot;plotPAGAClustGraph(clust_embedding, clust_edges, thresh = {{thresh}})&quot;,  
+        &quot;```&quot;,
+        &quot;&quot;
+    )
+    knit_expand(text = src)
+})
+
+out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</code></pre>
+<div id="con-0" class="section level3 unnumbered">
+<h3>Con 0</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.1" class="section level3 unnumbered">
+<h3>Con 0.1</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.1)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.2" class="section level3 unnumbered">
+<h3>Con 0.2</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.2)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.3" class="section level3 unnumbered">
+<h3>Con 0.3</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.3)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.4" class="section level3 unnumbered">
+<h3>Con 0.4</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.4)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.4-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.5" class="section level3 unnumbered">
+<h3>Con 0.5</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.5)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.5-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.6" class="section level3 unnumbered">
+<h3>Con 0.6</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.6)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.6-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.7" class="section level3 unnumbered">
+<h3>Con 0.7</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.7)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.7-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.8" class="section level3 unnumbered">
+<h3>Con 0.8</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.8)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="con-0.9" class="section level3 unnumbered">
+<h3>Con 0.9</h3>
+<pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.9)</code></pre>
+<p><img src="figure/05-paga.Rmd/clust-paga-0.9-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="edges-by-threshold" class="section level2">
+<h2>Edges by threshold</h2>
+<pre class="r"><code>plot_data &lt;- tibble(
+    Threshold = seq(0, 1, 0.01)
+) %&gt;%
+    mutate(Edges = map_int(Threshold, function(thresh) {
+        sum(clust_edges$Connectivity &gt; thresh)
+    }))
+
+con_thresh &lt;- 0.7
+
+ggplot(plot_data, aes(x = Threshold, y = Edges)) +
+    geom_point() +
+    geom_line() +
+    geom_vline(xintercept = con_thresh, colour = &quot;red&quot;) +
+    xlab(&quot;Connectivity threshold&quot;) +
+    ylab(&quot;Number of edges&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/05-paga.Rmd/thresh-edges-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cell-graph" class="section level1">
+<h1>Cell graph</h1>
+<pre class="r"><code>plotPAGACellGraph(cell_embedding, cell_edges, thresh = 0.1)</code></pre>
+<p><img src="figure/05-paga.Rmd/cell-paga-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="compare" class="section level1">
+<h1>Compare</h1>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges, clust_thresh = con_thresh,
+                cell_embedding, cell_edges, cell_thresh = 0.1)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-paga-1.png" width="960" style="display: block; margin: auto;" /></p>
+<div id="genes" class="section level2 tabset">
+<h2>Genes</h2>
+<pre class="r"><code>known_genes &lt;- c(
+    # Stroma
+    &quot;TAGLN&quot;, &quot;ACTA2&quot;, &quot;MAB21L2&quot;, &quot;DLK1&quot;, &quot;GATA3&quot;, &quot;COL2A1&quot;, &quot;COL9A3&quot;,
+    # Podocyte
+    &quot;PODXL&quot;, &quot;NPHS2&quot;, &quot;TCF21&quot;,
+    # Cell cycle
+    &quot;HIST1H4C&quot;, &quot;PCLAF&quot;, &quot;CENPF&quot;, &quot;HMGB2&quot;,
+    # Endothelium
+    &quot;CLDN5&quot;, &quot;PECAM1&quot;, &quot;KDR&quot;, &quot;CALM1&quot;,
+    # Neural
+    &quot;TTYH1&quot;, &quot;SOX2&quot;, &quot;HES6&quot;, &quot;STMN2&quot;,
+    # Epithelium
+    &quot;PAX2&quot;, &quot;PAX8&quot;, &quot;KRT19&quot;,
+    # Muscle
+    &quot;MYOG&quot;, &quot;MYOD1&quot;
+)
+
+for (gene in known_genes) {
+    cell_embedding[[gene]] &lt;- logcounts(sce)[gene, ]
+}
+
+clust_genes &lt;- cell_embedding %&gt;%
+    select(-Cell, -X, -Y) %&gt;%
+    group_by(Cluster) %&gt;%
+    summarise_all(mean)
+
+clust_embedding &lt;- left_join(clust_embedding, clust_genes, by = &quot;Cluster&quot;)
+
+src_list &lt;- lapply(known_genes, function(gene) {
+    src &lt;- c(
+        &quot;### {{gene}} {.unnumbered}&quot;,
+        &quot;```{r compare-{{gene}}}&quot;,
+        &quot;plotPAGACompare(clust_embedding, clust_edges,&quot;,
+        &quot;clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;{{gene}}&#39;)&quot;,  
+        &quot;```&quot;,
+        &quot;&quot;
+    )
+    knit_expand(text = src)
+})
+
+out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</code></pre>
+<div id="tagln" class="section level3 unnumbered">
+<h3>TAGLN</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;TAGLN&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-TAGLN-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="acta2" class="section level3 unnumbered">
+<h3>ACTA2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;ACTA2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-ACTA2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="mab21l2" class="section level3 unnumbered">
+<h3>MAB21L2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;MAB21L2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-MAB21L2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dlk1" class="section level3 unnumbered">
+<h3>DLK1</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;DLK1&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-DLK1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gata3" class="section level3 unnumbered">
+<h3>GATA3</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;GATA3&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-GATA3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="col2a1" class="section level3 unnumbered">
+<h3>COL2A1</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;COL2A1&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-COL2A1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="col9a3" class="section level3 unnumbered">
+<h3>COL9A3</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;COL9A3&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-COL9A3-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="podxl" class="section level3 unnumbered">
+<h3>PODXL</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;PODXL&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-PODXL-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="nphs2" class="section level3 unnumbered">
+<h3>NPHS2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;NPHS2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-NPHS2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tcf21" class="section level3 unnumbered">
+<h3>TCF21</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;TCF21&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-TCF21-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hist1h4c" class="section level3 unnumbered">
+<h3>HIST1H4C</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;HIST1H4C&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-HIST1H4C-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pclaf" class="section level3 unnumbered">
+<h3>PCLAF</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;PCLAF&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-PCLAF-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cenpf" class="section level3 unnumbered">
+<h3>CENPF</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;CENPF&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-CENPF-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hmgb2" class="section level3 unnumbered">
+<h3>HMGB2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;HMGB2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-HMGB2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cldn5" class="section level3 unnumbered">
+<h3>CLDN5</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;CLDN5&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-CLDN5-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pecam1" class="section level3 unnumbered">
+<h3>PECAM1</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;PECAM1&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-PECAM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="kdr" class="section level3 unnumbered">
+<h3>KDR</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;KDR&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-KDR-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="calm1" class="section level3 unnumbered">
+<h3>CALM1</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;CALM1&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-CALM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ttyh1" class="section level3 unnumbered">
+<h3>TTYH1</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;TTYH1&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-TTYH1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sox2" class="section level3 unnumbered">
+<h3>SOX2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;SOX2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-SOX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hes6" class="section level3 unnumbered">
+<h3>HES6</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;HES6&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-HES6-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="stmn2" class="section level3 unnumbered">
+<h3>STMN2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;STMN2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-STMN2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pax2" class="section level3 unnumbered">
+<h3>PAX2</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;PAX2&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-PAX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pax8" class="section level3 unnumbered">
+<h3>PAX8</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;PAX8&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-PAX8-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="krt19" class="section level3 unnumbered">
+<h3>KRT19</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;KRT19&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-KRT19-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="myog" class="section level3 unnumbered">
+<h3>MYOG</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;MYOG&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-MYOG-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="myod1" class="section level3 unnumbered">
+<h3>MYOD1</h3>
+<pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges,
+clust_thresh = con_thresh, cell_embedding, cell_edges,
+        cell_thresh = 0.1, colour = &#39;MYOD1&#39;)</code></pre>
+<p><img src="figure/05-paga.Rmd/compare-MYOD1-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<div id="parameters" class="section level2">
+<h2>Parameters</h2>
+<p>This table describes parameters used and set in this document.</p>
+<pre class="r"><code>params &lt;- list(
+    list(
+        Parameter = &quot;col_thresh&quot;,
+        Value = con_thresh,
+        Description = &quot;Connectivity threshold for PAGA graph&quot;
+    )
+)
+
+names(params) &lt;- map_chr(params, magrittr::extract2, &quot;Parameter&quot;)
+metadata(sce)$Params[[DOCNAME]] &lt;- params
+
+names(params) &lt;- NULL
+params &lt;- jsonlite::toJSON(params, pretty = TRUE)
+knitr::kable(jsonlite::fromJSON(params))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">col_thresh</td>
+<td align="left">0.7</td>
+<td align="left">Connectivity threshold for PAGA graph</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="output-files" class="section level2">
+<h2>Output files</h2>
+<p>This table describes the output files produced by this document. Right click and <em>Save Link As…</em> to download the results.</p>
+<pre class="r"><code>dir.create(here::here(&quot;output&quot;, DOCNAME), showWarnings = FALSE)
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink(&quot;parameters.json&quot;, DOCNAME),
+        getDownloadLink(&quot;cluster_embedding.csv&quot;, DOCNAME),
+        getDownloadLink(&quot;cluster_edges.csv&quot;, DOCNAME),
+        getDownloadLink(&quot;cluster_tree_edges.csv&quot;, DOCNAME),
+        getDownloadLink(&quot;cell_embedding.csv&quot;, DOCNAME),
+        getDownloadLink(&quot;cell_edges.csv&quot;, DOCNAME)
+    ),
+    Description = c(
+        &quot;Parameters set and used in this analysis&quot;,
+        &quot;Embedding for clusters from PAGA&quot;,
+        &quot;Edges for PAGA cluster graph&quot;,
+        &quot;Tree edges for PAGA cluster graph&quot;,
+        &quot;Embedding for cells from PAGA&quot;,
+        &quot;Edges for cell graph&quot;
+    )
+))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/05-paga/parameters.json">parameters.json</a></td>
+<td align="left">Parameters set and used in this analysis</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/05-paga/cluster_embedding.csv">cluster_embedding.csv</a></td>
+<td align="left">Embedding for clusters from PAGA</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/05-paga/cluster_edges.csv">cluster_edges.csv</a></td>
+<td align="left">Edges for PAGA cluster graph</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/05-paga/cluster_tree_edges.csv">cluster_tree_edges.csv</a></td>
+<td align="left">Tree edges for PAGA cluster graph</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/05-paga/cell_embedding.csv">cell_embedding.csv</a></td>
+<td align="left">Embedding for cells from PAGA</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/05-paga/cell_edges.csv">cell_edges.csv</a></td>
+<td align="left">Edges for cell graph</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>─ Session info ──────────────────────────────────────────────────────────
+ setting  value                       
+ version  R version 3.5.0 (2018-04-23)
+ os       CentOS release 6.7 (Final)  
+ system   x86_64, linux-gnu           
+ ui       X11                         
+ language (EN)                        
+ collate  en_US.UTF-8                 
+ ctype    en_US.UTF-8                 
+ tz       Australia/Melbourne         
+ date     2019-02-10                  
+
+─ Packages ──────────────────────────────────────────────────────────────
+ ! package              * version   date       lib source        
+   assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
+   backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
+   bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
+   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
+   BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
+   BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
+   bitops                 1.0-6     2013-08-17 [1] CRAN (R 3.5.0)
+   broom                  0.5.1     2018-12-05 [1] CRAN (R 3.5.0)
+   callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
+   cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
+   cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
+   colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
+   crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
+   DelayedArray         * 0.8.0     2018-10-30 [1] Bioconductor  
+   desc                   1.2.0     2018-05-01 [1] CRAN (R 3.5.0)
+   devtools               2.0.1     2018-10-26 [1] CRAN (R 3.5.0)
+   digest                 0.6.18    2018-10-10 [1] CRAN (R 3.5.0)
+   dplyr                * 0.7.8     2018-11-10 [1] CRAN (R 3.5.0)
+   evaluate               0.12      2018-10-09 [1] CRAN (R 3.5.0)
+   forcats              * 0.3.0     2018-02-19 [1] CRAN (R 3.5.0)
+   fs                     1.2.6     2018-08-23 [1] CRAN (R 3.5.0)
+   generics               0.0.2     2018-11-29 [1] CRAN (R 3.5.0)
+   GenomeInfoDb         * 1.18.1    2018-11-12 [1] Bioconductor  
+   GenomeInfoDbData       1.2.0     2019-01-15 [1] Bioconductor  
+   GenomicRanges        * 1.34.0    2018-10-30 [1] Bioconductor  
+   ggplot2              * 3.1.0     2018-10-25 [1] CRAN (R 3.5.0)
+   git2r                  0.24.0    2019-01-07 [1] CRAN (R 3.5.0)
+   glue                   1.3.0     2018-07-17 [1] CRAN (R 3.5.0)
+   gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
+   haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
+   here                   0.1       2017-05-28 [1] CRAN (R 3.5.0)
+   hms                    0.4.2     2018-03-10 [1] CRAN (R 3.5.0)
+   htmltools              0.3.6     2017-04-28 [1] CRAN (R 3.5.0)
+   httr                   1.4.0     2018-12-11 [1] CRAN (R 3.5.0)
+   IRanges              * 2.16.0    2018-10-30 [1] Bioconductor  
+   jsonlite               1.6       2018-12-07 [1] CRAN (R 3.5.0)
+   knitr                * 1.21      2018-12-10 [1] CRAN (R 3.5.0)
+ P lattice                0.20-35   2017-03-25 [5] CRAN (R 3.5.0)
+   lazyeval               0.2.1     2017-10-29 [1] CRAN (R 3.5.0)
+   lubridate              1.7.4     2018-04-11 [1] CRAN (R 3.5.0)
+   magrittr               1.5       2014-11-22 [1] CRAN (R 3.5.0)
+ P Matrix                 1.2-14    2018-04-09 [5] CRAN (R 3.5.0)
+   matrixStats          * 0.54.0    2018-07-23 [1] CRAN (R 3.5.0)
+   memoise                1.1.0     2017-04-21 [1] CRAN (R 3.5.0)
+   modelr                 0.1.3     2019-02-05 [1] CRAN (R 3.5.0)
+   munsell                0.5.0     2018-06-12 [1] CRAN (R 3.5.0)
+ P nlme                   3.1-137   2018-04-07 [5] CRAN (R 3.5.0)
+   pillar                 1.3.1     2018-12-15 [1] CRAN (R 3.5.0)
+   pkgbuild               1.0.2     2018-10-16 [1] CRAN (R 3.5.0)
+   pkgconfig              2.0.2     2018-08-16 [1] CRAN (R 3.5.0)
+   pkgload                1.0.2     2018-10-29 [1] CRAN (R 3.5.0)
+   plyr                   1.8.4     2016-06-08 [1] CRAN (R 3.5.0)
+   prettyunits            1.0.2     2015-07-13 [1] CRAN (R 3.5.0)
+   processx             * 3.2.1     2018-12-05 [1] CRAN (R 3.5.0)
+   ps                     1.3.0     2018-12-21 [1] CRAN (R 3.5.0)
+   purrr                * 0.3.0     2019-01-27 [1] CRAN (R 3.5.0)
+   R.methodsS3            1.7.1     2016-02-16 [1] CRAN (R 3.5.0)
+   R.oo                   1.22.0    2018-04-22 [1] CRAN (R 3.5.0)
+   R.utils                2.7.0     2018-08-27 [1] CRAN (R 3.5.0)
+   R6                     2.3.0     2018-10-04 [1] CRAN (R 3.5.0)
+   Rcpp                   1.0.0     2018-11-07 [1] CRAN (R 3.5.0)
+   RCurl                  1.95-4.11 2018-07-15 [1] CRAN (R 3.5.0)
+   readr                * 1.3.1     2018-12-21 [1] CRAN (R 3.5.0)
+   readxl                 1.2.0     2018-12-19 [1] CRAN (R 3.5.0)
+   remotes                2.0.2     2018-10-30 [1] CRAN (R 3.5.0)
+   rlang                  0.3.1     2019-01-08 [1] CRAN (R 3.5.0)
+   rmarkdown              1.11      2018-12-08 [1] CRAN (R 3.5.0)
+   rprojroot              1.3-2     2018-01-03 [1] CRAN (R 3.5.0)
+   rstudioapi             0.9.0     2019-01-09 [1] CRAN (R 3.5.0)
+   rvest                  0.3.2     2016-06-17 [1] CRAN (R 3.5.0)
+   S4Vectors            * 0.20.1    2018-11-09 [1] Bioconductor  
+   scales                 1.0.0     2018-08-09 [1] CRAN (R 3.5.0)
+   sessioninfo            1.1.1     2018-11-05 [1] CRAN (R 3.5.0)
+   SingleCellExperiment * 1.4.1     2019-01-04 [1] Bioconductor  
+   stringi                1.2.4     2018-07-20 [1] CRAN (R 3.5.0)
+   stringr              * 1.3.1     2018-05-10 [1] CRAN (R 3.5.0)
+   SummarizedExperiment * 1.12.0    2018-10-30 [1] Bioconductor  
+   testthat               2.0.0     2017-12-13 [5] CRAN (R 3.5.0)
+   tibble               * 2.0.1     2019-01-12 [1] CRAN (R 3.5.0)
+   tidyr                * 0.8.2     2018-10-28 [1] CRAN (R 3.5.0)
+   tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
+   tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
+   usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
+   whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
+   withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)
+   workflowr              1.1.1     2018-07-06 [1] CRAN (R 3.5.0)
+   xfun                   0.4       2018-10-23 [1] CRAN (R 3.5.0)
+   xml2                   1.2.0     2018-01-24 [1] CRAN (R 3.5.0)
+   XVector                0.22.0    2018-10-30 [1] Bioconductor  
+   yaml                   2.2.0     2018-07-25 [1] CRAN (R 3.5.0)
+   zlibbioc               1.28.0    2018-10-30 [1] Bioconductor  
+
+[1] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib/x86_64-pc-linux-gnu/3.5.0
+[2] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-ext/x86_64-pc-linux-gnu/3.5.0
+[3] /group/bioi1/luke/analysis/phd-thesis-analysis/packrat/lib-R/x86_64-pc-linux-gnu/3.5.0
+[4] /home/luke.zappia/R/x86_64-pc-linux-gnu-library/3.5
+[5] /usr/local/installed/R/3.5.0/lib64/R/library
+
+ P ── Loaded and on-disk path mismatch.</code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
