@@ -1,0 +1,238 @@
+---
+title: "Velocyto"
+---
+
+```{r knitr, include = FALSE}
+DOCNAME = "06-velocyto"
+NOW <- Sys.time()
+
+# Time chunks during knitting
+knitr::knit_hooks$set(timeit = function(before) {
+    if (before) {
+        print(paste("Start:", Sys.time()))
+        NOW <<- Sys.time()
+    } else {
+        print(paste("Stop:", Sys.time()))
+        print(Sys.time() - NOW)
+    }
+})
+
+knitr::opts_chunk$set(
+    autodep        = TRUE,
+    cache          = TRUE,
+    cache.path     = paste0("cache/", DOCNAME, "/"),
+    cache.comments = FALSE,
+    echo           = TRUE,
+    error          = FALSE,
+    fig.align      = "center",
+    fig.width      = 10,
+    fig.height     = 8,
+    message        = FALSE,
+    warning        = FALSE,
+    timeit         = TRUE
+)
+```
+
+```{r libaries, cache = FALSE}
+# scRNA-seq
+library("SingleCellExperiment")
+library("velocyto.R")
+
+# Tidyverse
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here::here("R/output.R"))
+```
+
+```{r depends-paths}
+clust_path <- here::here("data/processed/03-clustered.Rds")
+loom1_path <- here::here("data/velocyto/Org1.loom")
+loom2_path <- here::here("data/velocyto/Org2.loom")
+loom3_path <- here::here("data/velocyto/Org3.loom")
+loom_paths <- c(loom1_path, loom2_path, loom3_path)
+```
+
+```{r bpparam, cache = FALSE}
+
+```
+
+Introduction
+============
+
+In this document we are to perform cell velocity analysis using velocyto. This
+approach look at the number of spliced and unspliced reads from each gene and
+attempts to identify which are being actively transcribed and therefore the
+direction each cell is differentiating towards.
+
+```{r load-sce, cache.extra = tools::md5sum(clust_path)}
+if (file.exists(clust_path)) {
+    sce <- read_rds(clust_path)
+} else {
+    stop("Clustered dataset is missing. ",
+         "Please run '03-clustering.Rmd' first.",
+         call. = FALSE)
+}
+
+warning("New clustered dataset loaded, check Loom files are up to date!")
+```
+
+The first step in using velocyto is to process the aligned BAM files to
+separately count spliced and unspliced reads. This is done using a command line
+program and can take a relatively long time so here we start by reading in
+those results.
+
+```{r load-velocyto, cache.extra = tools::md5sum(loom_paths), results = "hide"}
+org1 <- read.loom.matrices(loom1_path)
+org2 <- read.loom.matrices(loom2_path)
+org3 <- read.loom.matrices(loom3_path)
+
+spliced <- cbind(org1$spliced, org2$spliced, org3$spliced)
+unspliced <- cbind(org1$unspliced, org2$unspliced, org3$unspliced)
+
+cell_idx <- colData(sce)$Cell
+names(cell_idx) <- paste0(
+    "Org", colData(sce)$Sample, ":", colData(sce)$Barcode, "x"
+)
+
+colnames(spliced) <- unname(cell_idx[colnames(spliced)])
+spliced <- spliced[intersect(rownames(sce), rownames(spliced)), colnames(sce)]
+
+colnames(unspliced) <- unname(cell_idx[colnames(unspliced)])
+unspliced <- unspliced[intersect(rownames(sce), rownames(unspliced)),
+                       colnames(sce)]
+```
+
+Velocyto
+========
+
+We now run velocyto to calclate velocities for each cell. We also project these
+results onto our previous dimensionality reductions for visualisation.
+
+```{r velocyto, results = "hide", fig.show = "hide"}
+spliced <- filter.genes.by.cluster.expression(
+    spliced, colData(sce)$Cluster,
+    min.max.cluster.average = 0.2
+)
+
+unspliced <- filter.genes.by.cluster.expression(
+    unspliced, colData(sce)$Cluster,
+    min.max.cluster.average = 0.05
+)
+
+velocity <- gene.relative.velocity.estimates(
+    spliced, unspliced,
+    deltaT       = 1,
+    kCells       = 30,
+    fit.quantile = 0.02,
+    n.cores      = 10
+)
+
+vel_embedding <- show.velocity.on.embedding.cor(
+    reducedDim(sce, "SeuratTSNE"), velocity,
+    n.cores = 10, show.grid.flow = TRUE, return.details = TRUE
+)
+```
+
+By cell
+-------
+
+This plot shows the velocity of individual cells. The direction of each arrow
+indicates where each cell is headed in this space based on the genes that are
+being actively transcribed and the length is an indication of rate.
+
+```{r velo-tsne}
+plot_data <- reducedDim(sce, "SeuratTSNE") %>%
+    as.data.frame() %>%
+    mutate(X0 = vel_embedding$arrows[, "x0"],
+           X1 = vel_embedding$arrows[, "x1"],
+           Y0 = vel_embedding$arrows[, "y0"],
+           Y1 = vel_embedding$arrows[, "y1"]) %>%
+    mutate(X2 = X0 + (X1 - X0) * 4,
+           Y2 = Y0 + (Y1 - Y0) * 4) %>%
+    mutate(Cluster = colData(sce)$Cluster)
+
+ggplot(plot_data) +
+    geom_point(aes(x = tSNE_1, y = tSNE_2, colour = Cluster)) +
+    geom_segment(aes(x = X0, xend = X2, y = Y0, yend = Y2),
+                 arrow = arrow(length = unit(3, "points"), type = "closed"),
+                 colour = "grey20", alpha = 0.8) +
+    theme_minimal()
+```
+
+Vector field
+------------
+
+It can be hard to see all the arrows for individual cells and noise in the data
+can make similar cells appear to be heading in different directions. Here we
+summarise the data by building a grid field of vectors that show the average
+velocity of nearby cells. This gives us a global view of the transcriptional
+direction of of the dataset.
+
+```{r velo-tsne-field}
+field_arrows <- vel_embedding$garrows %>%
+    as.data.frame() %>%
+    mutate(x2 = x0 + (x1 - x0) * 10,
+           y2 = y0 + (y1 - y0) * 10)
+
+ggplot(plot_data) +
+    geom_point(aes(x = tSNE_1, y = tSNE_2, colour = Cluster)) +
+    geom_segment(data = field_arrows,
+                 aes(x = x0, xend = x2, y = y0, yend = y2),
+                 size = 1,
+                 arrow = arrow(length = unit(4, "points"), type = "closed"),
+                 colour = "grey20", alpha = 0.8) +
+    theme_minimal()
+```
+
+Summary
+=======
+
+Parameters
+----------
+
+This table describes parameters used and set in this document.
+
+```{r parameters, cache.lazy = FALSE}
+params <- list(
+
+)
+
+names(params) <- map_chr(params, magrittr::extract2, "Parameter")
+metadata(sce)$Params[[DOCNAME]] <- params
+
+names(params) <- NULL
+params <- jsonlite::toJSON(params, pretty = TRUE)
+knitr::kable(jsonlite::fromJSON(params))
+```
+
+Output files
+------------
+
+This table describes the output files produced by this document. Right click
+and _Save Link As..._ to download the results.
+
+```{r save}
+
+```
+
+```{r output}
+dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+knitr::kable(data.frame(
+    File = c(
+        getDownloadLink("parameters.json", DOCNAME)
+    ),
+    Description = c(
+        "Parameters set and used in this analysis"
+    )
+))
+```
+
+Session information
+-------------------
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```

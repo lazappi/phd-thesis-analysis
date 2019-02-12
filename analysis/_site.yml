@@ -19,6 +19,8 @@ navbar:
           href: 04-marker-genes.html
         - text: "PAGA"
           href: 05-paga.html
+        - text: "Velocyto"
+          href: 06-velocyto.html
     - text: "About"
       href: about.html
     - text: "License"

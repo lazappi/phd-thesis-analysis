@@ -14,3 +14,4 @@ Analysis steps:
 * [Clustering](03-clustering.html)
 * [Marker genes](04-marker-genes.html)
 * [PAGA](05-paga.html)
+* [Velocyto](06-velocyto.html)

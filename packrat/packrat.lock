@@ -242,6 +242,12 @@ Version: 0.0.11
 Hash: 716ce8ce0dd65a2dfbafa76e97699726
 Requires: Rcpp
 
+Package: RcppArmadillo
+Source: CRAN
+Version: 0.9.200.7.0
+Hash: be02b115c7581081e478e56965770d45
+Requires: Rcpp
+
 Package: RcppEigen
 Source: CRAN
 Version: 0.3.3.5.0
@@ -1124,6 +1130,12 @@ Version: 0.4-7
 Hash: f195c3a0f527f69c491569c5cbaaf1db
 Requires: lme4
 
+Package: pcaMethods
+Source: Bioconductor
+Version: 1.74.0
+Hash: 19b2b01112a441e735b36457e939f15a
+Requires: Biobase, BiocGenerics, Rcpp
+
 Package: pcaPP
 Source: CRAN
 Version: 1.9-73
@@ -1563,6 +1575,21 @@ Source: CRAN
 Version: 1.4-4
 Hash: ea8b7b33aafb108ced1c4ae71da8deda
 Requires: colorspace, lmtest
+
+Package: velocyto.R
+Source: github
+Version: 0.6
+Hash: 81455279cd32b90de363d4b09caf5693
+Requires: Rcpp, RcppArmadillo, abind, hdf5r, igraph, pcaMethods
+GithubRepo: velocyto.R
+GithubUsername: velocyto-team
+GithubRef: master
+GithubSha1: 666e1db1a6bebf042114eb9eb4c58f54cb002d45
+RemoteHost: api.github.com
+RemoteRepo: velocyto.R
+RemoteUsername: velocyto-team
+RemoteRef: master
+RemoteSha: 666e1db1a6bebf042114eb9eb4c58f54cb002d45
 
 Package: vipor
 Source: CRAN
