@@ -64,6 +64,11 @@ paga_path <- here::here("scripts/paga.py")
 Introduction
 ============
 
+In this document we are going to explore the relationship between our clusters
+using partition-based graph abstraction (PAGA). PAGA builds a graph where each
+node is a cluster and the edges represent connectivity between clusters. This
+can give us an overview of the dataset and the relationships between cell types.
+
 ```{r load-sce, cache.extra = tools::md5sum(clust_path)}
 if (file.exists(clust_path)) {
     sce <- read_rds(clust_path)
@@ -77,11 +82,16 @@ if (file.exists(clust_path)) {
 PAGA
 ====
 
+PAGA is available as part of the `scanpy` Pyhon package. The PAGA analysis is
+performed using the following Python script.
+
 ```{r paga, comment = "", cache.extra = c(tools::md5sum(paga_path), tools::md5sum(clust_path))}
 cat(readLines(paga_path), sep = "\n")
 
 paga_out <- run(here::here("scripts/run_paga.sh"))
 ```
+
+We then load the PAGA results and visualise them here.
 
 ```{r load-paga}
 clust_embedding <- read_csv(
@@ -136,6 +146,11 @@ cell_edges <- read_csv(
 Cluster graph
 =============
 
+The PAGA graph shows the relationship between clusters. Here we have use a
+force directed graph layout in order to visualise it. PAGA calculates the
+connectivity between each pair of clusters but we need to apply some threshold
+to that to select the meaningful edges.
+
 Thresholds {.tabset}
 ----------
 
@@ -159,6 +174,8 @@ out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
 Edges by threshold
 ------------------
 
+Number of selected edges for different threshold connectivities.
+
 ```{r thresh-edges}
 plot_data <- tibble(
     Threshold = seq(0, 1, 0.01)
@@ -178,8 +195,13 @@ ggplot(plot_data, aes(x = Threshold, y = Edges)) +
     theme_minimal()
 ```
 
+Here we have selected a connectivity threshold of `r con_thresh`.
+
 Cell graph
 ==========
+
+The cluster graph can be used as a starting point to layout individual cells,
+allowing us to see things at a higher resolution.
 
 ```{r cell-paga}
 plotPAGACellGraph(cell_embedding, cell_edges, thresh = 0.1)
@@ -187,6 +209,8 @@ plotPAGACellGraph(cell_embedding, cell_edges, thresh = 0.1)
 
 Compare
 =======
+
+Looking the two views together let's us see both global and specific details.
 
 ```{r compare-paga}
 plotPAGACompare(clust_embedding, clust_edges, clust_thresh = con_thresh,

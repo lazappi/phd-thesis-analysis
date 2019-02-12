@@ -417,6 +417,9 @@ div.tocify {
     <li>
       <a href="05-paga.html">PAGA</a>
     </li>
+    <li>
+      <a href="06-velocyto.html">Velocyto</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -462,7 +465,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-10</p>
+<p><strong>Last updated:</strong> 2019-02-12</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -486,7 +489,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/6861a898260b3deb3acd28406ab824a7a506e720" target="_blank">6861a89</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/db1d45fa65854b18eb2f7e389409195bb2142eec" target="_blank">db1d45f</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -499,6 +502,7 @@ Ignored files:
     Ignored:    data/
     Ignored:    output/03-clustering/selected_genes.csv.zip
     Ignored:    output/04-marker-genes/de_genes.csv.zip
+    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -538,7 +542,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/6861a898260b3deb3acd28406ab824a7a506e720/analysis/05-paga.Rmd" target="_blank">6861a89</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/db1d45fa65854b18eb2f7e389409195bb2142eec/analysis/05-paga.Rmd" target="_blank">db1d45f</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-12
+</td>
+<td style="text-align:left;">
+Add PAGA text
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/ee99ad19f6a92e8a11b91bcfa1a7adc4fccb2c94/docs/05-paga.html" target="_blank">ee99ad1</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -572,6 +593,7 @@ source(here::here(&quot;R/plotting.R&quot;))</code></pre>
 paga_path &lt;- here::here(&quot;scripts/paga.py&quot;)</code></pre>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
+<p>In this document we are going to explore the relationship between our clusters using partition-based graph abstraction (PAGA). PAGA builds a graph where each node is a cluster and the edges represent connectivity between clusters. This can give us an overview of the dataset and the relationships between cell types.</p>
 <pre class="r"><code>if (file.exists(clust_path)) {
     sce &lt;- read_rds(clust_path)
 } else {
@@ -582,6 +604,7 @@ paga_path &lt;- here::here(&quot;scripts/paga.py&quot;)</code></pre>
 </div>
 <div id="paga" class="section level1">
 <h1>PAGA</h1>
+<p>PAGA is available as part of the <code>scanpy</code> Pyhon package. The PAGA analysis is performed using the following Python script.</p>
 <pre class="r"><code>cat(readLines(paga_path), sep = &quot;\n&quot;)</code></pre>
 <pre><code>#!/usr/bin/env python3
 
@@ -717,6 +740,7 @@ cell_embedding.to_csv(os.path.join(out_dir, &#39;cell_embedding.csv&#39;),
 
 print(&#39;Done!&#39;)</code></pre>
 <pre class="r"><code>paga_out &lt;- run(here::here(&quot;scripts/run_paga.sh&quot;))</code></pre>
+<p>We then load the PAGA results and visualise them here.</p>
 <pre class="r"><code>clust_embedding &lt;- read_csv(
     here::here(&quot;output/05-paga/cluster_embedding.csv&quot;),
     col_types = cols(
@@ -767,6 +791,7 @@ cell_edges &lt;- read_csv(
 </div>
 <div id="cluster-graph" class="section level1">
 <h1>Cluster graph</h1>
+<p>The PAGA graph shows the relationship between clusters. Here we have use a force directed graph layout in order to visualise it. PAGA calculates the connectivity between each pair of clusters but we need to apply some threshold to that to select the meaningful edges.</p>
 <div id="thresholds" class="section level2 tabset">
 <h2>Thresholds</h2>
 <pre class="r"><code>src_list &lt;- lapply(seq(0, 0.9, 0.1), function(thresh) {
@@ -834,6 +859,7 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 </div>
 <div id="edges-by-threshold" class="section level2">
 <h2>Edges by threshold</h2>
+<p>Number of selected edges for different threshold connectivities.</p>
 <pre class="r"><code>plot_data &lt;- tibble(
     Threshold = seq(0, 1, 0.01)
 ) %&gt;%
@@ -851,15 +877,18 @@ ggplot(plot_data, aes(x = Threshold, y = Edges)) +
     ylab(&quot;Number of edges&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/05-paga.Rmd/thresh-edges-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>Here we have selected a connectivity threshold of 0.7.</p>
 </div>
 </div>
 <div id="cell-graph" class="section level1">
 <h1>Cell graph</h1>
+<p>The cluster graph can be used as a starting point to layout individual cells, allowing us to see things at a higher resolution.</p>
 <pre class="r"><code>plotPAGACellGraph(cell_embedding, cell_edges, thresh = 0.1)</code></pre>
 <p><img src="figure/05-paga.Rmd/cell-paga-1.png" width="960" style="display: block; margin: auto;" /></p>
 </div>
 <div id="compare" class="section level1">
 <h1>Compare</h1>
+<p>Looking the two views together let’s us see both global and specific details.</p>
 <pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges, clust_thresh = con_thresh,
                 cell_embedding, cell_edges, cell_thresh = 0.1)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-paga-1.png" width="960" style="display: block; margin: auto;" /></p>
@@ -1205,7 +1234,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-10                  
+ date     2019-02-12                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
