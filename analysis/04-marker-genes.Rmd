@@ -198,7 +198,7 @@ names(de_list) <- paste("Cluster", 0:(n_clusts - 1))
 
 markers_list <- lapply(de_list, function(de) {
     de %>%
-        filter(PValue < 0.05, logFC > 1) %>%
+        filter(FDR < 0.05, logFC > 1) %>%
         select(Name, logFC, PValue, FDR)
 })
 ```
@@ -258,6 +258,7 @@ Summary
 ```{r de-summary}
 plot_data <- de_list %>%
     bind_rows() %>%
+    filter(FDR < 0.05) %>%
     mutate(IsUp = logFC > 0) %>%
     group_by(Cluster) %>%
     summarise(Up = sum(IsUp), Down = sum(!IsUp)) %>%
@@ -274,6 +275,7 @@ ggplot(plot_data,
     coord_flip() +
     scale_fill_manual(values = c("#377eb8", "#e41a1c")) +
     ggtitle("Number of identified genes") +
+    theme_minimal() +
     theme(axis.title = element_blank(),
           axis.line = element_blank(),
           axis.ticks = element_blank(),
@@ -406,6 +408,27 @@ ggplot(plot_data,
 
 Summary
 =======
+
+Based on the detected markers we will assign the following cell types to the
+clusters.
+
+```{r assignment}
+tribble(
+    ~Cluster,         ~Assignment,
+         "0",            "Stroma",
+         "1",            "Stroma",
+         "2",        "Cell cycle",
+         "3",       "Endothelium",
+         "4",          "Podocyte",
+         "5",            "Stroma",
+         "6",         "Stroma???",
+         "7",       "Endothelium",
+         "8",             "Glial",
+         "9",        "Epithelium",
+        "10", "Muscle progenitor",
+        "11",  "Neural progenitor"
+)
+```
 
 Parameters
 ----------
