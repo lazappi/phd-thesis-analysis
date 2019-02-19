@@ -38,6 +38,9 @@ knitr::opts_chunk$set(
 library("DropletUtils")
 library("SingleCellExperiment")
 
+# Plotting
+library("cowplot")
+
 # Tidyverse
 library("tidyverse")
 ```
@@ -285,6 +288,73 @@ glimpse(as.data.frame(colData(selected)))
 glimpse(as.data.frame(rowData(selected)))
 ```
 
+Figure
+======
+
+```{r figure}
+bc_plot <- bc_data %>%
+    filter(Total > 0) %>%
+    ggplot(aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    geom_line(aes(y = Fitted), colour = "#00B7C6", size = 1) +
+    geom_hline(yintercept = bc_ranks$knee,
+               colour = "#00ADEF", linetype = "dashed") +
+    annotate("text", x = 0, y = bc_ranks$knee, label = "Knee",
+             colour = "#00ADEF", hjust = 0, vjust = -1) +
+    geom_hline(yintercept = bc_ranks$inflection,
+               colour = "#8DC63F", linetype = "dashed") +
+    annotate("text", x = 0, y = bc_ranks$inflection, label = "Inflection",
+             colour = "#8DC63F", hjust = 0, vjust = -1) +
+    geom_hline(yintercept = empty_thresh,
+               colour = "#7A52C7", linetype = "dashed") +
+    annotate("text", x = 0, y = empty_thresh, label = "Empty threshold",
+             colour = "#7A52C7", hjust = 0, vjust = -1) +
+    scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
+    scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
+    scale_colour_manual(values = c("black", "#EC008C"),
+                        labels = c("Empty", "Cell"),
+                        name = "Cell Ranger") +
+    ggtitle("Cell Ranger droplet selection") +
+    ylab("Total counts") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+
+plot_data <- colData(raw) %>%
+    as.data.frame() %>%
+    mutate(`Cell Ranger only` =  CellRangerFilt & !EmpDropsFilt,
+           `emptyDrops only`  = !CellRangerFilt &  EmpDropsFilt,
+           Both               =  CellRangerFilt &  EmpDropsFilt) %>%
+    group_by(Sample) %>%
+    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
+              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
+              Both               = sum(Both, na.rm = TRUE)) %>%
+    gather(key = Selected, value = Count, -Sample) %>%
+    mutate(Selected = factor(Selected,
+                             levels = c("Both", "Cell Ranger only",
+                                        "emptyDrops only")))
+
+comp_plot <- ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
+    geom_col() +
+    scale_fill_manual(values = c("#EC008C", "#00ADEF", "#8DC63F"),
+                      name = "Organoid") +
+    ggtitle("Comparison of droplet selection methods") +
+    ylab("Number of cells") +
+    theme_minimal() +
+    theme(axis.title.x = element_blank(),
+          panel.grid.major.x = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.position = "bottom")
+
+fig <- plot_grid(bc_plot, comp_plot, nrow = 1, labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "droplet-selection.pdf"), fig,
+       width = 8, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "droplet-selection.png"), fig,
+       width = 8, height = 4, scale = 2)
+
+fig
+```
+
 Summary
 =======
 
@@ -360,13 +430,17 @@ knitr::kable(data.frame(
         getDownloadLink("parameters.json", DOCNAME),
         getDownloadLink("barcodes_Org1.tsv", DOCNAME),
         getDownloadLink("barcodes_Org2.tsv", DOCNAME),
-        getDownloadLink("barcodes_Org3.tsv", DOCNAME)
+        getDownloadLink("barcodes_Org3.tsv", DOCNAME),
+        getDownloadLink("droplet-selection.png", DOCNAME),
+        getDownloadLink("droplet-selection.pdf", DOCNAME)
     ),
     Description = c(
         "Parameters set and used in this analysis",
         "Selected barcodes for organoid 1",
         "Selected barcodes for organoid 2",
-        "Selected barcodes for organoid 3"
+        "Selected barcodes for organoid 3",
+        "Droplet selection figure (PNG)",
+        "Droplet selection figure (PDF)"
     )
 ))
 ```
