@@ -465,7 +465,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-19</p>
+<p><strong>Last updated:</strong> 2019-02-20</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -489,7 +489,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/2ccb12e780297ff0f6089465a75ee1bf33f9d60a" target="_blank">2ccb12e</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/edc3720c9eb9c094ddce926f2396b70c2a6d8058" target="_blank">edc3720</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -511,7 +511,15 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/01-preprocessing/droplet-selection.pdf
+    Untracked:  output/01-preprocessing/selection-comparison.pdf
+
+Unstaged changes:
+    Modified:   output/01-preprocessing/barcodes_Org1.tsv
+    Modified:   output/01-preprocessing/barcodes_Org2.tsv
+    Modified:   output/01-preprocessing/barcodes_Org3.tsv
+    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   scripts/build.pbs
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -545,7 +553,41 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/2ccb12e780297ff0f6089465a75ee1bf33f9d60a/analysis/01-preprocessing.Rmd" target="_blank">2ccb12e</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/edc3720c9eb9c094ddce926f2396b70c2a6d8058/analysis/01-preprocessing.Rmd" target="_blank">edc3720</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-20
+</td>
+<td style="text-align:left;">
+Add default Cell Ranger and update figures
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/431c1803e388fbe3713f1b7db56c80eaab012f80/analysis/01-preprocessing.Rmd" target="_blank">431c180</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-19
+</td>
+<td style="text-align:left;">
+Add droplet selection figure
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/431c1803e388fbe3713f1b7db56c80eaab012f80/docs/01-preprocessing.html" target="_blank">431c180</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -687,6 +729,8 @@ library(&quot;SingleCellExperiment&quot;)
 
 # Plotting
 library(&quot;cowplot&quot;)
+library(&quot;UpSetR&quot;)
+library(&quot;grid&quot;)
 
 # Tidyverse
 library(&quot;tidyverse&quot;)</code></pre>
@@ -706,6 +750,8 @@ colData(raw)$CellRangerFilt &lt;- paste(colData(raw)$Barcode,
                                      colData(raw)$Sample, sep = &quot;-&quot;) %in%
     filt_barcodes</code></pre>
 <p>The raw dataset has 33538 features and 2211840 droplets.</p>
+<pre class="r"><code>raw &lt;- raw[Matrix::rowSums(counts(raw)) &gt; 0, Matrix::colSums(counts(raw)) &gt; 0]</code></pre>
+<p>After removing all zero features and droplets the dataset has 25020 features and 945038 droplets.</p>
 </div>
 <div id="barcode-ranks" class="section level1">
 <h1>Barcode ranks</h1>
@@ -776,6 +822,32 @@ Luke Zappia
 <p></details></p>
 <p>This is typical of what we see for 10x experiment where there is a sharp drop off between droplets with lots of counts and those without many. The inflection and knee points are methods for identifying the transition between distributions. These are roughly associated with the cells selected by <code>Cell Ranger</code> The empty threshold line indicates the point at which we assume droplets must be empty (total counts &lt;= 100).</p>
 </div>
+<div id="traditional-cell-ranger" class="section level1">
+<h1>Traditional Cell Ranger</h1>
+<p>The version of Cell Ranger we have used here selects cells using a modified version of the <code>emptyDrops</code> method (see below) but older versions used an alternative approach by calculating the 99th percentile of the total number of counts in top given expected number of cells and selecting droplets that had at least 10 percent of this many counts. For comparison purposes we will perform this method as well.</p>
+<pre class="r"><code>default1 &lt;- defaultDrops(counts(raw[, colData(raw)$Sample == 1]))
+default2 &lt;- defaultDrops(counts(raw[, colData(raw)$Sample == 2]))
+default3 &lt;- defaultDrops(counts(raw[, colData(raw)$Sample == 3]))
+colData(raw)$DefaultFilt &lt;- c(default1, default2, default3)
+
+plot_data &lt;- colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %&gt;%
+    group_by(Sample) %&gt;%
+    mutate(Rank = rank(-Total)) %&gt;%
+    arrange(Sample, Rank)
+
+ggplot(plot_data, aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c(&quot;black&quot;, &quot;forestgreen&quot;)) +
+    facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
+    ylab(&quot;Total counts&quot;) +
+    theme_minimal()</code></pre>
+<p><img src="figure/01-preprocessing.Rmd/default-drops-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>This method identifies 7006 droplets as containing cells.</p>
+</div>
 <div id="empty-drops" class="section level1">
 <h1>Empty drops</h1>
 <p>We will now look at identifying which droplets to select using the <code>emptyDrops</code> method. This method tests whether the composition of a droplet is significantly different from the ambient RNA in the sample which is obtained by pooling the empty droplets. Droplets with very large counts are also automatically retained.</p>
@@ -799,8 +871,8 @@ colData(raw)$EmpDropsFilt    &lt;- is_cell
 table(Limited = emp_drops$Limited, Significant = is_cell)</code></pre>
 <pre><code>       Significant
 Limited  FALSE   TRUE
-  FALSE 935336    524
-  TRUE       0   9178</code></pre>
+  FALSE 935180    534
+  TRUE       0   9324</code></pre>
 <p>Another way to check the <code>emptyDrops</code> results is to look at the droplets below our empty threshold. We are assuming that these droplets only contain ambient RNA and therefore the null hypothesis should be true and the distribution of p-values should be approximately uniform.</p>
 <pre class="r"><code>colData(raw) %&gt;%
     as.data.frame() %&gt;%
@@ -827,6 +899,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01-preprocessing.Rmd/empty-drops-pvals-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/01-preprocessing.Rmd/empty-drops-pvals-1.png" target="_blank">2daa7f2</a>
@@ -882,6 +965,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01-preprocessing.Rmd/empty-drops-plot-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/01-preprocessing.Rmd/empty-drops-plot-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -916,92 +1010,19 @@ Luke Zappia
 </tbody>
 </table>
 <p></details></p>
-<p>There were 2190677 droplets with less than 100 counts which were used to make up the ambient RNA pool. Of the remaining 21163 droplets 9702 were found to have profiles significantly different from the ambient RNA and should contain cells.</p>
+<p>There were 923875 droplets with less than 100 counts which were used to make up the ambient RNA pool. Of the remaining 21163 droplets 9858 were found to have profiles significantly different from the ambient RNA and should contain cells.</p>
 </div>
 <div id="comparison" class="section level1">
 <h1>Comparison</h1>
-<p>Let’s quickly compare differences between the default we get from <code>Cell Ranger</code> and what we have got from using <code>DropletUtils</code>. First let’s look at the number of cells identified by each method.</p>
-<pre class="r"><code>colData(raw) %&gt;%
-    as.data.frame() %&gt;%
-    group_by(Sample) %&gt;%
-    summarise(`Cell Ranger` = sum(CellRangerFilt),
-              emptyDrops    = sum(EmpDropsFilt, na.rm = TRUE)) %&gt;%
-    gather(key = Method, value = Total, -Sample) %&gt;%
-    ggplot(aes(x = Method, y = Total, fill = Sample)) +
-    geom_col() +
-    ylab(&quot;Number of cells&quot;) +
-    theme_minimal()</code></pre>
-<p><img src="figure/01-preprocessing.Rmd/compare-total-1.png" width="960" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of compare-total-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
-<thead>
-<tr>
-<th style="text-align:left;">
-Version
-</th>
-<th style="text-align:left;">
-Author
-</th>
-<th style="text-align:left;">
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/01-preprocessing.Rmd/compare-total-1.png" target="_blank">2daa7f2</a>
-</td>
-<td style="text-align:left;">
-Luke Zappia
-</td>
-<td style="text-align:left;">
-2019-01-25
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/lazappi/phd-thesis-analysis/blob/b4432ffac74600c2afecb0b82221aa4386aaa171/docs/figure/01-preprocessing.Rmd/compare-total-1.png" target="_blank">b4432ff</a>
-</td>
-<td style="text-align:left;">
-Luke Zappia
-</td>
-<td style="text-align:left;">
-2019-01-18
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/lazappi/phd-thesis-analysis/blob/bf4004909e5fb04c6a5a3e4d4189119bc9a788d0/docs/figure/01-preprocessing.Rmd/compare-total-1.png" target="_blank">bf40049</a>
-</td>
-<td style="text-align:left;">
-Luke Zappia
-</td>
-<td style="text-align:left;">
-2019-01-18
-</td>
-</tr>
-</tbody>
-</table>
-<p></details></p>
-<p>From this plot we can see that <code>emptyDrops</code> has identified many more cells and that they seem to be evenly spread across the three samples. Well will also check to see that the methods are finding the same cells.</p>
-<pre class="r"><code>plot_data &lt;- colData(raw) %&gt;%
-    as.data.frame() %&gt;%
-    mutate(`Cell Ranger only` =  CellRangerFilt &amp; !EmpDropsFilt,
-           `emptyDrops only`  = !CellRangerFilt &amp;  EmpDropsFilt,
-           Both               =  CellRangerFilt &amp;  EmpDropsFilt) %&gt;%
-    group_by(Sample) %&gt;%
-    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
-              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
-              Both               = sum(Both, na.rm = TRUE)) %&gt;%
-    gather(key = Selected, value = Count, -Sample) %&gt;%
-    mutate(Selected = factor(Selected,
-                             levels = c(&quot;Both&quot;, &quot;Cell Ranger only&quot;,
-                                        &quot;emptyDrops only&quot;)))
+<p>Let’s quickly compare differences between the selection methods using an UpSet plot:</p>
+<pre class="r"><code>plot_data &lt;- list(
+    &quot;Cell Ranger&quot;    = colData(raw)$Cell[colData(raw)$DefaultFilt],
+    &quot;Cell Ranger v3&quot; = colData(raw)$Cell[colData(raw)$CellRangerFilt],
+    &quot;emptyDrops&quot;     = colData(raw)$Cell[colData(raw)$EmpDropsFilt]
+)
 
-ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
-    geom_col() +
-    theme_minimal()</code></pre>
+upset(fromList(plot_data), order.by = &quot;freq&quot;,
+      sets.x.label = &quot;Number of cells&quot;, text.scale = c(2, 1.2, 2, 1.2, 2, 3))</code></pre>
 <p><img src="figure/01-preprocessing.Rmd/compare-overlap-1.png" width="960" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of compare-overlap-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -1019,6 +1040,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01-preprocessing.Rmd/compare-overlap-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/01-preprocessing.Rmd/compare-overlap-1.png" target="_blank">2daa7f2</a>
@@ -1055,15 +1087,11 @@ Luke Zappia
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>plot_data %&gt;%
-    group_by(Selected) %&gt;%
-    summarise(Total = sum(Count))</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Selected"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Total"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Both","2":"8145"},{"1":"Cell Ranger only","2":"146"},{"1":"emptyDrops only","2":"1557"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
+<p>We can see that most of the cells are identified by all methods. A large number of cells are also identified by the new Cell Ranger and <code>emptyDrops</code> methods. These are likely to be those cells that fall below the total counts threshold selected by the traditional Cell Ranger algorithm. Our use of the <code>emptyDrops</code> algorithm has identified even more cells than Cell Ranger v3 but there are very few cells that Cell Ranger identifed which <code>emptyDrops</code> didn’t.</p>
 </div>
-<p>Most cells are identified by both methods with <code>emptyDrops</code> identifying many more additional cells. There are only a few cells that are identified only by Cell Ranger. We will perform further quality control of cells so at this stage we will keep cells that are selected by either method.</p>
+<div id="selection" class="section level1">
+<h1>Selection</h1>
+<p>We are going to perform further quality control of these cells anyway so at this stage we will keep those that were selected by either Cell Ranger v3 or <code>emptyDrops</code>.</p>
 <pre class="r"><code>selected &lt;- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
 
 colData(selected)$SelMethod &lt;- &quot;Both&quot;
@@ -1083,8 +1111,8 @@ colData(selected)$SelMethod[!colData(selected)$EmpDropsFilt] &lt;- &quot;CellRan
                         BPPARAM    = bpparam)
 
 glimpse(as.data.frame(colData(selected)))</code></pre>
-<pre><code>Observations: 9,848
-Variables: 54
+<pre><code>Observations: 10,002
+Variables: 55
 $ Cell                                           &lt;chr&gt; &quot;Cell74&quot;, &quot;Cell10…
 $ Dataset                                        &lt;chr&gt; &quot;Orgs123&quot;, &quot;Orgs1…
 $ Barcode                                        &lt;chr&gt; &quot;AAACCTGAGAGTACAT…
@@ -1093,15 +1121,16 @@ $ CellRangerFilt                                 &lt;lgl&gt; TRUE, TRUE, FALSE�
 $ BarcodeRank                                    &lt;dbl&gt; 2281.5, 3193.5, 1…
 $ BarcodeTotal                                   &lt;dbl&gt; 11084, 9414, 114,…
 $ BarcodeFitted                                  &lt;dbl&gt; 11089.186, 9427.9…
-$ EmpDropsLogProb                                &lt;dbl&gt; -11721.3989, -948…
+$ DefaultFilt                                    &lt;lgl&gt; TRUE, TRUE, FALSE…
+$ EmpDropsLogProb                                &lt;dbl&gt; -11721.5793, -948…
 $ EmpDropsPValue                                 &lt;dbl&gt; 3.333222e-05, 3.3…
 $ EmpDropsLimited                                &lt;lgl&gt; TRUE, TRUE, TRUE,…
 $ EmpDropsFDR                                    &lt;dbl&gt; 0.000000000, 0.00…
 $ EmpDropsFilt                                   &lt;lgl&gt; TRUE, TRUE, TRUE,…
 $ SelMethod                                      &lt;chr&gt; &quot;Both&quot;, &quot;Both&quot;, &quot;…
-$ G1Score                                        &lt;dbl&gt; 0.027, 0.389, 0.9…
-$ SScore                                         &lt;dbl&gt; 0.027, 0.389, 0.9…
-$ G2MScore                                       &lt;dbl&gt; 0.529, 0.103, 0.0…
+$ G1Score                                        &lt;dbl&gt; 0.026, 0.421, 0.9…
+$ SScore                                         &lt;dbl&gt; 0.026, 0.421, 0.9…
+$ G2MScore                                       &lt;dbl&gt; 0.516, 0.104, 0.0…
 $ CellCycle                                      &lt;chr&gt; &quot;G2M&quot;, &quot;S&quot;, &quot;G1&quot;,…
 $ is_cell_control                                &lt;lgl&gt; FALSE, FALSE, FAL…
 $ total_features_by_counts                       &lt;int&gt; 3193, 2663, 108, …
@@ -1140,32 +1169,57 @@ $ pct_counts_in_top_100_features_MT              &lt;dbl&gt; 100, 100, NaN, 10�
 $ pct_counts_in_top_200_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…
 $ pct_counts_in_top_500_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…</code></pre>
 <pre class="r"><code>glimpse(as.data.frame(rowData(selected)))</code></pre>
-<pre><code>Observations: 33,538
+<pre><code>Observations: 25,020
 Variables: 20
-$ ID                         &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000237613&quot;,…
-$ Symbol                     &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;A…
+$ ID                         &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000238009&quot;,…
+$ Symbol                     &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;AL627309.1&quot;, &quot;AL62730…
 $ Type                       &lt;chr&gt; &quot;Gene Expression&quot;, &quot;Gene Expression&quot;,…
-$ Name                       &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;A…
-$ ensembl_gene_id            &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000237613&quot;,…
-$ entrezgene                 &lt;int&gt; NA, NA, 79501, NA, NA, NA, NA, NA, 72…
-$ external_gene_name         &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;A…
-$ hgnc_symbol                &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;FAM138A&quot;, &quot;OR4F5&quot;, &quot;&quot;…
+$ Name                       &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;AL627309.1&quot;, &quot;AL62730…
+$ ensembl_gene_id            &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000238009&quot;,…
+$ entrezgene                 &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ external_gene_name         &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;AL627309.1&quot;, &quot;AL62730…
+$ hgnc_symbol                &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;FAM87B&quot;, …
 $ chromosome_name            &lt;chr&gt; &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1…
-$ description                &lt;chr&gt; &quot;MIR1302-2 host gene&quot;, &quot;family with s…
-$ gene_biotype               &lt;chr&gt; &quot;lincRNA&quot;, &quot;lincRNA&quot;, &quot;protein_coding…
-$ percentage_gene_gc_content &lt;dbl&gt; 48.84, 50.26, 32.06, 39.91, 48.75, 52…
+$ description                &lt;chr&gt; &quot;MIR1302-2 host gene&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;f…
+$ gene_biotype               &lt;chr&gt; &quot;lincRNA&quot;, &quot;lincRNA&quot;, &quot;lincRNA&quot;, &quot;lin…
+$ percentage_gene_gc_content &lt;dbl&gt; 48.84, 39.91, 48.75, 40.42, 48.52, 52…
 $ is_feature_control         &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
 $ is_feature_control_MT      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
-$ mean_counts                &lt;dbl&gt; 0.0001015435, 0.0000000000, 0.0000000…
-$ log10_mean_counts          &lt;dbl&gt; 4.409753e-05, 0.000000e+00, 0.000000e…
-$ n_cells_by_counts          &lt;int&gt; 1, 0, 0, 12, 2, 0, 0, 0, 0, 0, 0, 0, …
-$ pct_dropout_by_counts      &lt;dbl&gt; 99.98985, 100.00000, 100.00000, 99.87…
-$ total_counts               &lt;dbl&gt; 1, 0, 0, 12, 2, 0, 0, 0, 0, 0, 0, 0, …
-$ log10_total_counts         &lt;dbl&gt; 0.3010300, 0.0000000, 0.0000000, 1.11…</code></pre>
+$ mean_counts                &lt;dbl&gt; 0.00009998, 0.00119976, 0.00019996, 0…
+$ log10_mean_counts          &lt;dbl&gt; 4.341859e-05, 5.207369e-04, 8.683285e…
+$ n_cells_by_counts          &lt;int&gt; 1, 12, 2, 379, 10, 153, 204, 12, 879,…
+$ pct_dropout_by_counts      &lt;dbl&gt; 99.99000, 99.88002, 99.98000, 96.2107…
+$ total_counts               &lt;dbl&gt; 1, 12, 2, 415, 10, 160, 214, 12, 1045…
+$ log10_total_counts         &lt;dbl&gt; 0.3010300, 1.1139434, 0.4771213, 2.61…</code></pre>
 </div>
 <div id="figure" class="section level1">
 <h1>Figure</h1>
-<pre class="r"><code>bc_plot &lt;- bc_data %&gt;%
+<pre class="r"><code>plot_data &lt;- colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %&gt;%
+    group_by(Sample) %&gt;%
+    mutate(Rank = rank(-Total)) %&gt;%
+    arrange(Sample, Rank)
+
+default_plot &lt;- ggplot(plot_data, aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c(&quot;black&quot;, &quot;#8DC63F&quot;),
+                        labels = c(&quot;Empty&quot;, &quot;Cell&quot;)) +
+    facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
+    ylab(&quot;Total counts&quot;) +
+    ggtitle(&quot;Cell Ranger&quot;) +
+    theme_minimal() +
+    theme(legend.title = element_blank())
+
+plot_data &lt;- colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    select(Cell, Kept = EmpDropsFilt, Rank = BarcodeRank,
+           Total = BarcodeTotal, Fitted = BarcodeFitted) %&gt;%
+    arrange(Rank)
+
+emp_plot &lt;- plot_data %&gt;%
     filter(Total &gt; 0) %&gt;%
     ggplot(aes(x = Rank, y = Total)) +
     geom_point(shape = 1, aes(colour = Kept)) +
@@ -1185,48 +1239,95 @@ $ log10_total_counts         &lt;dbl&gt; 0.3010300, 0.0000000, 0.0000000, 1.11�
     scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
     scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
     scale_colour_manual(values = c(&quot;black&quot;, &quot;#EC008C&quot;),
-                        labels = c(&quot;Empty&quot;, &quot;Cell&quot;),
-                        name = &quot;Cell Ranger&quot;) +
-    ggtitle(&quot;Cell Ranger droplet selection&quot;) +
+                        labels = c(&quot;Empty&quot;, &quot;Cell&quot;)) +
+    ggtitle(&quot;emptyDrops&quot;) +
     ylab(&quot;Total counts&quot;) +
     theme_minimal() +
-    theme(legend.position = &quot;bottom&quot;)
+    theme(legend.position = &quot;bottom&quot;,
+          legend.title = element_blank())
 
-plot_data &lt;- colData(raw) %&gt;%
-    as.data.frame() %&gt;%
-    mutate(`Cell Ranger only` =  CellRangerFilt &amp; !EmpDropsFilt,
-           `emptyDrops only`  = !CellRangerFilt &amp;  EmpDropsFilt,
-           Both               =  CellRangerFilt &amp;  EmpDropsFilt) %&gt;%
-    group_by(Sample) %&gt;%
-    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
-              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
-              Both               = sum(Both, na.rm = TRUE)) %&gt;%
-    gather(key = Selected, value = Count, -Sample) %&gt;%
-    mutate(Selected = factor(Selected,
-                             levels = c(&quot;Both&quot;, &quot;Cell Ranger only&quot;,
-                                        &quot;emptyDrops only&quot;)))
-
-comp_plot &lt;- ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
-    geom_col() +
-    scale_fill_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;),
-                      name = &quot;Organoid&quot;) +
-    ggtitle(&quot;Comparison of droplet selection methods&quot;) +
-    ylab(&quot;Number of cells&quot;) +
+cr_plot &lt;- bc_data %&gt;%
+    filter(Total &gt; 0) %&gt;%
+    ggplot(aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
+    scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
+    scale_colour_manual(values = c(&quot;black&quot;, &quot;#F47920&quot;),
+                        labels = c(&quot;Empty&quot;, &quot;Cell&quot;)) +
+    ggtitle(&quot;Cell Ranger v3&quot;) +
+    ylab(&quot;Total counts&quot;) +
     theme_minimal() +
-    theme(axis.title.x = element_blank(),
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor = element_blank(),
-          legend.position = &quot;bottom&quot;)
+    theme(legend.position = &quot;bottom&quot;,
+          legend.title = element_blank())
 
-fig &lt;- plot_grid(bc_plot, comp_plot, nrow = 1, labels = &quot;AUTO&quot;)
+p1 &lt;- plot_grid(emp_plot, cr_plot, nrow = 1, labels = c(&quot;B&quot;, &quot;C&quot;))
+
+fig &lt;- plot_grid(default_plot, p1, ncol = 1, rel_heights = c(0.5, 1),
+                 labels = c(&quot;A&quot;, &quot;&quot;))
 
 ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;droplet-selection.pdf&quot;), fig,
-       width = 8, height = 4, scale = 2)
+       width = 7, height = 4, scale = 2)
 ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;droplet-selection.png&quot;), fig,
-       width = 8, height = 4, scale = 2)
+       width = 7, height = 4, scale = 2)
 
 fig</code></pre>
 <p><img src="figure/01-preprocessing.Rmd/figure-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of figure-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/431c1803e388fbe3713f1b7db56c80eaab012f80/docs/figure/01-preprocessing.Rmd/figure-1.png" target="_blank">431c180</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-19
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>plot_data &lt;- colData(raw) %&gt;%
+    as.data.frame() %&gt;%
+    select(Name             = Cell,
+           `Cell Ranger`    = DefaultFilt,
+           `Cell Ranger v3` = CellRangerFilt,
+           emptyDrops       = `EmpDropsFilt`,
+           `Total counts`   = BarcodeTotal) %&gt;%
+    mutate(`Cell Ranger`    = if_else(`Cell Ranger`,    1L, 0L),
+           `Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
+           emptyDrops       = if_else(emptyDrops,       1L, 0L)) %&gt;%
+    mutate(`Total counts`   = log10(`Total counts`))
+
+upset(plot_data, order.by = &quot;freq&quot;,
+      #boxplot.summary = &quot;Total counts&quot;,
+      sets.x.label = &quot;Number of cells&quot;,
+      text.scale = c(2, 1.2, 2, 1.2, 2, 3),
+      matrix.color = &quot;#7A52C7&quot;,
+      main.bar.color = &quot;#7A52C7&quot;,
+      sets.bar.color = &quot;#7A52C7&quot;)
+grid.edit(&quot;arrange&quot;, name = &quot;arrange2&quot;)
+comp_plot &lt;- grid.grab()
+
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;selection-comparison.pdf&quot;), comp_plot,
+       width = 7, height = 4, scale = 2)
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;selection-comparison.png&quot;), comp_plot,
+       width = 7, height = 4, scale = 2)</code></pre>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
@@ -1288,7 +1389,7 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </tr>
 <tr class="even">
 <td align="left">n_cells</td>
-<td align="left">9848</td>
+<td align="left">10002</td>
 <td align="left">Number of cells selected</td>
 </tr>
 </tbody>
@@ -1321,7 +1422,9 @@ knitr::kable(data.frame(
         getDownloadLink(&quot;barcodes_Org2.tsv&quot;, DOCNAME),
         getDownloadLink(&quot;barcodes_Org3.tsv&quot;, DOCNAME),
         getDownloadLink(&quot;droplet-selection.png&quot;, DOCNAME),
-        getDownloadLink(&quot;droplet-selection.pdf&quot;, DOCNAME)
+        getDownloadLink(&quot;droplet-selection.pdf&quot;, DOCNAME),
+        getDownloadLink(&quot;selection-comparison.png&quot;, DOCNAME),
+        getDownloadLink(&quot;selection-comparison.pdf&quot;, DOCNAME)
     ),
     Description = c(
         &quot;Parameters set and used in this analysis&quot;,
@@ -1329,7 +1432,9 @@ knitr::kable(data.frame(
         &quot;Selected barcodes for organoid 2&quot;,
         &quot;Selected barcodes for organoid 3&quot;,
         &quot;Droplet selection figure (PNG)&quot;,
-        &quot;Droplet selection figure (PDF)&quot;
+        &quot;Droplet selection figure (PDF)&quot;,
+        &quot;Selection comparison figure (PNG)&quot;,
+        &quot;Selection comparison figure (PDF)&quot;
     )
 ))</code></pre>
 <table>
@@ -1364,6 +1469,14 @@ knitr::kable(data.frame(
 <td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/01-preprocessing/droplet-selection.pdf">droplet-selection.pdf</a></td>
 <td align="left">Droplet selection figure (PDF)</td>
 </tr>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/01-preprocessing/selection-comparison.png">selection-comparison.png</a></td>
+<td align="left">Selection comparison figure (PNG)</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/01-preprocessing/selection-comparison.pdf">selection-comparison.pdf</a></td>
+<td align="left">Selection comparison figure (PDF)</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1380,7 +1493,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-19                  
+ date     2019-02-20                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
@@ -1416,6 +1529,7 @@ knitr::kable(data.frame(
    ggplot2              * 3.1.0     2018-10-25 [1] CRAN (R 3.5.0)
    git2r                  0.24.0    2019-01-07 [1] CRAN (R 3.5.0)
    glue                   1.3.0     2018-07-17 [1] CRAN (R 3.5.0)
+   gridExtra              2.3       2017-09-09 [1] CRAN (R 3.5.0)
    gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
    haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
    HDF5Array              1.10.1    2018-12-05 [1] Bioconductor  
@@ -1475,6 +1589,7 @@ knitr::kable(data.frame(
    tidyr                * 0.8.2     2018-10-28 [1] CRAN (R 3.5.0)
    tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
    tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
+   UpSetR               * 1.3.3     2017-03-21 [1] CRAN (R 3.5.0)
    usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
    whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
    withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)

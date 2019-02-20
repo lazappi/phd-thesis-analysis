@@ -40,6 +40,8 @@ library("SingleCellExperiment")
 
 # Plotting
 library("cowplot")
+library("UpSetR")
+library("grid")
 
 # Tidyverse
 library("tidyverse")
@@ -74,6 +76,13 @@ colData(raw)$CellRangerFilt <- paste(colData(raw)$Barcode,
 ```
 
 The raw dataset has `r nrow(raw)` features and `r ncol(raw)` droplets.
+
+```{r all-zero}
+raw <- raw[Matrix::rowSums(counts(raw)) > 0, Matrix::colSums(counts(raw)) > 0]
+```
+
+After removing all zero features and droplets the dataset has `r nrow(raw)` 
+features and `r ncol(raw)` droplets.
 
 Barcode ranks
 =============
@@ -127,6 +136,42 @@ and knee points are methods for identifying the transition between
 distributions. These are roughly associated with the cells selected by `Cell
 Ranger` The empty threshold line indicates the point at which we assume droplets
 must be empty (total counts <= `r empty_thresh`).
+
+Traditional Cell Ranger
+=======================
+
+The version of Cell Ranger we have used here selects cells using a modified
+version of the `emptyDrops` method (see below) but older versions used an
+alternative approach by calculating the 99th percentile of the total number
+of counts in top given expected number of cells and selecting droplets that
+had at least 10 percent of this many counts. For comparison purposes we will
+perform this method as well.
+
+```{r default-drops}
+default1 <- defaultDrops(counts(raw[, colData(raw)$Sample == 1]))
+default2 <- defaultDrops(counts(raw[, colData(raw)$Sample == 2]))
+default3 <- defaultDrops(counts(raw[, colData(raw)$Sample == 3]))
+colData(raw)$DefaultFilt <- c(default1, default2, default3)
+
+plot_data <- colData(raw) %>%
+    as.data.frame() %>%
+    select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %>%
+    group_by(Sample) %>%
+    mutate(Rank = rank(-Total)) %>%
+    arrange(Sample, Rank)
+
+ggplot(plot_data, aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c("black", "forestgreen")) +
+    facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
+    ylab("Total counts") +
+    theme_minimal()
+```
+
+This method identifies `r sum(colData(raw)$DefaultFilt)` droplets as containing
+cells.
 
 Empty drops
 ===========
@@ -207,55 +252,33 @@ contain cells.
 Comparison
 ==========
 
-Let's quickly compare differences between the default we get from `Cell Ranger`
-and what we have got from using `DropletUtils`. First let's look at the number
-of cells identified by each method.
-
-```{r compare-total}
-colData(raw) %>%
-    as.data.frame() %>%
-    group_by(Sample) %>%
-    summarise(`Cell Ranger` = sum(CellRangerFilt),
-              emptyDrops    = sum(EmpDropsFilt, na.rm = TRUE)) %>%
-    gather(key = Method, value = Total, -Sample) %>%
-    ggplot(aes(x = Method, y = Total, fill = Sample)) +
-    geom_col() +
-    ylab("Number of cells") +
-    theme_minimal()
-```
-
-From this plot we can see that `emptyDrops` has identified many more cells and
-that they seem to be evenly spread across the three samples. Well will also
-check to see that the methods are finding the same cells.
+Let's quickly compare differences between the selection methods using an UpSet
+plot:
 
 ```{r compare-overlap}
-plot_data <- colData(raw) %>%
-    as.data.frame() %>%
-    mutate(`Cell Ranger only` =  CellRangerFilt & !EmpDropsFilt,
-           `emptyDrops only`  = !CellRangerFilt &  EmpDropsFilt,
-           Both               =  CellRangerFilt &  EmpDropsFilt) %>%
-    group_by(Sample) %>%
-    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
-              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
-              Both               = sum(Both, na.rm = TRUE)) %>%
-    gather(key = Selected, value = Count, -Sample) %>%
-    mutate(Selected = factor(Selected,
-                             levels = c("Both", "Cell Ranger only",
-                                        "emptyDrops only")))
+plot_data <- list(
+    "Cell Ranger"    = colData(raw)$Cell[colData(raw)$DefaultFilt],
+    "Cell Ranger v3" = colData(raw)$Cell[colData(raw)$CellRangerFilt],
+    "emptyDrops"     = colData(raw)$Cell[colData(raw)$EmpDropsFilt]
+)
 
-ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
-    geom_col() +
-    theme_minimal()
-
-plot_data %>%
-    group_by(Selected) %>%
-    summarise(Total = sum(Count))
+upset(fromList(plot_data), order.by = "freq",
+      sets.x.label = "Number of cells", text.scale = c(2, 1.2, 2, 1.2, 2, 3))
 ```
 
-Most cells are identified by both methods with `emptyDrops` identifying many
-more additional cells. There are only a few cells that are identified only by
-Cell Ranger. We will perform further quality control of cells so at this stage
-we will keep cells that are selected by either method.
+We can see that most of the cells are identified by all methods. A large number
+of cells are also identified by the new Cell Ranger and `emptyDrops` methods.
+These are likely to be those cells that fall below the total counts threshold
+selected by the traditional Cell Ranger algorithm. Our use of the `emptyDrops`
+algorithm has identified even more cells than Cell Ranger v3 but there are
+very few cells that Cell Ranger identifed which `emptyDrops` didn't.
+
+Selection
+=========
+
+We are going to perform further quality control of these cells anyway so at
+this stage we will keep those that were selected by either Cell Ranger v3 or
+`emptyDrops`.
 
 ```{r select}
 selected <- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
@@ -292,7 +315,32 @@ Figure
 ======
 
 ```{r figure}
-bc_plot <- bc_data %>%
+plot_data <- colData(raw) %>%
+    as.data.frame() %>%
+    select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %>%
+    group_by(Sample) %>%
+    mutate(Rank = rank(-Total)) %>%
+    arrange(Sample, Rank)
+
+default_plot <- ggplot(plot_data, aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c("black", "#8DC63F"),
+                        labels = c("Empty", "Cell")) +
+    facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
+    ylab("Total counts") +
+    ggtitle("Cell Ranger") +
+    theme_minimal() +
+    theme(legend.title = element_blank())
+
+plot_data <- colData(raw) %>%
+    as.data.frame() %>%
+    select(Cell, Kept = EmpDropsFilt, Rank = BarcodeRank,
+           Total = BarcodeTotal, Fitted = BarcodeFitted) %>%
+    arrange(Rank)
+
+emp_plot <- plot_data %>%
     filter(Total > 0) %>%
     ggplot(aes(x = Rank, y = Total)) +
     geom_point(shape = 1, aes(colour = Kept)) +
@@ -312,47 +360,67 @@ bc_plot <- bc_data %>%
     scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
     scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
     scale_colour_manual(values = c("black", "#EC008C"),
-                        labels = c("Empty", "Cell"),
-                        name = "Cell Ranger") +
-    ggtitle("Cell Ranger droplet selection") +
+                        labels = c("Empty", "Cell")) +
+    ggtitle("emptyDrops") +
     ylab("Total counts") +
     theme_minimal() +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
 
-plot_data <- colData(raw) %>%
-    as.data.frame() %>%
-    mutate(`Cell Ranger only` =  CellRangerFilt & !EmpDropsFilt,
-           `emptyDrops only`  = !CellRangerFilt &  EmpDropsFilt,
-           Both               =  CellRangerFilt &  EmpDropsFilt) %>%
-    group_by(Sample) %>%
-    summarise(`Cell Ranger only` = sum(`Cell Ranger only`),
-              `emptyDrops only`  = sum(`emptyDrops only`, na.rm = TRUE),
-              Both               = sum(Both, na.rm = TRUE)) %>%
-    gather(key = Selected, value = Count, -Sample) %>%
-    mutate(Selected = factor(Selected,
-                             levels = c("Both", "Cell Ranger only",
-                                        "emptyDrops only")))
-
-comp_plot <- ggplot(plot_data, aes(x = Selected, y = Count, fill = Sample)) +
-    geom_col() +
-    scale_fill_manual(values = c("#EC008C", "#00ADEF", "#8DC63F"),
-                      name = "Organoid") +
-    ggtitle("Comparison of droplet selection methods") +
-    ylab("Number of cells") +
+cr_plot <- bc_data %>%
+    filter(Total > 0) %>%
+    ggplot(aes(x = Rank, y = Total)) +
+    geom_point(shape = 1, aes(colour = Kept)) +
+    scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
+    scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
+    scale_colour_manual(values = c("black", "#F47920"),
+                        labels = c("Empty", "Cell")) +
+    ggtitle("Cell Ranger v3") +
+    ylab("Total counts") +
     theme_minimal() +
-    theme(axis.title.x = element_blank(),
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor = element_blank(),
-          legend.position = "bottom")
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
 
-fig <- plot_grid(bc_plot, comp_plot, nrow = 1, labels = "AUTO")
+p1 <- plot_grid(emp_plot, cr_plot, nrow = 1, labels = c("B", "C"))
+
+fig <- plot_grid(default_plot, p1, ncol = 1, rel_heights = c(0.5, 1),
+                 labels = c("A", ""))
 
 ggsave(here::here("output", DOCNAME, "droplet-selection.pdf"), fig,
-       width = 8, height = 4, scale = 2)
+       width = 7, height = 4, scale = 2)
 ggsave(here::here("output", DOCNAME, "droplet-selection.png"), fig,
-       width = 8, height = 4, scale = 2)
+       width = 7, height = 4, scale = 2)
 
 fig
+```
+
+```{r fig-comp, collapse = TRUE, fig.show = "hide"}
+plot_data <- colData(raw) %>%
+    as.data.frame() %>%
+    select(Name             = Cell,
+           `Cell Ranger`    = DefaultFilt,
+           `Cell Ranger v3` = CellRangerFilt,
+           emptyDrops       = `EmpDropsFilt`,
+           `Total counts`   = BarcodeTotal) %>%
+    mutate(`Cell Ranger`    = if_else(`Cell Ranger`,    1L, 0L),
+           `Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
+           emptyDrops       = if_else(emptyDrops,       1L, 0L)) %>%
+    mutate(`Total counts`   = log10(`Total counts`))
+
+upset(plot_data, order.by = "freq",
+      #boxplot.summary = "Total counts",
+      sets.x.label = "Number of cells",
+      text.scale = c(2, 1.2, 2, 1.2, 2, 3),
+      matrix.color = "#7A52C7",
+      main.bar.color = "#7A52C7",
+      sets.bar.color = "#7A52C7")
+grid.edit("arrange", name = "arrange2")
+comp_plot <- grid.grab()
+
+ggsave(here::here("output", DOCNAME, "selection-comparison.pdf"), comp_plot,
+       width = 7, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "selection-comparison.png"), comp_plot,
+       width = 7, height = 4, scale = 2)
 ```
 
 Summary
@@ -432,7 +500,9 @@ knitr::kable(data.frame(
         getDownloadLink("barcodes_Org2.tsv", DOCNAME),
         getDownloadLink("barcodes_Org3.tsv", DOCNAME),
         getDownloadLink("droplet-selection.png", DOCNAME),
-        getDownloadLink("droplet-selection.pdf", DOCNAME)
+        getDownloadLink("droplet-selection.pdf", DOCNAME),
+        getDownloadLink("selection-comparison.png", DOCNAME),
+        getDownloadLink("selection-comparison.pdf", DOCNAME)
     ),
     Description = c(
         "Parameters set and used in this analysis",
@@ -440,7 +510,9 @@ knitr::kable(data.frame(
         "Selected barcodes for organoid 2",
         "Selected barcodes for organoid 3",
         "Droplet selection figure (PNG)",
-        "Droplet selection figure (PDF)"
+        "Droplet selection figure (PDF)",
+        "Selection comparison figure (PNG)",
+        "Selection comparison figure (PDF)"
     )
 ))
 ```

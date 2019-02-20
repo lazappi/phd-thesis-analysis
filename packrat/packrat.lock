@@ -323,6 +323,12 @@ Hash: 86f17c3170bbb3dc5cd42de86d7efe02
 Requires: Biobase, BiocGenerics, DelayedArray, GenomeInfoDb,
     GenomicRanges, IRanges, S4Vectors
 
+Package: UpSetR
+Source: CRAN
+Version: 1.3.3
+Hash: 0c6b1296967164109f0e4009b8198953
+Requires: ggplot2, gridExtra, plyr, scales
+
 Package: VIM
 Source: CRAN
 Version: 4.7.0
