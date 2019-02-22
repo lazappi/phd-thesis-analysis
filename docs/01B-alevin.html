@@ -414,6 +414,12 @@ div.tocify {
     <li>
       <a href="04-marker-genes.html">Marker genes</a>
     </li>
+    <li>
+      <a href="05-paga.html">PAGA</a>
+    </li>
+    <li>
+      <a href="06-velocyto.html">Velocyto</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -459,7 +465,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-08</p>
+<p><strong>Last updated:</strong> 2019-02-22</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -483,7 +489,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/737f0b03a317410e36b363411655cef2995ceaa7" target="_blank">737f0b0</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/15192eebadf13de4f2517b23bd9217028df5a8bc" target="_blank">15192ee</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -492,8 +498,11 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    ._.DS_Store
     Ignored:    analysis/cache/
+    Ignored:    build-logs/
     Ignored:    data/
     Ignored:    output/03-clustering/selected_genes.csv.zip
+    Ignored:    output/04-marker-genes/de_genes.csv.zip
+    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -502,27 +511,24 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  build-logs/
-    Untracked:  docs/figure/01B-alevin.Rmd/
-    Untracked:  docs/figure/04-marker-genes.Rmd/
-    Untracked:  figures/
-    Untracked:  output/01-preprocessing/barcodes_Org1.tsv
-    Untracked:  output/01-preprocessing/barcodes_Org2.tsv
-    Untracked:  output/01-preprocessing/barcodes_Org3.tsv
-    Untracked:  output/01B-alevin/
-    Untracked:  output/04-marker-genes/
-    Untracked:  scripts/
-    Untracked:  workflowr-build.e2509293
-    Untracked:  workflowr-build.o2509293
+    Untracked:  output/01B-alevin/alevin-comparison.pdf
+    Untracked:  workflowr-build.e2538443
+    Untracked:  workflowr-build.e2545370
+    Untracked:  workflowr-build.o2538443
+    Untracked:  workflowr-build.o2545370
 
 Unstaged changes:
-    Modified:   output/01-preprocessing/parameters.json
     Modified:   output/02-quality-control/parameters.json
     Modified:   output/03-clustering/cluster_assignments.tsv.gz
     Modified:   output/03-clustering/cluster_expression.tsv.gz
     Modified:   output/03-clustering/parameters.json
-    Deleted:    output/README.md
-    Modified:   packrat/packrat.lock
+    Modified:   output/04-marker-genes/de_genes.xlsx
+    Modified:   output/05-paga/cell_edges.csv
+    Modified:   output/05-paga/cell_embedding.csv
+    Modified:   output/05-paga/cluster_edges.csv
+    Modified:   output/05-paga/cluster_embedding.csv
+    Modified:   output/05-paga/cluster_tree_edges.csv
+    Modified:   scripts/build.pbs
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -556,6 +562,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/15192eebadf13de4f2517b23bd9217028df5a8bc/analysis/01B-alevin.Rmd" target="_blank">15192ee</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+<td style="text-align:left;">
+Add Alevin comparison figure
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/01B-alevin.html" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+<td style="text-align:left;">
+Rebuild site and tidy
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="http://github.com/lazappi/phd-thesis-analysis/blob/a8d104de68c6897953c52857a5109e35c22e735a/analysis/01B-alevin.Rmd" target="_blank">a8d104d</a>
 </td>
 <td style="text-align:left;">
@@ -576,12 +616,23 @@ Add Alevin comparison
 <pre class="r"><code># scRNA-seq
 library(&quot;SingleCellExperiment&quot;)
 
+# Plotting
+library(&quot;UpSetR&quot;)
+library(&quot;cowplot&quot;)
+library(&quot;grid&quot;)
+
 # Tidyverse
 library(&quot;tidyverse&quot;)</code></pre>
 <pre class="r"><code>source(here::here(&quot;R/load.R&quot;))
 source(here::here(&quot;R/annotate.R&quot;))
 source(here::here(&quot;R/output.R&quot;))</code></pre>
-<pre class="r"><code>sel_path &lt;- here::here(&quot;data/processed/01-selected.Rds&quot;)</code></pre>
+<pre class="r"><code>sel_path &lt;- here::here(&quot;data/processed/01-selected.Rds&quot;)
+
+alevin_paths &lt;- c(
+    here::here(&quot;data/alevin/Org1&quot;),
+    here::here(&quot;data/alevin/Org2&quot;),
+    here::here(&quot;data/alevin/Org3&quot;)
+)</code></pre>
 <pre class="r"><code>bpparam &lt;- BiocParallel::MulticoreParam(workers = 10)</code></pre>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
@@ -599,13 +650,7 @@ colData(selected)$BarcodeSample &lt;- paste(
     colData(selected)$Sample,
     sep = &quot;-&quot;
 )</code></pre>
-<pre class="r"><code>alevin_paths &lt;- c(
-    here::here(&quot;data/alevin/Org1&quot;),
-    here::here(&quot;data/alevin/Org2&quot;),
-    here::here(&quot;data/alevin/Org3&quot;)
-)
-
-alevin &lt;- readAlevin(alevin_paths, dataset = &quot;Orgs123Alevin&quot;)
+<pre class="r"><code>alevin &lt;- readAlevin(alevin_paths, dataset = &quot;Orgs123Alevin&quot;)
 alevin &lt;- annotateSCE(alevin, calc_qc = TRUE, BPPARAM = bpparam)
 
 colData(alevin)$BarcodeSample &lt;- paste(
@@ -619,8 +664,10 @@ colData(alevin)$BarcodeSample &lt;- paste(
                        suffix = c(&quot;.Trad&quot;, &quot;.Alevin&quot;)) %&gt;%
     mutate(Sample = Sample.Trad) %&gt;%
     mutate(Sample = if_else(is.na(Sample), Sample.Alevin, Sample)) %&gt;%
-    select(BarcodeSample, Sample, contains(&quot;_&quot;),
+    select(BarcodeSample, Sample, contains(&quot;_&quot;), contains(&quot;Filt&quot;),
            -contains(&quot;control&quot;), -contains(&quot;endogenous&quot;), -contains(&quot;_MT&quot;)) %&gt;%
+    mutate_at(vars(contains(&quot;Filt&quot;)), replace_na, replace = FALSE) %&gt;%
+    mutate(AlevinFilt = !is.na(total_counts.Alevin)) %&gt;%
     mutate(SelBy = &quot;Both&quot;) %&gt;%
     mutate(SelBy = if_else(!is.na(total_counts.Trad) &amp;
                                is.na(total_counts.Alevin),
@@ -653,6 +700,36 @@ feat_data &lt;- full_join(as.data.frame(rowData(selected)),
     theme_minimal() +
     theme(axis.title.x = element_blank())</code></pre>
 <p><img src="figure/01B-alevin.Rmd/cell-selection-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of cell-selection-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-selection-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="cell-counts" class="section level1 tabset">
 <h1>Cell counts</h1>
@@ -673,6 +750,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
     ggtitle(&quot;total_counts&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/cell-counts-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of cell-counts-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-counts-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="logged" class="section level2">
 <h2>Logged</h2>
@@ -691,6 +798,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
     ggtitle(&quot;log10(total_counts)&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/cell-counts-log-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of cell-counts-log-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-counts-log-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="cell-features" class="section level1 tabset">
@@ -712,6 +849,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
     ggtitle(&quot;total_features_by_counts&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/cell-features-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of cell-features-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-features-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="logged-1" class="section level2">
 <h2>Logged</h2>
@@ -730,6 +897,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
     ggtitle(&quot;log10(total_features_by_counts)&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/cell-features-log-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of cell-features-log-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-features-log-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="top-100" class="section level1 tabset">
@@ -750,6 +947,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
     ggtitle(&quot;pct_counts_in_top_100_features&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/top-100-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of top-100-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/top-100-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="gene-counts" class="section level1 tabset">
 <h1>Gene counts</h1>
@@ -769,6 +996,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
     ggtitle(&quot;total_counts&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/gene-counts-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of gene-counts-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-counts-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="logged-2" class="section level2">
 <h2>Logged</h2>
@@ -786,6 +1043,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
     ggtitle(&quot;log10(total_counts)&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/gene-counts-log-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of gene-counts-log-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-counts-log-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="gene-cells" class="section level1 tabset">
@@ -804,23 +1091,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
     ggtitle(&quot;n_cells_by_counts&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/gene-cells-1.png" width="960" style="display: block; margin: auto;" /></p>
-<div id="logged-3" class="section level2">
-<h2>Logged</h2>
-<pre class="r"><code>plot_data &lt;- feat_data %&gt;%
-    mutate(Traditional = log10_total_counts.Trad,
-           Alevin = log10_total_counts.Alevin) %&gt;%
-    mutate(Traditional = replace_na(Traditional, -1),
-           Alevin = replace_na(Alevin, -1))
-
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
-    geom_point(alpha = 0.3) +
-    geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
-    geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
-                method = &quot;lm&quot;, colour = &quot;blue&quot;) +
-    ggtitle(&quot;log10(total_counts)&quot;) +
-    theme_minimal()</code></pre>
-<p><img src="figure/01B-alevin.Rmd/gene-cells-log-1.png" width="960" style="display: block; margin: auto;" /></p>
-</div>
+<details> <summary><em>Expand here to see past versions of gene-cells-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-cells-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="gene-means" class="section level1 tabset">
 <h1>Gene means</h1>
@@ -840,8 +1140,38 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
     ggtitle(&quot;mean_counts&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/gene-means-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of gene-means-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-means-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
-<div id="logged-4" class="section level2">
+<div id="logged-3" class="section level2">
 <h2>Logged</h2>
 <pre class="r"><code>plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = log10_mean_counts.Trad,
@@ -857,6 +1187,36 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
     ggtitle(&quot;log10(mean_counts)&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/gene-means-log-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of gene-means-log-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-means-log-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="counts-cells" class="section level1">
@@ -882,6 +1242,143 @@ ggplot(plot_data,
     facet_wrap(~ Method) +
     theme_minimal()</code></pre>
 <p><img src="figure/01B-alevin.Rmd/counts-zeros-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of counts-zeros-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/counts-zeros-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+</div>
+<div id="figures" class="section level1">
+<h1>Figures</h1>
+<pre class="r"><code>plot_data &lt;- cell_data %&gt;%
+    select(BarcodeSample,
+           `Cell Ranger v3` = CellRangerFilt,
+           emptyDrops       = EmpDropsFilt,
+           Alevin           = AlevinFilt) %&gt;%
+    mutate(`Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
+           emptyDrops       = if_else(emptyDrops,       1L, 0L),
+           Alevin           = if_else(Alevin,           1L, 0L))
+
+upset(plot_data, order.by = &quot;freq&quot;,
+      sets.x.label = &quot;Number of cells&quot;,
+      text.scale = c(2, 1.2, 2, 1.2, 2, 2),
+      matrix.color = &quot;#7A52C7&quot;,
+      main.bar.color = &quot;#7A52C7&quot;,
+      sets.bar.color = &quot;#7A52C7&quot;)
+grid.edit(&quot;arrange&quot;, name = &quot;arrange2&quot;)
+comp_plot &lt;- grid.grab()
+
+plot_data &lt;- cell_data %&gt;%
+    mutate(Traditional = total_counts.Trad,
+           Alevin = total_counts.Alevin) %&gt;%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+counts_plot &lt;- ggplot(plot_data,
+                      aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = &quot;#7A52C7&quot;) +
+    geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
+                method = &quot;lm&quot;, colour = &quot;#00B7C6&quot;) +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;),
+                        labels = c(&quot;Both&quot;, &quot;Alignment based only&quot;,
+                                   &quot;Alevin only&quot;)) +
+    ggtitle(&quot;Total counts per cell&quot;) +
+    xlab(&quot;Alignment based&quot;) +
+    theme_minimal() +
+    theme(legend.position = &quot;bottom&quot;,
+          legend.title = element_blank())
+
+plot_data &lt;- feat_data %&gt;%
+    mutate(Traditional = log10_mean_counts.Trad,
+           Alevin = log10_mean_counts.Alevin) %&gt;%
+    mutate(Traditional = replace_na(Traditional, -0.1),
+           Alevin = replace_na(Alevin, -0.1))
+
+mean_plot &lt;- ggplot(plot_data,
+                    aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = &quot;#7A52C7&quot;) +
+    geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
+                method = &quot;lm&quot;, colour = &quot;#00B7C6&quot;) +
+    scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;),
+                        labels = c(&quot;Both&quot;, &quot;Alignment based only&quot;,
+                                   &quot;Alevin only&quot;)) +
+    ggtitle(&quot;Mean counts per gene (log10)&quot;) +
+    xlab(&quot;Alignment based&quot;) +
+    theme_minimal() +
+    theme(legend.position = &quot;bottom&quot;,
+          legend.title = element_blank())
+
+counts_data &lt;- feat_data %&gt;%
+    filter(Annot == &quot;Both&quot;) %&gt;%
+    select(ID, starts_with(&quot;log10_total_counts&quot;)) %&gt;%
+    gather(key = &quot;Method&quot;, value = &quot;log10_total_counts&quot;, -ID) %&gt;%
+    mutate(Method = str_split(Method, &quot;\\.&quot;, simplify = TRUE)[, 2])
+
+zeros_data &lt;- feat_data %&gt;%
+    filter(Annot == &quot;Both&quot;) %&gt;%
+    select(ID, starts_with(&quot;n_cells_by_counts&quot;)) %&gt;%
+    gather(key = &quot;Method&quot;, value = &quot;n_cells_by_counts&quot;, -ID) %&gt;%
+    mutate(Method = str_split(Method, &quot;\\.&quot;, simplify = TRUE)[, 2]) %&gt;%
+    mutate(PropZero = if_else(Method == &quot;Trad&quot;,
+                              1 - n_cells_by_counts / ncol(selected),
+                              1 - n_cells_by_counts / ncol(alevin)))
+
+plot_data &lt;- left_join(counts_data, zeros_data, by = c(&quot;ID&quot;, &quot;Method&quot;)) %&gt;%
+    mutate(Method = factor(Method, levels = c(&quot;Trad&quot;, &quot;Alevin&quot;),
+                           labels = c(&quot;Alignment based&quot;, &quot;Alevin&quot;)))
+
+zeros_plot &lt;- ggplot(plot_data,
+       aes(x = log10_total_counts, y = PropZero, colour = Method)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(aes(group = Method), colour = &quot;#EC008C&quot;) +
+    scale_y_continuous(labels = scales::percent) +
+    scale_colour_manual(values = c(&quot;#00ADEF&quot;, &quot;#8DC63F&quot;)) +
+    facet_wrap(~ Method) +
+    ggtitle(&quot;Zeros relationship&quot;) +
+    xlab(&quot;Total counts per gene (log10)&quot;) +
+    ylab(&quot;Percentage zeros&quot;) +
+    theme_minimal() +
+    theme(legend.position = &quot;none&quot;)</code></pre>
+<pre class="r"><code>fig &lt;- plot_grid(comp_plot, counts_plot, mean_plot, zeros_plot,
+          nrow = 2, labels = &quot;AUTO&quot;)
+
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;alevin-comparison.pdf&quot;), fig,
+       width = 7, height = 6, scale = 2)
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;alevin-comparison.png&quot;), fig,
+       width = 7, height = 6, scale = 2)
+
+fig</code></pre>
+<p><img src="figure/01B-alevin.Rmd/make-fig-1.png" width="960" style="display: block; margin: auto;" /></p>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
@@ -948,14 +1445,14 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-08                  
+ date     2019-02-22                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
    assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
    backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
    bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
-   bindrcpp             * 0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
    Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
    BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
    BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
@@ -964,8 +1461,8 @@ knitr::kable(data.frame(
    callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
    cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
    cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
- P codetools              0.2-15    2016-10-05 [5] CRAN (R 3.5.0)
    colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
+   cowplot              * 0.9.4     2019-01-08 [1] CRAN (R 3.5.0)
    crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
    DelayedArray         * 0.8.0     2018-10-30 [1] Bioconductor  
    desc                   1.2.0     2018-05-01 [1] CRAN (R 3.5.0)
@@ -982,6 +1479,7 @@ knitr::kable(data.frame(
    ggplot2              * 3.1.0     2018-10-25 [1] CRAN (R 3.5.0)
    git2r                  0.24.0    2019-01-07 [1] CRAN (R 3.5.0)
    glue                   1.3.0     2018-07-17 [1] CRAN (R 3.5.0)
+   gridExtra              2.3       2017-09-09 [1] CRAN (R 3.5.0)
    gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
    haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
    here                   0.1       2017-05-28 [1] CRAN (R 3.5.0)
@@ -1036,6 +1534,7 @@ knitr::kable(data.frame(
    tidyr                * 0.8.2     2018-10-28 [1] CRAN (R 3.5.0)
    tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
    tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
+   UpSetR               * 1.3.3     2017-03-21 [1] CRAN (R 3.5.0)
    usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
    whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
    withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)

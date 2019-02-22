@@ -37,6 +37,11 @@ knitr::opts_chunk$set(
 # scRNA-seq
 library("SingleCellExperiment")
 
+# Plotting
+library("UpSetR")
+library("cowplot")
+library("grid")
+
 # Tidyverse
 library("tidyverse")
 ```
@@ -49,6 +54,12 @@ source(here::here("R/output.R"))
 
 ```{r depends-paths}
 sel_path <- here::here("data/processed/01-selected.Rds")
+
+alevin_paths <- c(
+    here::here("data/alevin/Org1"),
+    here::here("data/alevin/Org2"),
+    here::here("data/alevin/Org3")
+)
 ```
 
 ```{r bpparam, cache = FALSE}
@@ -82,13 +93,7 @@ colData(selected)$BarcodeSample <- paste(
 )
 ```
 
-```{r load-alevin, cache.extra = tools::md5sum(sel_path)}
-alevin_paths <- c(
-    here::here("data/alevin/Org1"),
-    here::here("data/alevin/Org2"),
-    here::here("data/alevin/Org3")
-)
-
+```{r load-alevin, cache.extra = tools::md5sum(alevin_paths)}
 alevin <- readAlevin(alevin_paths, dataset = "Orgs123Alevin")
 alevin <- annotateSCE(alevin, calc_qc = TRUE, BPPARAM = bpparam)
 
@@ -106,8 +111,10 @@ cell_data <- full_join(as.data.frame(colData(selected)),
                        suffix = c(".Trad", ".Alevin")) %>%
     mutate(Sample = Sample.Trad) %>%
     mutate(Sample = if_else(is.na(Sample), Sample.Alevin, Sample)) %>%
-    select(BarcodeSample, Sample, contains("_"),
+    select(BarcodeSample, Sample, contains("_"), contains("Filt"),
            -contains("control"), -contains("endogenous"), -contains("_MT")) %>%
+    mutate_at(vars(contains("Filt")), replace_na, replace = FALSE) %>%
+    mutate(AlevinFilt = !is.na(total_counts.Alevin)) %>%
     mutate(SelBy = "Both") %>%
     mutate(SelBy = if_else(!is.na(total_counts.Trad) &
                                is.na(total_counts.Alevin),
@@ -314,25 +321,6 @@ ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
     theme_minimal()
 ```
 
-Logged
-------
-
-```{r gene-cells-log}
-plot_data <- feat_data %>%
-    mutate(Traditional = log10_total_counts.Trad,
-           Alevin = log10_total_counts.Alevin) %>%
-    mutate(Traditional = replace_na(Traditional, -1),
-           Alevin = replace_na(Alevin, -1))
-
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
-    geom_point(alpha = 0.3) +
-    geom_abline(intercept = 0, slope = 1, colour = "red") +
-    geom_smooth(data = filter(plot_data, Annot == "Both"),
-                method = "lm", colour = "blue") +
-    ggtitle("log10(total_counts)") +
-    theme_minimal()
-```
-
 Gene means {.tabset}
 ==========
 
@@ -399,6 +387,119 @@ ggplot(plot_data,
     facet_wrap(~ Method) +
     theme_minimal()
 ```
+
+Figures
+=======
+
+```{r fig-plots, collapse = TRUE, fig.show = "hide"}
+plot_data <- cell_data %>%
+    select(BarcodeSample,
+           `Cell Ranger v3` = CellRangerFilt,
+           emptyDrops       = EmpDropsFilt,
+           Alevin           = AlevinFilt) %>%
+    mutate(`Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
+           emptyDrops       = if_else(emptyDrops,       1L, 0L),
+           Alevin           = if_else(Alevin,           1L, 0L))
+
+upset(plot_data, order.by = "freq",
+      sets.x.label = "Number of cells",
+      text.scale = c(2, 1.2, 2, 1.2, 2, 2),
+      matrix.color = "#7A52C7",
+      main.bar.color = "#7A52C7",
+      sets.bar.color = "#7A52C7")
+grid.edit("arrange", name = "arrange2")
+comp_plot <- grid.grab()
+
+plot_data <- cell_data %>%
+    mutate(Traditional = total_counts.Trad,
+           Alevin = total_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional,
+                                    0.9 * min(Traditional, na.rm = TRUE)),
+           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+
+counts_plot <- ggplot(plot_data,
+                      aes(x = Traditional, y = Alevin, colour = SelBy)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "#7A52C7") +
+    geom_smooth(data = filter(plot_data, SelBy == "Both"),
+                method = "lm", colour = "#00B7C6") +
+    scale_x_log10(labels = scales::number) +
+    scale_y_log10(labels = scales::number) +
+    scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F"),
+                        labels = c("Both", "Alignment based only",
+                                   "Alevin only")) +
+    ggtitle("Total counts per cell") +
+    xlab("Alignment based") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
+
+plot_data <- feat_data %>%
+    mutate(Traditional = log10_mean_counts.Trad,
+           Alevin = log10_mean_counts.Alevin) %>%
+    mutate(Traditional = replace_na(Traditional, -0.1),
+           Alevin = replace_na(Alevin, -0.1))
+
+mean_plot <- ggplot(plot_data,
+                    aes(x = Traditional, y = Alevin, colour = Annot)) +
+    geom_point(alpha = 0.3) +
+    geom_abline(intercept = 0, slope = 1, colour = "#7A52C7") +
+    geom_smooth(data = filter(plot_data, Annot == "Both"),
+                method = "lm", colour = "#00B7C6") +
+    scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F"),
+                        labels = c("Both", "Alignment based only",
+                                   "Alevin only")) +
+    ggtitle("Mean counts per gene (log10)") +
+    xlab("Alignment based") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
+
+counts_data <- feat_data %>%
+    filter(Annot == "Both") %>%
+    select(ID, starts_with("log10_total_counts")) %>%
+    gather(key = "Method", value = "log10_total_counts", -ID) %>%
+    mutate(Method = str_split(Method, "\\.", simplify = TRUE)[, 2])
+
+zeros_data <- feat_data %>%
+    filter(Annot == "Both") %>%
+    select(ID, starts_with("n_cells_by_counts")) %>%
+    gather(key = "Method", value = "n_cells_by_counts", -ID) %>%
+    mutate(Method = str_split(Method, "\\.", simplify = TRUE)[, 2]) %>%
+    mutate(PropZero = if_else(Method == "Trad",
+                              1 - n_cells_by_counts / ncol(selected),
+                              1 - n_cells_by_counts / ncol(alevin)))
+
+plot_data <- left_join(counts_data, zeros_data, by = c("ID", "Method")) %>%
+    mutate(Method = factor(Method, levels = c("Trad", "Alevin"),
+                           labels = c("Alignment based", "Alevin")))
+
+zeros_plot <- ggplot(plot_data,
+       aes(x = log10_total_counts, y = PropZero, colour = Method)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(aes(group = Method), colour = "#EC008C") +
+    scale_y_continuous(labels = scales::percent) +
+    scale_colour_manual(values = c("#00ADEF", "#8DC63F")) +
+    facet_wrap(~ Method) +
+    ggtitle("Zeros relationship") +
+    xlab("Total counts per gene (log10)") +
+    ylab("Percentage zeros") +
+    theme_minimal() +
+    theme(legend.position = "none")
+```
+
+```{r make-fig}
+fig <- plot_grid(comp_plot, counts_plot, mean_plot, zeros_plot,
+          nrow = 2, labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "alevin-comparison.pdf"), fig,
+       width = 7, height = 6, scale = 2)
+ggsave(here::here("output", DOCNAME, "alevin-comparison.png"), fig,
+       width = 7, height = 6, scale = 2)
+
+fig
+```
+
 
 Summary
 =======
