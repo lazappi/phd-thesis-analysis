@@ -540,10 +540,14 @@ readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
 
 knitr::kable(data.frame(
     File = c(
-        getDownloadLink("parameters.json", DOCNAME)
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("alevin-comparison.png", DOCNAME),
+        getDownloadLink("alevin-comparison.pdf", DOCNAME)
     ),
     Description = c(
-        "Parameters set and used in this analysis"
+        "Parameters set and used in this analysis",
+        "Alevin comparison figure (PNG)",
+        "Alevin comparison figure (PDF)"
     )
 ))
 ```
