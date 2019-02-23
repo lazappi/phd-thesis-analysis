@@ -44,6 +44,7 @@ library("edgeR")
 
 # Plotting
 library("cowplot")
+library("gridExtra")
 
 # Tidyverse
 library("tidyverse")
@@ -308,6 +309,10 @@ features_out <- isOutlier(cell_data$log10_total_features_by_counts,
 mt_out       <- isOutlier(cell_data$pct_counts_MT,
                           nmads = mt_mads, type = "higher")
 
+counts_thresh   <- attr(counts_out, "thresholds")["lower"]
+features_thresh <- attr(features_out, "thresholds")["lower"]
+mt_thresh       <- attr(mt_out, "thresholds")["higher"]
+
 kept_manual <- !(counts_out | features_out | mt_out)
 colData(selected)$KeptManual <- kept_manual
 
@@ -319,9 +324,9 @@ manual_summ <- tibble(
         "Kept (manual)"
     ),
     Threshold = c(
-        paste("< 10 ^", round(attr(counts_out, "thresholds")["lower"], 2)),
-        paste("< 10 ^", round(attr(features_out, "thresholds")["lower"], 2)),
-        paste(">", round(attr(mt_out, "thresholds")["higher"], 2)),
+        paste("< 10 ^", round(counts_thresh, 2)),
+        paste("< 10 ^", round(features_thresh, 2)),
+        paste(">", round(mt_thresh, 2)),
         ""
     ),
     Count = c(
@@ -496,15 +501,15 @@ Filter
 
 ```{r filter-doublets}
 doublet_out <- isOutlier(doublet_scores, nmads = 15, type = "higher")
+doublet_thresh <- attr(doublet_out, "thresholds")["higher"]
 
 filtered <- filtered[, !doublet_out]
 ```
 
 We choose a threshold for the doublet score that removes around the number of
 cells as the expected doublet frequency for a 10x experiment (around 1 percent).
-A threshold of `r round(attr(doublet_out, "thresholds")["higher"], 2)`
-identifies `r sum(doublet_out)` doublets leaving us with `r ncol(filtered)`
-cells.
+A threshold of `r round(doublet_thresh, 2)` identifies `r sum(doublet_out)`
+doublets leaving us with `r ncol(filtered)` cells.
 
 Gene filtering
 ==============
@@ -569,7 +574,7 @@ Kept vs lost
 
 One thing we can look at is the difference in expression between the kept and
 removed cells. If we see known genes that are highly expressed in the removed
-cells taht can indicate that we have removed an interesting population of cells
+cells that can indicate that we have removed an interesting population of cells
 from the dataset. The red line shows equal expression and the blue line is a
 linear fit.
 
@@ -587,7 +592,7 @@ kept_lost <- tibble(
     KeptProp = Matrix::rowSums(kept_counts > 0) / ncol(kept_counts)
 ) %>%
     mutate(LogFC = predFC(cbind(Lost, Kept),
-                          design = cbind(1, c(1, 0)))[,2]) %>%
+                          design = cbind(1, c(1, 0)))[, 2]) %>%
     mutate(LostCapped = pmax(Lost, min(Lost[Lost > 0]) * 0.5),
            KeptCapped = pmax(Kept, min(Kept[Kept > 0]) * 0.5))
 
@@ -652,6 +657,194 @@ plot_list <- lapply(names(dimred_factors), function(fct_name) {
 plot_grid(plotlist = plot_list, ncol = 2)
 ```
 
+Figures
+=======
+
+Thresholds
+----------
+
+```{r fig-thresholds}
+plot_data <- cell_data %>%
+    mutate(Kept = !(counts_out | features_out))
+
+exp_plot <- ggplot(plot_data,
+       aes(x = log10_total_counts, y = log10_total_features_by_counts,
+           colour = Kept)) +
+    geom_point(alpha = 0.3) +
+    geom_vline(xintercept = counts_thresh, linetype = "dashed",
+               colour = "#8DC63F") +
+    annotate("text", x = counts_thresh, y = Inf,
+             label = paste(counts_mads, "MADs = ", round(counts_thresh, 2)),
+             angle = 90, vjust = -1, hjust = 1, colour = "#8DC63F") +
+    annotate("text", x = counts_thresh, y = Inf,
+             label = paste(sum(counts_out), "removed"),
+             angle = 90, vjust = 2, hjust = 1, colour = "#8DC63F") +
+    geom_hline(yintercept = features_thresh, linetype = "dashed",
+               colour = "#7A52C7") +
+    annotate("text", x = Inf, y = features_thresh,
+             label = paste(features_mads, "MADs = ", round(features_thresh, 2)),
+             vjust = -1, hjust = 1, colour = "#7A52C7") +
+    annotate("text", x = Inf, y = features_thresh,
+             label = paste(sum(features_out), "removed"),
+             vjust = 2, hjust = 1, colour = "#7A52C7") +
+    annotate("text", x = 4.5, y = 1,
+             label = paste(sum(!(counts_out | features_out)), "kept"),
+             vjust = -1, colour = "#00ADEF") +
+    annotate("text", x = 4.5, y = 1,
+             label = paste(sum((counts_out | features_out)), "removed"),
+             vjust = 1, colour = "#EC008C") +
+    scale_colour_manual(values = c("#EC008C", "#00ADEF"),
+                        labels = c("Removed", "Kept")) +
+    ggtitle("Counts thresholds") +
+    xlab("Total counts (log10)") +
+    ylab("Total features (log10)") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
+
+mt_plot <- ggplot(cell_data, aes(x = pct_counts_MT)) +
+    geom_histogram(bins = 100, fill = "#7A52C7") +
+    geom_vline(xintercept = mt_thresh, linetype = "dashed",
+               colour = "#EC008C") +
+    annotate("text", x = mt_thresh, y = Inf,
+             label = paste(mt_mads, "MADs = ", round(mt_thresh, 2), "%"),
+             angle = 90, vjust = -1, hjust = 1, colour = "#EC008C") +
+    annotate("text", x = mt_thresh, y = Inf,
+             label = paste(sum(mt_out), "removed"),
+             angle = 90, vjust = 2, hjust = 1, colour = "#EC008C") +
+    ggtitle("Mitochondrial percentage threshold") +
+    xlab("% counts mitochondrial") +
+    ylab("Number of cells") +
+    theme_minimal()
+
+plot_data <- data.frame(Score = doublet_scores)
+
+doublet_plot <- ggplot(plot_data, aes(x = Score)) +
+    geom_histogram(bins = 100, fill = "#7A52C7") +
+    geom_vline(xintercept = doublet_thresh, linetype = "dashed",
+               colour = "#EC008C") +
+    annotate("text", x = doublet_thresh, y = Inf,
+             label = paste("Threshold =", round(doublet_thresh, 2)),
+             angle = 90, vjust = -1, hjust = 1, colour = "#EC008C") +
+    annotate("text", x = doublet_thresh, y = Inf,
+             label = paste(sum(doublet_out), "removed"),
+             angle = 90, vjust = 2, hjust = 1, colour = "#EC008C") +
+    ggtitle("Doublet threshold") +
+    xlab("Doublet score") +
+    ylab("Number of cells") +
+    theme_minimal()
+
+plot_data <- reducedDim(selected, "PCA_coldata") %>%
+    as.data.frame() %>%
+    mutate(Removed = "Kept") %>%
+    mutate(Removed = if_else(!kept_manual, "Manual", Removed),
+           Removed = if_else(!kept_pca, "PCA", Removed),
+           Removed = if_else(!kept_manual & !kept_pca, "Both", Removed)) %>%
+    mutate(Removed = factor(Removed, levels = c("Both", "Manual", "Kept"),
+                            labels = c("Both", "Manual only", "Kept")))
+
+pca_plot <- ggplot(plot_data, aes(x = PC1, y = PC2, colour = Removed)) +
+    geom_point(alpha = 0.3) +
+    scale_colour_manual(values = c("#F47920", "#00B7C6", "grey50"),
+                        name = "Removed by") +
+    ggtitle("PCA based cell filtering") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+
+fig <- plot_grid(exp_plot, mt_plot, doublet_plot, pca_plot,
+                 ncol = 2, labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "qc-thresholds.pdf"), fig,
+       width = 7, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "qc-thresholds.png"), fig,
+       width = 7, height = 4, scale = 2)
+
+fig
+```
+
+Validation
+----------
+
+```{r fig-validation}
+plot_data <- kept_lost %>%
+    mutate(Mean = 0.5 * (Lost + Kept),
+           Diff = Kept - Lost)
+
+fc_plot <- ggplot(plot_data,
+                  aes(x = Mean, y  = LogFC, colour = LostProp - KeptProp)) +
+    geom_point(alpha = 0.3) +
+    geom_hline(yintercept = 0, colour = "red") +
+    scale_x_log10(labels = scales::number_format(accuracy = 0.0001)) +
+    scale_colour_viridis_c(
+        name = "Proportion expressed (Removed) - Proportion expressed (Kept)"
+    ) +
+    ggtitle("Foldchange between removed and kept cells") +
+    xlab("0.5 * (Average expression (Kept) + Average expression (Removed))") +
+    ylab("Predicted log2 foldchange (Removed / Kept)") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+
+fc_table <- kept_lost %>%
+    select(Gene, `Predicted foldchange (log2)` = LogFC) %>%
+    arrange(-`Predicted foldchange (log2)`) %>%
+    as.data.frame() %>%
+    head(15) %>%
+    tableGrob(rows = NULL, theme = ttheme_minimal())
+
+plot_data <- reducedDim(filtered, "TSNE") %>%
+    as.data.frame() %>%
+    rename(TSNE1 = V1, TSNE2 = V2) %>%
+    mutate(
+        Sample = colData(filtered)$Sample,
+        `Total counts (log10)` = colData(filtered)$log10_total_counts,
+        `Cell cycle` = colData(filtered)$CellCycle,
+        `Total features (log10)` = colData(filtered)$log10_total_features_by_counts,
+        `% Mitochondrial` = colData(filtered)$pct_counts_MT,
+        `Selection method` = colData(filtered)$SelMethod
+    )
+
+plot_list <- list(
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = Sample)) +
+        scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F")) +
+        ggtitle("Sample"),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Selection method`)) +
+        scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F")) +
+        ggtitle("Selection method"),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Cell cycle`)) +
+        scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F")) +
+        ggtitle("Cell cycle stage"),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total counts (log10)`)) +
+        scale_colour_viridis_c() +
+        ggtitle("Total counts (log10)"),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total features (log10)`)) +
+        scale_colour_viridis_c() +
+        ggtitle("Total features (log10)"),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `% Mitochondrial`)) +
+        scale_colour_viridis_c() +
+        ggtitle("% Mitochondrial")
+) %>%
+    lapply(function(x) {
+        x + geom_point(alpha = 0.3) +
+            theme_minimal() +
+            theme(legend.position = "bottom",
+                  legend.title = element_blank())
+    })
+
+tsne_plot <- plot_grid(plotlist = plot_list, ncol = 3)
+
+p1 <- plot_grid(fc_plot, fc_table, ncol = 2, labels = "AUTO")
+
+fig <- plot_grid(p1, tsne_plot, ncol = 1, labels = c("", "C"),
+                 rel_heights = c(0.8, 1))
+
+ggsave(here::here("output", DOCNAME, "qc-validation.pdf"), fig,
+       width = 7, height = 6, scale = 2)
+ggsave(here::here("output", DOCNAME, "qc-validation.png"), fig,
+       width = 7, height = 6, scale = 2)
+
+fig
+```
+
 Summary
 =======
 
@@ -667,18 +860,23 @@ This table describes parameters used and set in this document.
 params <- list(
     list(
         Parameter = "counts_thresh",
-        Value = attr(counts_out, "thresholds")["lower"],
+        Value = counts_thresh,
         Description = "Minimum threshold for (log10) total counts"
     ),
     list(
         Parameter = "features_thresh",
-        Value = attr(features_out, "thresholds")["lower"],
+        Value = features_thresh,
         Description = "Minimum threshold for (log10) total features"
     ),
     list(
         Parameter = "mt_thresh",
-        Value = attr(mt_out, "thresholds")["higher"],
+        Value = mt_thresh,
         Description = "Maximum threshold for percentage counts mitochondrial"
+    ),
+    list(
+        Parameter = "doublet_thresh",
+        Value = doublet_thresh,
+        Description = "Maximum threshold for doublet score"
     ),
     list(
         Parameter = "counts_mads",
@@ -754,10 +952,18 @@ readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
 
 knitr::kable(data.frame(
     File = c(
-        getDownloadLink("parameters.json", DOCNAME)
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("qc-thresholds.png", DOCNAME),
+        getDownloadLink("qc-thresholds.pdf", DOCNAME),
+        getDownloadLink("qc-validation.png", DOCNAME),
+        getDownloadLink("qc-validation.pdf", DOCNAME)
     ),
     Description = c(
-        "Parameters set and used in this analysis"
+        "Parameters set and used in this analysis",
+        "Quality control thresholds figure (PNG)",
+        "Quality control thresholds figure (PDF)",
+        "Quality control validation figure (PNG)",
+        "Quality control validation figure (PDF)"
     )
 ))
 ```

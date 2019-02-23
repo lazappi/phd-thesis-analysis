@@ -414,6 +414,12 @@ div.tocify {
     <li>
       <a href="04-marker-genes.html">Marker genes</a>
     </li>
+    <li>
+      <a href="05-paga.html">PAGA</a>
+    </li>
+    <li>
+      <a href="06-velocyto.html">Velocyto</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -459,7 +465,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-08</p>
+<p><strong>Last updated:</strong> 2019-02-23</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -483,7 +489,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/737f0b03a317410e36b363411655cef2995ceaa7" target="_blank">737f0b0</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1ecb5c649308b98934f37c9b753e0f5095a7e73e" target="_blank">1ecb5c6</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -492,8 +498,11 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    ._.DS_Store
     Ignored:    analysis/cache/
+    Ignored:    build-logs/
     Ignored:    data/
     Ignored:    output/03-clustering/selected_genes.csv.zip
+    Ignored:    output/04-marker-genes/de_genes.csv.zip
+    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -502,27 +511,25 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  build-logs/
-    Untracked:  docs/figure/01B-alevin.Rmd/
-    Untracked:  docs/figure/04-marker-genes.Rmd/
-    Untracked:  figures/
-    Untracked:  output/01-preprocessing/barcodes_Org1.tsv
-    Untracked:  output/01-preprocessing/barcodes_Org2.tsv
-    Untracked:  output/01-preprocessing/barcodes_Org3.tsv
-    Untracked:  output/01B-alevin/
-    Untracked:  output/04-marker-genes/
-    Untracked:  scripts/
-    Untracked:  workflowr-build.e2509293
-    Untracked:  workflowr-build.o2509293
+    Untracked:  output/02-quality-control/qc-thresholds.pdf
+    Untracked:  output/02-quality-control/qc-validation.pdf
+    Untracked:  workflowr-build.e2538443
+    Untracked:  workflowr-build.e2545370
+    Untracked:  workflowr-build.o2538443
+    Untracked:  workflowr-build.o2545370
 
 Unstaged changes:
-    Modified:   output/01-preprocessing/parameters.json
     Modified:   output/02-quality-control/parameters.json
     Modified:   output/03-clustering/cluster_assignments.tsv.gz
     Modified:   output/03-clustering/cluster_expression.tsv.gz
     Modified:   output/03-clustering/parameters.json
-    Deleted:    output/README.md
-    Modified:   packrat/packrat.lock
+    Modified:   output/04-marker-genes/de_genes.xlsx
+    Modified:   output/05-paga/cell_edges.csv
+    Modified:   output/05-paga/cell_embedding.csv
+    Modified:   output/05-paga/cluster_edges.csv
+    Modified:   output/05-paga/cluster_embedding.csv
+    Modified:   output/05-paga/cluster_tree_edges.csv
+    Modified:   scripts/build.pbs
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -556,7 +563,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/737f0b03a317410e36b363411655cef2995ceaa7/analysis/02-quality-control.Rmd" target="_blank">737f0b0</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1ecb5c649308b98934f37c9b753e0f5095a7e73e/analysis/02-quality-control.Rmd" target="_blank">1ecb5c6</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+<td style="text-align:left;">
+Add quality control figures
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/analysis/02-quality-control.Rmd" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -565,7 +589,24 @@ Luke Zappia
 2019-02-08
 </td>
 <td style="text-align:left;">
-Rebuild site
+Rebuild site and tidy
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/02-quality-control.html" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+<td style="text-align:left;">
+Rebuild site and tidy
 </td>
 </tr>
 <tr>
@@ -651,6 +692,7 @@ library(&quot;edgeR&quot;)
 
 # Plotting
 library(&quot;cowplot&quot;)
+library(&quot;gridExtra&quot;)
 
 # Tidyverse
 library(&quot;tidyverse&quot;)</code></pre>
@@ -707,6 +749,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/counts-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/counts-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -753,6 +806,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/features-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/features-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -797,6 +861,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/percent-MT-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/percent-MT-1.png" target="_blank">2daa7f2</a>
@@ -863,6 +938,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/pca-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -915,6 +1001,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/t-sne-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/t-sne-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -965,6 +1062,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/umap-1.png" target="_blank">2daa7f2</a>
@@ -1020,6 +1128,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exp-vars-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/exp-vars-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1073,6 +1192,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/cell-cycle-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/cell-cycle-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1107,19 +1237,19 @@ Luke Zappia
 <tbody>
 <tr class="odd">
 <td align="left">G1</td>
-<td align="right">5672</td>
+<td align="right">5701</td>
 </tr>
 <tr class="even">
 <td align="left">G2M</td>
-<td align="right">1331</td>
+<td align="right">1362</td>
 </tr>
 <tr class="odd">
 <td align="left">S</td>
-<td align="right">2722</td>
+<td align="right">2730</td>
 </tr>
 <tr class="even">
 <td align="left">NA</td>
-<td align="right">123</td>
+<td align="right">209</td>
 </tr>
 </tbody>
 </table>
@@ -1147,6 +1277,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-mean-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/exprs-mean-1.png" target="_blank">2daa7f2</a>
@@ -1193,6 +1334,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-total-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/exprs-total-1.png" target="_blank">2daa7f2</a>
@@ -1242,6 +1394,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-mean-expressed-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/exprs-mean-expressed-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1287,6 +1450,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-total-expressed-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/exprs-total-expressed-1.png" target="_blank">2daa7f2</a>
@@ -1337,6 +1511,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/high-exprs-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/high-exprs-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1385,6 +1570,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/freq-by-mean-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/freq-by-mean-1.png" target="_blank">2daa7f2</a>
@@ -1439,6 +1635,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/ncells-by-mean-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/ncells-by-mean-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1467,7 +1674,7 @@ Luke Zappia
 </div>
 <div id="cell-filtering" class="section level1">
 <h1>Cell filtering</h1>
-<p>We will now perform filtering to select high quality cells. Before we start we have 9848 cells.</p>
+<p>We will now perform filtering to select high quality cells. Before we start we have 10002 cells.</p>
 <div id="manual-outliers" class="section level2">
 <h2>Manual outliers</h2>
 <p>The simplest filtering method is to set thresholds on some of the factors we have explored. Specifically these are the total number of counts per cell, the number of features expressed in each cell and the percentage of counts assigned to genes on the mitochondrial chromosome which is used as a proxy for cell damage. The selected thresholds and numbers of filtered cells using this method are:</p>
@@ -1482,6 +1689,10 @@ features_out &lt;- isOutlier(cell_data$log10_total_features_by_counts,
 mt_out       &lt;- isOutlier(cell_data$pct_counts_MT,
                           nmads = mt_mads, type = &quot;higher&quot;)
 
+counts_thresh   &lt;- attr(counts_out, &quot;thresholds&quot;)[&quot;lower&quot;]
+features_thresh &lt;- attr(features_out, &quot;thresholds&quot;)[&quot;lower&quot;]
+mt_thresh       &lt;- attr(mt_out, &quot;thresholds&quot;)[&quot;higher&quot;]
+
 kept_manual &lt;- !(counts_out | features_out | mt_out)
 colData(selected)$KeptManual &lt;- kept_manual
 
@@ -1493,9 +1704,9 @@ manual_summ &lt;- tibble(
         &quot;Kept (manual)&quot;
     ),
     Threshold = c(
-        paste(&quot;&lt; 10 ^&quot;, round(attr(counts_out, &quot;thresholds&quot;)[&quot;lower&quot;], 2)),
-        paste(&quot;&lt; 10 ^&quot;, round(attr(features_out, &quot;thresholds&quot;)[&quot;lower&quot;], 2)),
-        paste(&quot;&gt;&quot;, round(attr(mt_out, &quot;thresholds&quot;)[&quot;higher&quot;], 2)),
+        paste(&quot;&lt; 10 ^&quot;, round(counts_thresh, 2)),
+        paste(&quot;&lt; 10 ^&quot;, round(features_thresh, 2)),
+        paste(&quot;&gt;&quot;, round(mt_thresh, 2)),
         &quot;&quot;
     ),
     Count = c(
@@ -1518,23 +1729,23 @@ knitr::kable(manual_summ)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">Total counts</td>
-<td align="left">&lt; 10 ^ 2.36</td>
-<td align="right">928</td>
+<td align="left">&lt; 10 ^ 2.31</td>
+<td align="right">1071</td>
 </tr>
 <tr class="even">
 <td align="left">Total features</td>
-<td align="left">&lt; 10 ^ 2.4</td>
-<td align="right">1205</td>
+<td align="left">&lt; 10 ^ 2.37</td>
+<td align="right">1323</td>
 </tr>
 <tr class="odd">
 <td align="left">Mitochondrial %</td>
-<td align="left">&gt; 8.2</td>
-<td align="right">615</td>
+<td align="left">&gt; 8.24</td>
+<td align="right">598</td>
 </tr>
 <tr class="even">
 <td align="left">Kept (manual)</td>
 <td align="left"></td>
-<td align="right">8150</td>
+<td align="right">8186</td>
 </tr>
 </tbody>
 </table>
@@ -1563,6 +1774,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-outliers-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/pca-outliers-1.png" target="_blank">2daa7f2</a>
@@ -1613,11 +1835,11 @@ knitr::kable(pca_summ)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">PCA</td>
-<td align="right">505</td>
+<td align="right">434</td>
 </tr>
 <tr class="even">
 <td align="left">Kept (PCA)</td>
-<td align="right">9343</td>
+<td align="right">9568</td>
 </tr>
 </tbody>
 </table>
@@ -1629,7 +1851,7 @@ colData(selected)$Kept              &lt;- &quot;False&quot;
 colData(selected)$Kept[kept_manual] &lt;- &quot;Manual&quot;
 colData(selected)$Kept[kept_pca]    &lt;- &quot;PCA&quot;
 colData(selected)$Kept[kept_both]   &lt;- &quot;Both&quot;</code></pre>
-<p>The manual method has identified 8150 high-quality cells and the PCA method identified 9343. If we combine both methods we get 8150 cells. We can look at which cells each method identified on our dimensionality reduction plots.</p>
+<p>The manual method has identified 8186 high-quality cells and the PCA method identified 9568. If we combine both methods we get 8186 cells. We can look at which cells each method identified on our dimensionality reduction plots.</p>
 <pre class="r"><code>out_factors &lt;- c(
     &quot;Kept&quot;                = &quot;Kept&quot;,
     &quot;Total counts&quot;        = &quot;log10_total_counts&quot;,
@@ -1662,6 +1884,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-summary-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/pca-summary-1.png" target="_blank">2daa7f2</a>
@@ -1716,6 +1949,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/tSNE-summary-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/tSNE-summary-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1768,6 +2012,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-summary-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/umap-summary-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1804,7 +2059,7 @@ filtered &lt;- normalize(filtered)
 filtered &lt;- runPCA(filtered, method = &quot;irlba&quot;)
 filtered &lt;- runTSNE(filtered)
 filtered &lt;- runUMAP(filtered)</code></pre>
-<p>Our filtered dataset now has 8150 cells.</p>
+<p>Our filtered dataset now has 8186 cells.</p>
 </div>
 </div>
 <div id="doublets" class="section level1">
@@ -1836,6 +2091,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-doublets-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/pca-doublets-1.png" target="_blank">2daa7f2</a>
@@ -1884,6 +2150,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/tSNE-doublets-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/tSNE-doublets-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -1928,6 +2205,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-doublets-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/umap-doublets-1.png" target="_blank">2daa7f2</a>
@@ -1977,6 +2265,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/hist-doublets-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/hist-doublets-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -2005,9 +2304,10 @@ Luke Zappia
 <div id="filter-1" class="section level2">
 <h2>Filter</h2>
 <pre class="r"><code>doublet_out &lt;- isOutlier(doublet_scores, nmads = 15, type = &quot;higher&quot;)
+doublet_thresh &lt;- attr(doublet_out, &quot;thresholds&quot;)[&quot;higher&quot;]
 
 filtered &lt;- filtered[, !doublet_out]</code></pre>
-<p>We choose a threshold for the doublet score that removes around the number of cells as the expected doublet frequency for a 10x experiment (around 1 percent). A threshold of 1.57 identifies 114 doublets leaving us with 8036 cells.</p>
+<p>We choose a threshold for the doublet score that removes around the number of cells as the expected doublet frequency for a 10x experiment (around 1 percent). A threshold of 1.55 identifies 134 doublets leaving us with 8052 cells.</p>
 </div>
 </div>
 <div id="gene-filtering" class="section level1">
@@ -2040,6 +2340,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/mean-histogram-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/mean-histogram-1.png" target="_blank">2daa7f2</a>
@@ -2090,6 +2401,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/cells-histogram-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/cells-histogram-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -2129,7 +2451,7 @@ filtered &lt;- normalize(filtered)
 filtered &lt;- runPCA(filtered, method = &quot;irlba&quot;)
 filtered &lt;- runTSNE(filtered)
 filtered &lt;- runUMAP(filtered)</code></pre>
-<p>We use a minimal filter that keeps genes with at least 1 counts in at least 2 cells. After filtering we have reduced the number of features from 33538 to 22734.</p>
+<p>We use a minimal filter that keeps genes with at least 1 counts in at least 2 cells. After filtering we have reduced the number of features from 25020 to 22738.</p>
 </div>
 </div>
 <div id="validation" class="section level1">
@@ -2137,7 +2459,7 @@ filtered &lt;- runUMAP(filtered)</code></pre>
 <p>The final quality control step is to inspect some validation plots that should help us see if we need to make any adjustments.</p>
 <div id="kept-vs-lost" class="section level2">
 <h2>Kept vs lost</h2>
-<p>One thing we can look at is the difference in expression between the kept and removed cells. If we see known genes that are highly expressed in the removed cells taht can indicate that we have removed an interesting population of cells from the dataset. The red line shows equal expression and the blue line is a linear fit.</p>
+<p>One thing we can look at is the difference in expression between the kept and removed cells. If we see known genes that are highly expressed in the removed cells that can indicate that we have removed an interesting population of cells from the dataset. The red line shows equal expression and the blue line is a linear fit.</p>
 <pre class="r"><code>pass_qc &lt;- colnames(selected) %in% colnames(filtered)
 
 lost_counts &lt;- counts(selected)[, !pass_qc]
@@ -2151,7 +2473,7 @@ kept_lost &lt;- tibble(
     KeptProp = Matrix::rowSums(kept_counts &gt; 0) / ncol(kept_counts)
 ) %&gt;%
     mutate(LogFC = predFC(cbind(Lost, Kept),
-                          design = cbind(1, c(1, 0)))[,2]) %&gt;%
+                          design = cbind(1, c(1, 0)))[, 2]) %&gt;%
     mutate(LostCapped = pmax(Lost, min(Lost[Lost &gt; 0]) * 0.5),
            KeptCapped = pmax(Kept, min(Kept[Kept &gt; 0]) * 0.5))
 
@@ -2185,6 +2507,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/kept-lost-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/kept-lost-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -2215,7 +2548,7 @@ Luke Zappia
     head(100)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Gene"],"name":[1],"type":["chr"],"align":["left"]},{"label":["LogFC"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Lost"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["LostProp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Kept"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["KeptProp"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"PLCG2","2":"4.055202","3":"3.0318853","4":"0.0546357616","5":"0.4240878853","6":"0.0576157292","_rn_":"1"},{"1":"AC005523.2","2":"3.758139","3":"0.7653445","4":"0.0033112583","5":"0.0096464048","6":"0.0069686411","_rn_":"2"},{"1":"LINC00843","2":"3.751693","3":"0.7268012","4":"0.0016556291","5":"0.0010640469","6":"0.0012444002","_rn_":"3"},{"1":"AL627309.1","2":"3.751048","3":"0.7263546","4":"0.0005518764","5":"0.0010404532","6":"0.0013688402","_rn_":"4"},{"1":"LINC02067","2":"3.750939","3":"0.7268300","4":"0.0022075055","5":"0.0011721325","6":"0.0009955202","_rn_":"5"},{"1":"AC025569.1","2":"3.748006","3":"0.7264391","4":"0.0011037528","5":"0.0014689206","6":"0.0013688402","_rn_":"6"},{"1":"AC010761.1","2":"3.741828","3":"0.7269983","4":"0.0027593819","5":"0.0024380117","6":"0.0033598805","_rn_":"7"},{"1":"LINC00921","2":"3.741120","3":"0.7325949","4":"0.0016556291","5":"0.0039209478","6":"0.0041065207","_rn_":"8"},{"1":"AC008738.2","2":"3.736334","3":"0.7266188","4":"0.0011037528","5":"0.0030856978","6":"0.0037332006","_rn_":"9"},{"1":"HSF4","2":"3.734394","3":"0.7264415","4":"0.0011037528","5":"0.0033040672","6":"0.0029865605","_rn_":"10"},{"1":"AC091057.3","2":"3.726501","3":"0.7266178","4":"0.0027593819","5":"0.0044200140","6":"0.0017421603","_rn_":"11"},{"1":"NR5A2","2":"3.724581","3":"0.7583210","4":"0.0022075055","5":"0.0126320689","6":"0.0099552016","_rn_":"12"},{"1":"GOLGA8N","2":"3.724338","3":"0.7295890","4":"0.0038631347","5":"0.0054601029","6":"0.0051020408","_rn_":"13"},{"1":"AP000350.7","2":"3.722859","3":"0.7273582","4":"0.0038631347","5":"0.0051025678","6":"0.0049776008","_rn_":"14"},{"1":"AL023583.1","2":"3.716774","3":"0.7267222","4":"0.0033112583","5":"0.0057755089","6":"0.0067197611","_rn_":"15"},{"1":"SIGLEC9","2":"3.689932","3":"0.7266350","4":"0.0033112583","5":"0.0094685046","6":"0.0060975610","_rn_":"16"},{"1":"MAEL","2":"3.684947","3":"0.7381064","4":"0.0038631347","5":"0.0131229313","6":"0.0102040816","_rn_":"17"},{"1":"CEBPA-DT","2":"3.622445","3":"0.7271318","4":"0.0055187638","5":"0.0192535665","6":"0.0171727227","_rn_":"18"},{"1":"LAIR1","2":"3.599899","3":"0.7332514","4":"0.0088300221","5":"0.0242550094","6":"0.0261324042","_rn_":"19"},{"1":"LINC00663","2":"3.596781","3":"0.7429254","4":"0.0066225166","5":"0.0273737051","6":"0.0262568442","_rn_":"20"},{"1":"AC093297.2","2":"3.536132","3":"0.7528533","4":"0.0149006623","5":"0.0396323278","6":"0.0326032852","_rn_":"21"},{"1":"U2AF1","2":"3.486162","3":"0.7329247","4":"0.0110375276","5":"0.0419024274","6":"0.0411896466","_rn_":"22"},{"1":"TIMM23B","2":"3.228682","3":"0.7487674","4":"0.0270419426","5":"0.0932194154","6":"0.0899701344","_rn_":"23"},{"1":"TAAR6","2":"3.219062","3":"0.4842364","4":"0.0005518764","5":"0.0009534164","6":"0.0011199602","_rn_":"24"},{"1":"SLC35D3","2":"3.218221","3":"0.4843171","4":"0.0011037528","5":"0.0010947240","6":"0.0012444002","_rn_":"25"},{"1":"FAM163A","2":"3.194911","3":"0.4845710","4":"0.0016556291","5":"0.0043328649","6":"0.0051020408","_rn_":"26"},{"1":"ADAM32","2":"3.113046","3":"0.4848985","4":"0.0033112583","5":"0.0159250723","6":"0.0156794425","_rn_":"27"},{"1":"ZFP3","2":"3.087187","3":"0.4898948","4":"0.0055187638","5":"0.0216355889","6":"0.0212792434","_rn_":"28"},{"1":"PPP1R3F","2":"3.069675","3":"0.4852982","4":"0.0077262693","5":"0.0224304778","6":"0.0250124440","_rn_":"29"},{"1":"PUS7","2":"2.939913","3":"0.5402094","4":"0.0209713024","5":"0.0663390312","6":"0.0673220508","_rn_":"30"},{"1":"AC091100.1","2":"2.858808","3":"0.3632660","4":"0.0011037528","5":"0.0004210567","6":"0.0003733201","_rn_":"31"},{"1":"AC009446.1","2":"2.838069","3":"0.3633517","4":"0.0027593819","5":"0.0032477749","6":"0.0038576406","_rn_":"32"},{"1":"CXCL16","2":"2.832153","3":"0.3830647","4":"0.0099337748","5":"0.0132268195","6":"0.0113240418","_rn_":"33"},{"1":"LYSMD1","2":"2.824783","3":"0.4559067","4":"0.0176600442","5":"0.0483606702","6":"0.0396963664","_rn_":"34"},{"1":"GRIK5","2":"2.812230","3":"0.3656594","4":"0.0060706402","5":"0.0078664465","6":"0.0075908412","_rn_":"35"},{"1":"DISP2","2":"2.805724","3":"0.3653548","4":"0.0044150110","5":"0.0086257146","6":"0.0079641613","_rn_":"36"},{"1":"KCNJ12","2":"2.799735","3":"0.3644574","4":"0.0044150110","5":"0.0090333688","6":"0.0107018417","_rn_":"37"},{"1":"HEY2","2":"2.798175","3":"0.5116591","4":"0.0204194260","5":"0.0794076143","6":"0.0653310105","_rn_":"38"},{"1":"FOXL1","2":"2.742134","3":"0.3679717","4":"0.0099337748","5":"0.0189660671","6":"0.0186660030","_rn_":"39"},{"1":"ACY1","2":"2.719910","3":"0.3760534","4":"0.0110375276","5":"0.0263085709","6":"0.0255102041","_rn_":"40"},{"1":"CHRNA1","2":"2.717451","3":"0.3683662","4":"0.0055187638","5":"0.0228063551","6":"0.0121951220","_rn_":"41"},{"1":"ZNF417","2":"2.699554","3":"0.3649062","4":"0.0060706402","5":"0.0237228628","6":"0.0243902439","_rn_":"42"},{"1":"IL10RB","2":"2.697834","3":"0.4186896","4":"0.0198675497","5":"0.0514598940","6":"0.0456694873","_rn_":"43"},{"1":"RASSF10","2":"2.693251","3":"0.5167723","4":"0.0364238411","5":"0.1025077318","6":"0.0571179691","_rn_":"44"},{"1":"ADAMTS2","2":"2.651252","3":"0.3645368","4":"0.0082781457","5":"0.0308747693","6":"0.0294922847","_rn_":"45"},{"1":"ZNF587B","2":"2.649304","3":"0.3755366","4":"0.0126931567","5":"0.0369883377","6":"0.0321055251","_rn_":"46"},{"1":"ZNF773","2":"2.644598","3":"0.3716767","4":"0.0099337748","5":"0.0356905200","6":"0.0342210055","_rn_":"47"},{"1":"RAB9B","2":"2.641187","3":"0.3642322","4":"0.0088300221","5":"0.0322737509","6":"0.0355898457","_rn_":"48"},{"1":"WDR90","2":"2.622881","3":"0.3713459","4":"0.0149006623","5":"0.0389668897","6":"0.0383275261","_rn_":"49"},{"1":"EEPD1","2":"2.618178","3":"0.3802668","4":"0.0115894040","5":"0.0445378264","6":"0.0424340468","_rn_":"50"},{"1":"SLC2A13","2":"2.612094","3":"0.4213100","4":"0.0160044150","5":"0.0677920770","6":"0.0668242907","_rn_":"51"},{"1":"AC068831.6","2":"2.599507","3":"0.2956751","4":"0.0011037528","5":"0.0013508441","6":"0.0016177203","_rn_":"52"},{"1":"ITPRIPL2","2":"2.596800","3":"0.5380825","4":"0.0408388521","5":"0.1345523095","6":"0.1103782977","_rn_":"53"},{"1":"ABHD14A-ACY1","2":"2.595189","3":"0.3821746","4":"0.0215231788","5":"0.0493849632","6":"0.0510204082","_rn_":"54"},{"1":"AC090772.3","2":"2.574869","3":"0.2906189","4":"0.0016556291","5":"0.0018690416","6":"0.0024888004","_rn_":"55"},{"1":"ATR","2":"2.562223","3":"0.3996280","4":"0.0248344371","5":"0.0647619837","6":"0.0581134893","_rn_":"56"},{"1":"TANC2","2":"2.557253","3":"0.4873672","4":"0.0408388521","5":"0.1150650301","6":"0.1087605774","_rn_":"57"},{"1":"AL158063.1","2":"2.551044","3":"0.2905740","4":"0.0011037528","5":"0.0050730144","6":"0.0042309607","_rn_":"58"},{"1":"ZNF605","2":"2.492406","3":"0.5617111","4":"0.0474613687","5":"0.1729824250","6":"0.1556744649","_rn_":"59"},{"1":"LINC00472","2":"2.483997","3":"0.4481580","4":"0.0336644592","5":"0.1078290732","6":"0.0669487307","_rn_":"60"},{"1":"JAG2","2":"2.479342","3":"0.3731551","4":"0.0242825607","5":"0.0642107476","6":"0.0359631658","_rn_":"61"},{"1":"ELP4","2":"2.427091","3":"0.4411073","4":"0.0303532009","5":"0.1155485159","6":"0.0980587357","_rn_":"62"},{"1":"VKORC1L1","2":"2.419673","3":"0.4356771","4":"0.0474613687","5":"0.1137696270","6":"0.1072672972","_rn_":"63"},{"1":"HEXIM2","2":"2.383191","3":"0.4471217","4":"0.0309050773","5":"0.1288743794","6":"0.1097560976","_rn_":"64"},{"1":"SEC24C","2":"2.373683","3":"0.4402163","4":"0.0424944812","5":"0.1265794554","6":"0.1039074166","_rn_":"65"},{"1":"MAVS","2":"2.372169","3":"0.5512039","4":"0.0667770419","5":"0.1979818494","6":"0.1637630662","_rn_":"66"},{"1":"TRG-AS1","2":"2.369989","3":"0.2653340","4":"0.0022075055","5":"0.0152464559","6":"0.0060975610","_rn_":"67"},{"1":"IMPA2","2":"2.317143","3":"0.3826454","4":"0.0435982340","5":"0.1010183677","6":"0.0985564958","_rn_":"68"},{"1":"LPAR4","2":"2.287339","3":"0.4022728","4":"0.0286975717","5":"0.1204648701","6":"0.0980587357","_rn_":"69"},{"1":"TMEM8A","2":"2.267206","3":"0.3719300","4":"0.0452538631","5":"0.1039613320","6":"0.0834992534","_rn_":"70"},{"1":"MTA2","2":"2.258292","3":"0.3360112","4":"0.0187637969","5":"0.0809075633","6":"0.0664509706","_rn_":"71"},{"1":"ZNF134","2":"2.242771","3":"0.4635766","4":"0.0491169978","5":"0.1732077768","6":"0.1500746640","_rn_":"72"},{"1":"ZNF248","2":"2.242511","3":"0.3360709","4":"0.0281456954","5":"0.0839517952","6":"0.0801393728","_rn_":"73"},{"1":"ARNT","2":"2.204462","3":"0.4191611","4":"0.0391832230","5":"0.1510910039","6":"0.1330263813","_rn_":"74"},{"1":"SOX12","2":"2.191903","3":"0.5459984","4":"0.0722958057","5":"0.2461172631","6":"0.1991040319","_rn_":"75"},{"1":"ARFGAP1","2":"2.188653","3":"0.4655015","4":"0.0562913907","5":"0.1885696879","6":"0.1413638626","_rn_":"76"},{"1":"MRI1","2":"2.171910","3":"0.4453178","4":"0.0518763797","5":"0.1781644745","6":"0.1574166252","_rn_":"77"},{"1":"DUOX1","2":"2.163936","3":"0.4076533","4":"0.0331125828","5":"0.1523543109","6":"0.1260577402","_rn_":"78"},{"1":"HMGN5","2":"2.085031","3":"0.4327537","4":"0.0408388521","5":"0.1913276497","6":"0.1439771030","_rn_":"79"},{"1":"HNF1A","2":"2.050129","3":"0.1843605","4":"0.0066225166","5":"0.0018864658","6":"0.0021154803","_rn_":"80"},{"1":"LINC01535","2":"2.045943","3":"0.1815886","4":"0.0005518764","5":"0.0002247825","6":"0.0003733201","_rn_":"81"},{"1":"SLC9C1","2":"2.034912","3":"0.1816952","4":"0.0016556291","5":"0.0017869204","6":"0.0013688402","_rn_":"82"},{"1":"EVA1C","2":"2.018863","3":"0.1815886","4":"0.0005518764","5":"0.0038682149","6":"0.0043554007","_rn_":"83"},{"1":"LRRC8A","2":"2.000450","3":"0.3791703","4":"0.0496688742","5":"0.1700825322","6":"0.1340219014","_rn_":"84"},{"1":"CLEC18A","2":"1.987280","3":"0.2475811","4":"0.0298013245","5":"0.0633813896","6":"0.0289945246","_rn_":"85"},{"1":"BCL6B","2":"1.983717","3":"0.4604735","4":"0.0342163355","5":"0.2424533637","6":"0.0719263315","_rn_":"86"},{"1":"AL157373.2","2":"1.980435","3":"0.1826293","4":"0.0066225166","5":"0.0100314581","6":"0.0100796416","_rn_":"87"},{"1":"RPP25","2":"1.968647","3":"0.3246606","4":"0.0187637969","5":"0.1319861042","6":"0.0946988552","_rn_":"88"},{"1":"NCKAP1","2":"1.932965","3":"0.6391358","4":"0.0866445916","5":"0.4131226559","6":"0.2847187656","_rn_":"89"},{"1":"ZNF138","2":"1.908710","3":"0.3185211","4":"0.0320088300","5":"0.1403119041","6":"0.1233200597","_rn_":"90"},{"1":"HMGXB3","2":"1.900473","3":"0.4438412","4":"0.0656732892","5":"0.2534938441","6":"0.2015928323","_rn_":"91"},{"1":"CLDN5","2":"1.882086","3":"2.3199621","4":"0.1655629139","5":"1.9464923581","6":"0.2117969139","_rn_":"92"},{"1":"ZNF286A","2":"1.865008","3":"0.2130791","4":"0.0160044150","5":"0.0545760746","6":"0.0559980090","_rn_":"93"},{"1":"FAM81B","2":"1.854787","3":"0.1891742","4":"0.0182119205","5":"0.0344201727","6":"0.0166749627","_rn_":"94"},{"1":"UPP1","2":"1.833806","3":"0.2813121","4":"0.0204194260","5":"0.1234219344","6":"0.0668242907","_rn_":"95"},{"1":"C1orf131","2":"1.831093","3":"0.4039840","4":"0.0529801325","5":"0.2383093141","6":"0.1851667496","_rn_":"96"},{"1":"PIM3","2":"1.823631","3":"0.5598061","4":"0.0540838852","5":"0.3864738523","6":"0.1728471877","_rn_":"97"},{"1":"JUP","2":"1.819437","3":"0.5868578","4":"0.0888520971","5":"0.4135667756","6":"0.1833001493","_rn_":"98"},{"1":"MT-ND6","2":"1.816405","3":"0.7487626","4":"0.2157836645","5":"0.5672318863","6":"0.3451966152","_rn_":"99"},{"1":"SPOCK2","2":"1.815648","3":"0.7137249","4":"0.0921633554","5":"0.5346343861","6":"0.1161025386","_rn_":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Gene"],"name":[1],"type":["chr"],"align":["left"]},{"label":["LogFC"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Lost"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["LostProp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Kept"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["KeptProp"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"AC005523.2","2":"3.635019","3":"0.6516544","4":"0.0030769231","5":"0.0095422077","6":"0.0069547938","_rn_":"1"},{"1":"OCLM","2":"3.634619","3":"0.6186724","4":"0.0015384615","5":"0.0000000000","6":"0.0000000000","_rn_":"2"},{"1":"LINC00843","2":"3.627595","3":"0.6188241","4":"0.0015384615","5":"0.0010000186","6":"0.0012419275","_rn_":"3"},{"1":"AL627309.1","2":"3.626357","3":"0.6183744","4":"0.0005128205","5":"0.0010373655","6":"0.0013661202","_rn_":"4"},{"1":"LINC02067","2":"3.626263","3":"0.6187791","4":"0.0020512821","5":"0.0011686541","6":"0.0009935420","_rn_":"5"},{"1":"AC025569.1","2":"3.625177","3":"0.6186560","4":"0.0015384615","5":"0.0012809951","6":"0.0012419275","_rn_":"6"},{"1":"ITPKA","2":"3.624939","3":"0.6183744","4":"0.0005128205","5":"0.0012310157","6":"0.0016145057","_rn_":"7"},{"1":"GCNT4","2":"3.618081","3":"0.6200749","4":"0.0051282051","5":"0.0026706230","6":"0.0027322404","_rn_":"8"},{"1":"AC010761.1","2":"3.617089","3":"0.6188909","4":"0.0020512821","5":"0.0024583284","6":"0.0034773969","_rn_":"9"},{"1":"LINC00921","2":"3.616814","3":"0.6236870","4":"0.0015384615","5":"0.0039093119","6":"0.0040983607","_rn_":"10"},{"1":"AC008738.2","2":"3.611973","3":"0.6185993","4":"0.0010256410","5":"0.0030765406","6":"0.0037257824","_rn_":"11"},{"1":"HSF4","2":"3.610516","3":"0.6185008","4":"0.0015384615","5":"0.0032483670","6":"0.0028564332","_rn_":"12"},{"1":"NR5A2","2":"3.602700","3":"0.6457632","4":"0.0030769231","5":"0.0124417608","6":"0.0096870343","_rn_":"13"},{"1":"AC091057.3","2":"3.602354","3":"0.6185985","4":"0.0025641026","5":"0.0044068971","6":"0.0017386985","_rn_":"14"},{"1":"AP000350.7","2":"3.599396","3":"0.6192983","4":"0.0041025641","5":"0.0050265154","6":"0.0048435171","_rn_":"15"},{"1":"GOLGA8N","2":"3.598908","3":"0.6209606","4":"0.0020512821","5":"0.0055903891","6":"0.0054644809","_rn_":"16"},{"1":"TSPAN32","2":"3.594678","3":"0.6184650","4":"0.0015384615","5":"0.0054351453","6":"0.0045951316","_rn_":"17"},{"1":"AL023583.1","2":"3.592251","3":"0.6186173","4":"0.0020512821","5":"0.0058196554","6":"0.0069547938","_rn_":"18"},{"1":"CYP26B1","2":"3.577206","3":"0.6186427","4":"0.0025641026","5":"0.0079411164","6":"0.0062096374","_rn_":"19"},{"1":"SIGLEC9","2":"3.565557","3":"0.6184914","4":"0.0015384615","5":"0.0095469085","6":"0.0064580229","_rn_":"20"},{"1":"MAEL","2":"3.562359","3":"0.6284263","4":"0.0041025641","5":"0.0130426667","6":"0.0100596125","_rn_":"21"},{"1":"PRLR","2":"3.522047","3":"0.6213000","4":"0.0097435897","5":"0.0167189306","6":"0.0172627919","_rn_":"22"},{"1":"LINC01550","2":"3.505192","3":"0.6252766","4":"0.0071794872","5":"0.0204826501","6":"0.0176353701","_rn_":"23"},{"1":"CEBPA-DT","2":"3.499416","3":"0.6189028","4":"0.0035897436","5":"0.0193130620","6":"0.0175111773","_rn_":"24"},{"1":"LAIR1","2":"3.480355","3":"0.6244778","4":"0.0092307692","5":"0.0239800410","6":"0.0258320914","_rn_":"25"},{"1":"LINC00663","2":"3.474967","3":"0.6323884","4":"0.0046153846","5":"0.0273741644","6":"0.0265772479","_rn_":"26"},{"1":"AC093297.2","2":"3.416611","3":"0.6409620","4":"0.0133333333","5":"0.0394899790","6":"0.0326626925","_rn_":"27"},{"1":"U2AF1","2":"3.383492","3":"0.6239254","4":"0.0102564103","5":"0.0390532383","6":"0.0409836066","_rn_":"28"},{"1":"SLC6A9","2":"3.321640","3":"0.6247693","4":"0.0133333333","5":"0.0496471957","6":"0.0500496771","_rn_":"29"},{"1":"HAPLN3","2":"3.274634","3":"0.6313026","4":"0.0179487179","5":"0.0602173825","6":"0.0567560854","_rn_":"30"},{"1":"PLCG2","2":"3.274065","3":"2.2665229","4":"0.0471794872","5":"0.6713586045","6":"0.0579980129","_rn_":"31"},{"1":"WHAMM","2":"3.168022","3":"0.6355718","4":"0.0220512821","5":"0.0815721614","6":"0.0776204670","_rn_":"32"},{"1":"TAAR6","2":"3.100570","3":"0.4124151","4":"0.0010256410","5":"0.0008057090","6":"0.0009935420","_rn_":"33"},{"1":"TIMM23B","2":"3.092388","3":"0.6341008","4":"0.0266666667","5":"0.0958793748","6":"0.0894187779","_rn_":"34"},{"1":"FAM163A","2":"3.075382","3":"0.4125344","4":"0.0015384615","5":"0.0043200066","6":"0.0050919026","_rn_":"35"},{"1":"ADAM32","2":"2.997302","3":"0.4130398","4":"0.0051282051","5":"0.0156794619","6":"0.0151515152","_rn_":"36"},{"1":"PUS7","2":"2.826371","3":"0.4598842","4":"0.0200000000","5":"0.0661574311","6":"0.0670640835","_rn_":"37"},{"1":"HEY2","2":"2.700293","3":"0.4357629","4":"0.0200000000","5":"0.0766667115","6":"0.0648286140","_rn_":"38"},{"1":"ZNF417","2":"2.588510","3":"0.3108073","4":"0.0056410256","5":"0.0235226474","6":"0.0243417784","_rn_":"39"},{"1":"ZNF587B","2":"2.539163","3":"0.3198342","4":"0.0123076923","5":"0.0367690819","6":"0.0319175360","_rn_":"40"},{"1":"ZNF773","2":"2.533278","3":"0.3164197","4":"0.0092307692","5":"0.0355875609","6":"0.0341530055","_rn_":"41"},{"1":"AL158063.1","2":"2.439953","3":"0.2473771","4":"0.0010256410","5":"0.0050579596","6":"0.0042225534","_rn_":"42"},{"1":"TRG-AS1","2":"2.261453","3":"0.2258190","4":"0.0015384615","5":"0.0152628134","6":"0.0062096374","_rn_":"43"},{"1":"HSPB3","2":"2.205283","3":"0.2075662","4":"0.0010256410","5":"0.0093361390","6":"0.0037257824","_rn_":"44"},{"1":"ZNF248","2":"2.139649","3":"0.2863377","4":"0.0256410256","5":"0.0835036970","6":"0.0801043219","_rn_":"45"},{"1":"ZNF134","2":"2.139583","3":"0.3952443","4":"0.0492307692","5":"0.1728594744","6":"0.1490312966","_rn_":"46"},{"1":"TMEM8A","2":"2.131796","3":"0.3128934","4":"0.0415384615","5":"0.1069315308","6":"0.0834575261","_rn_":"47"},{"1":"SPINDOC","2":"2.091960","3":"0.2487743","4":"0.0164102564","5":"0.0610416581","6":"0.0577496274","_rn_":"48"},{"1":"TXLNB","2":"2.048525","3":"0.1779426","4":"0.0025641026","5":"0.0069991058","6":"0.0049677099","_rn_":"49"},{"1":"C7orf31","2":"2.040978","3":"0.2280509","4":"0.0128205128","5":"0.0520778890","6":"0.0512916046","_rn_":"50"},{"1":"HNF1A","2":"1.948858","3":"0.1569682","4":"0.0061538462","5":"0.0018678647","6":"0.0021112767","_rn_":"51"},{"1":"LINC01535","2":"1.944586","3":"0.1545936","4":"0.0005128205","5":"0.0002241155","6":"0.0003725782","_rn_":"52"},{"1":"SLC9C1","2":"1.934490","3":"0.1547364","4":"0.0020512821","5":"0.0017359717","6":"0.0012419275","_rn_":"53"},{"1":"BCL6B","2":"1.930667","3":"0.4123793","4":"0.0348717949","5":"0.2465553464","6":"0.0710382514","_rn_":"54"},{"1":"EVA1C","2":"1.920059","3":"0.1547417","4":"0.0015384615","5":"0.0037271162","6":"0.0040983607","_rn_":"55"},{"1":"AL157373.2","2":"1.880708","3":"0.1554969","4":"0.0061538462","5":"0.0099864631","6":"0.0100596125","_rn_":"56"},{"1":"MYCL","2":"1.874204","3":"0.1661709","4":"0.0082051282","5":"0.0214413504","6":"0.0182563338","_rn_":"57"},{"1":"RPP25","2":"1.868627","3":"0.2768677","4":"0.0174358974","5":"0.1318567977","6":"0.0946348733","_rn_":"58"},{"1":"ZNF286A","2":"1.861842","3":"0.1971722","4":"0.0169230769","5":"0.0541425703","6":"0.0555141580","_rn_":"59"},{"1":"CLEC18A","2":"1.844292","3":"0.2011516","4":"0.0271794872","5":"0.0612079350","6":"0.0289369101","_rn_":"60"},{"1":"ZDHHC13","2":"1.844028","3":"0.2210730","4":"0.0225641026","5":"0.0813135339","6":"0.0773720815","_rn_":"61"},{"1":"LRRC8A","2":"1.836192","3":"0.3118799","4":"0.0430769231","5":"0.1747524316","6":"0.1342523597","_rn_":"62"},{"1":"SPOCK2","2":"1.835524","3":"0.6785678","4":"0.0835897436","5":"0.5463174568","6":"0.1164927968","_rn_":"63"},{"1":"NPHS1","2":"1.788047","3":"0.5629659","4":"0.0630769231","5":"0.4501438515","6":"0.1004719324","_rn_":"64"},{"1":"VKORC1L1","2":"1.782003","3":"0.2392987","4":"0.0451282051","5":"0.1126455291","6":"0.1068057625","_rn_":"65"},{"1":"PRMT7","2":"1.776295","3":"0.2218749","4":"0.0307692308","5":"0.0954814767","6":"0.0880526577","_rn_":"66"},{"1":"TGFBR3","2":"1.773812","3":"0.6715729","4":"0.0764102564","5":"0.5713573227","6":"0.1321410830","_rn_":"67"},{"1":"HTRA1","2":"1.760182","3":"0.5350875","4":"0.0953846154","5":"0.4329921130","6":"0.2076502732","_rn_":"68"},{"1":"OCLN","2":"1.745441","3":"0.1612394","4":"0.0189743590","5":"0.0364079985","6":"0.0327868852","_rn_":"69"},{"1":"SEMA3B","2":"1.743318","3":"0.4383789","4":"0.0743589744","5":"0.3359712867","6":"0.1219572777","_rn_":"70"},{"1":"ITIH5","2":"1.740656","3":"0.3906168","4":"0.0507692308","5":"0.2852907230","6":"0.0797317437","_rn_":"71"},{"1":"C20orf194","2":"1.734314","3":"0.2500051","4":"0.0430769231","5":"0.1346443407","6":"0.1183556880","_rn_":"72"},{"1":"UPP1","2":"1.729652","3":"0.2346395","4":"0.0220512821","5":"0.1189662279","6":"0.0656979632","_rn_":"73"},{"1":"CLDN5","2":"1.728449","3":"1.9292669","4":"0.1446153846","5":"1.9678361717","6":"0.2127421759","_rn_":"74"},{"1":"DHRS12","2":"1.718579","3":"0.2186401","4":"0.0400000000","5":"0.1038187165","6":"0.0887978142","_rn_":"75"},{"1":"FAM81B","2":"1.717799","3":"0.1562093","4":"0.0148717949","5":"0.0353726176","6":"0.0170144064","_rn_":"76"},{"1":"SLC44A3","2":"1.716112","3":"0.1493974","4":"0.0261538462","5":"0.0281484615","6":"0.0213611525","_rn_":"77"},{"1":"PIM3","2":"1.706853","3":"0.4736157","4":"0.0528205128","5":"0.3886025856","6":"0.1720069548","_rn_":"78"},{"1":"SLC13A4","2":"1.704358","3":"0.1237382","4":"0.0010256410","5":"0.0015186460","6":"0.0013661202","_rn_":"79"},{"1":"NACAD","2":"1.702137","3":"0.1500295","4":"0.0097435897","5":"0.0310308838","6":"0.0285643318","_rn_":"80"},{"1":"JUP","2":"1.689218","3":"0.4911416","4":"0.0825641026","5":"0.4154354333","6":"0.1830601093","_rn_":"81"},{"1":"TRIB1","2":"1.689132","3":"0.2091029","4":"0.0256410256","5":"0.0993063999","6":"0.0673124690","_rn_":"82"},{"1":"COL18A1","2":"1.680575","3":"0.2806379","4":"0.0810256410","5":"0.1817298612","6":"0.1151266766","_rn_":"83"},{"1":"AC104825.1","2":"1.673136","3":"0.1409846","4":"0.0102564103","5":"0.0253849290","6":"0.0239692002","_rn_":"84"},{"1":"ZMYM3","2":"1.667953","3":"0.2795827","4":"0.0579487179","5":"0.1838472743","6":"0.1544957774","_rn_":"85"},{"1":"MT-ND6","2":"1.666265","3":"0.6183971","4":"0.2005128205","5":"0.5701711607","6":"0.3440139096","_rn_":"86"},{"1":"CDK20","2":"1.660835","3":"0.1559337","4":"0.0148717949","5":"0.0443689809","6":"0.0413561848","_rn_":"87"},{"1":"NAP1L2","2":"1.653669","3":"0.1352734","4":"0.0092307692","5":"0.0218284772","6":"0.0207401888","_rn_":"88"},{"1":"DEAF1","2":"1.652136","3":"0.3515678","4":"0.0605128205","5":"0.2708240405","6":"0.2155986090","_rn_":"89"},{"1":"MRC2","2":"1.635314","3":"0.4276607","4":"0.0979487179","5":"0.3648395365","6":"0.2526080477","_rn_":"90"},{"1":"RNPEPL1","2":"1.632485","3":"0.1573059","4":"0.0225641026","5":"0.0507355642","6":"0.0432190760","_rn_":"91"},{"1":"PCDH12","2":"1.627950","3":"0.3159704","4":"0.0430769231","5":"0.2370796848","6":"0.0649528068","_rn_":"92"},{"1":"HSPG2","2":"1.624165","3":"0.4887699","4":"0.0866666667","5":"0.4408480839","6":"0.1748633880","_rn_":"93"},{"1":"PIK3R4","2":"1.621539","3":"0.1540198","4":"0.0138461538","5":"0.0487528881","6":"0.0449577745","_rn_":"94"},{"1":"PNPO","2":"1.618300","3":"0.1366913","4":"0.0138461538","5":"0.0288998513","6":"0.0275707899","_rn_":"95"},{"1":"AC008496.2","2":"1.617934","3":"0.1127712","4":"0.0015384615","5":"0.0007858811","6":"0.0006209637","_rn_":"96"},{"1":"TPPP3","2":"1.613301","3":"0.7192356","4":"0.0702564103","5":"0.7179555127","6":"0.1286636860","_rn_":"97"},{"1":"ANXA4","2":"1.612196","3":"0.2934641","4":"0.0558974359","5":"0.2152214677","6":"0.1443119722","_rn_":"98"},{"1":"RAB3IP","2":"1.611946","3":"0.1766059","4":"0.0348717949","5":"0.0770952751","6":"0.0602334824","_rn_":"99"},{"1":"CPXM1","2":"1.610263","3":"1.6028010","4":"0.1902564103","5":"1.7660131664","6":"0.4063586687","_rn_":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -2248,6 +2581,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-valid-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/pca-valid-1.png" target="_blank">2daa7f2</a>
@@ -2302,6 +2646,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/t-sne-valid-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/t-sne-valid-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -2354,6 +2709,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-valid-1.png" target="_blank">8f826ef</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2daa7f23810cd08139fbcf4d03ff31e41d432c32/docs/figure/02-quality-control.Rmd/umap-valid-1.png" target="_blank">2daa7f2</a>
 </td>
 <td style="text-align:left;">
@@ -2380,27 +2746,216 @@ Luke Zappia
 </div>
 </div>
 </div>
+<div id="figures" class="section level1">
+<h1>Figures</h1>
+<div id="thresholds" class="section level2">
+<h2>Thresholds</h2>
+<pre class="r"><code>plot_data &lt;- cell_data %&gt;%
+    mutate(Kept = !(counts_out | features_out))
+
+exp_plot &lt;- ggplot(plot_data,
+       aes(x = log10_total_counts, y = log10_total_features_by_counts,
+           colour = Kept)) +
+    geom_point(alpha = 0.3) +
+    geom_vline(xintercept = counts_thresh, linetype = &quot;dashed&quot;,
+               colour = &quot;#8DC63F&quot;) +
+    annotate(&quot;text&quot;, x = counts_thresh, y = Inf,
+             label = paste(counts_mads, &quot;MADs = &quot;, round(counts_thresh, 2)),
+             angle = 90, vjust = -1, hjust = 1, colour = &quot;#8DC63F&quot;) +
+    annotate(&quot;text&quot;, x = counts_thresh, y = Inf,
+             label = paste(sum(counts_out), &quot;removed&quot;),
+             angle = 90, vjust = 2, hjust = 1, colour = &quot;#8DC63F&quot;) +
+    geom_hline(yintercept = features_thresh, linetype = &quot;dashed&quot;,
+               colour = &quot;#7A52C7&quot;) +
+    annotate(&quot;text&quot;, x = Inf, y = features_thresh,
+             label = paste(features_mads, &quot;MADs = &quot;, round(features_thresh, 2)),
+             vjust = -1, hjust = 1, colour = &quot;#7A52C7&quot;) +
+    annotate(&quot;text&quot;, x = Inf, y = features_thresh,
+             label = paste(sum(features_out), &quot;removed&quot;),
+             vjust = 2, hjust = 1, colour = &quot;#7A52C7&quot;) +
+    annotate(&quot;text&quot;, x = 4.5, y = 1,
+             label = paste(sum(!(counts_out | features_out)), &quot;kept&quot;),
+             vjust = -1, colour = &quot;#00ADEF&quot;) +
+    annotate(&quot;text&quot;, x = 4.5, y = 1,
+             label = paste(sum((counts_out | features_out)), &quot;removed&quot;),
+             vjust = 1, colour = &quot;#EC008C&quot;) +
+    scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;),
+                        labels = c(&quot;Removed&quot;, &quot;Kept&quot;)) +
+    ggtitle(&quot;Counts thresholds&quot;) +
+    xlab(&quot;Total counts (log10)&quot;) +
+    ylab(&quot;Total features (log10)&quot;) +
+    theme_minimal() +
+    theme(legend.position = &quot;bottom&quot;,
+          legend.title = element_blank())
+
+mt_plot &lt;- ggplot(cell_data, aes(x = pct_counts_MT)) +
+    geom_histogram(bins = 100, fill = &quot;#7A52C7&quot;) +
+    geom_vline(xintercept = mt_thresh, linetype = &quot;dashed&quot;,
+               colour = &quot;#EC008C&quot;) +
+    annotate(&quot;text&quot;, x = mt_thresh, y = Inf,
+             label = paste(mt_mads, &quot;MADs = &quot;, round(mt_thresh, 2), &quot;%&quot;),
+             angle = 90, vjust = -1, hjust = 1, colour = &quot;#EC008C&quot;) +
+    annotate(&quot;text&quot;, x = mt_thresh, y = Inf,
+             label = paste(sum(mt_out), &quot;removed&quot;),
+             angle = 90, vjust = 2, hjust = 1, colour = &quot;#EC008C&quot;) +
+    ggtitle(&quot;Mitochondrial percentage threshold&quot;) +
+    xlab(&quot;% counts mitochondrial&quot;) +
+    ylab(&quot;Number of cells&quot;) +
+    theme_minimal()
+
+plot_data &lt;- data.frame(Score = doublet_scores)
+
+doublet_plot &lt;- ggplot(plot_data, aes(x = Score)) +
+    geom_histogram(bins = 100, fill = &quot;#7A52C7&quot;) +
+    geom_vline(xintercept = doublet_thresh, linetype = &quot;dashed&quot;,
+               colour = &quot;#EC008C&quot;) +
+    annotate(&quot;text&quot;, x = doublet_thresh, y = Inf,
+             label = paste(&quot;Threshold =&quot;, round(doublet_thresh, 2)),
+             angle = 90, vjust = -1, hjust = 1, colour = &quot;#EC008C&quot;) +
+    annotate(&quot;text&quot;, x = doublet_thresh, y = Inf,
+             label = paste(sum(doublet_out), &quot;removed&quot;),
+             angle = 90, vjust = 2, hjust = 1, colour = &quot;#EC008C&quot;) +
+    ggtitle(&quot;Doublet threshold&quot;) +
+    xlab(&quot;Doublet score&quot;) +
+    ylab(&quot;Number of cells&quot;) +
+    theme_minimal()
+
+plot_data &lt;- reducedDim(selected, &quot;PCA_coldata&quot;) %&gt;%
+    as.data.frame() %&gt;%
+    mutate(Removed = &quot;Kept&quot;) %&gt;%
+    mutate(Removed = if_else(!kept_manual, &quot;Manual&quot;, Removed),
+           Removed = if_else(!kept_pca, &quot;PCA&quot;, Removed),
+           Removed = if_else(!kept_manual &amp; !kept_pca, &quot;Both&quot;, Removed)) %&gt;%
+    mutate(Removed = factor(Removed, levels = c(&quot;Both&quot;, &quot;Manual&quot;, &quot;Kept&quot;),
+                            labels = c(&quot;Both&quot;, &quot;Manual only&quot;, &quot;Kept&quot;)))
+
+pca_plot &lt;- ggplot(plot_data, aes(x = PC1, y = PC2, colour = Removed)) +
+    geom_point(alpha = 0.3) +
+    scale_colour_manual(values = c(&quot;#F47920&quot;, &quot;#00B7C6&quot;, &quot;grey50&quot;),
+                        name = &quot;Removed by&quot;) +
+    ggtitle(&quot;PCA based cell filtering&quot;) +
+    theme_minimal() +
+    theme(legend.position = &quot;bottom&quot;)
+
+fig &lt;- plot_grid(exp_plot, mt_plot, doublet_plot, pca_plot,
+                 ncol = 2, labels = &quot;AUTO&quot;)
+
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;qc-thresholds.pdf&quot;), fig,
+       width = 7, height = 4, scale = 2)
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;qc-thresholds.png&quot;), fig,
+       width = 7, height = 4, scale = 2)
+
+fig</code></pre>
+<p><img src="figure/02-quality-control.Rmd/fig-thresholds-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="validation-1" class="section level2">
+<h2>Validation</h2>
+<pre class="r"><code>plot_data &lt;- kept_lost %&gt;%
+    mutate(Mean = 0.5 * (Lost + Kept),
+           Diff = Kept - Lost)
+
+fc_plot &lt;- ggplot(plot_data,
+                  aes(x = Mean, y  = LogFC, colour = LostProp - KeptProp)) +
+    geom_point(alpha = 0.3) +
+    geom_hline(yintercept = 0, colour = &quot;red&quot;) +
+    scale_x_log10(labels = scales::number_format(accuracy = 0.0001)) +
+    scale_colour_viridis_c(
+        name = &quot;Proportion expressed (Removed) - Proportion expressed (Kept)&quot;
+    ) +
+    ggtitle(&quot;Foldchange between removed and kept cells&quot;) +
+    xlab(&quot;0.5 * (Average expression (Kept) + Average expression (Removed))&quot;) +
+    ylab(&quot;Predicted log2 foldchange (Removed / Kept)&quot;) +
+    theme_minimal() +
+    theme(legend.position = &quot;bottom&quot;)
+
+fc_table &lt;- kept_lost %&gt;%
+    select(Gene, `Predicted foldchange (log2)` = LogFC) %&gt;%
+    arrange(-`Predicted foldchange (log2)`) %&gt;%
+    as.data.frame() %&gt;%
+    head(15) %&gt;%
+    tableGrob(rows = NULL, theme = ttheme_minimal())
+
+plot_data &lt;- reducedDim(filtered, &quot;TSNE&quot;) %&gt;%
+    as.data.frame() %&gt;%
+    rename(TSNE1 = V1, TSNE2 = V2) %&gt;%
+    mutate(
+        Sample = colData(filtered)$Sample,
+        `Total counts (log10)` = colData(filtered)$log10_total_counts,
+        `Cell cycle` = colData(filtered)$CellCycle,
+        `Total features (log10)` = colData(filtered)$log10_total_features_by_counts,
+        `% Mitochondrial` = colData(filtered)$pct_counts_MT,
+        `Selection method` = colData(filtered)$SelMethod
+    )
+
+plot_list &lt;- list(
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = Sample)) +
+        scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;)) +
+        ggtitle(&quot;Sample&quot;),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Selection method`)) +
+        scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;)) +
+        ggtitle(&quot;Selection method&quot;),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Cell cycle`)) +
+        scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;)) +
+        ggtitle(&quot;Cell cycle stage&quot;),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total counts (log10)`)) +
+        scale_colour_viridis_c() +
+        ggtitle(&quot;Total counts (log10)&quot;),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total features (log10)`)) +
+        scale_colour_viridis_c() +
+        ggtitle(&quot;Total features (log10)&quot;),
+    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `% Mitochondrial`)) +
+        scale_colour_viridis_c() +
+        ggtitle(&quot;% Mitochondrial&quot;)
+) %&gt;%
+    lapply(function(x) {
+        x + geom_point(alpha = 0.3) +
+            theme_minimal() +
+            theme(legend.position = &quot;bottom&quot;,
+                  legend.title = element_blank())
+    })
+
+tsne_plot &lt;- plot_grid(plotlist = plot_list, ncol = 3)
+
+p1 &lt;- plot_grid(fc_plot, fc_table, ncol = 2, labels = &quot;AUTO&quot;)
+
+fig &lt;- plot_grid(p1, tsne_plot, ncol = 1, labels = c(&quot;&quot;, &quot;C&quot;),
+                 rel_heights = c(0.8, 1))
+
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;qc-validation.pdf&quot;), fig,
+       width = 7, height = 6, scale = 2)
+ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;qc-validation.png&quot;), fig,
+       width = 7, height = 6, scale = 2)
+
+fig</code></pre>
+<p><img src="figure/02-quality-control.Rmd/fig-validation-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
-<p>After quality control we have a dataset with 8036 cells and 22734 genes.</p>
+<p>After quality control we have a dataset with 8052 cells and 22738 genes.</p>
 <div id="parameters" class="section level2">
 <h2>Parameters</h2>
 <p>This table describes parameters used and set in this document.</p>
 <pre class="r"><code>params &lt;- list(
     list(
         Parameter = &quot;counts_thresh&quot;,
-        Value = attr(counts_out, &quot;thresholds&quot;)[&quot;lower&quot;],
+        Value = counts_thresh,
         Description = &quot;Minimum threshold for (log10) total counts&quot;
     ),
     list(
         Parameter = &quot;features_thresh&quot;,
-        Value = attr(features_out, &quot;thresholds&quot;)[&quot;lower&quot;],
+        Value = features_thresh,
         Description = &quot;Minimum threshold for (log10) total features&quot;
     ),
     list(
         Parameter = &quot;mt_thresh&quot;,
-        Value = attr(mt_out, &quot;thresholds&quot;)[&quot;higher&quot;],
+        Value = mt_thresh,
         Description = &quot;Maximum threshold for percentage counts mitochondrial&quot;
+    ),
+    list(
+        Parameter = &quot;doublet_thresh&quot;,
+        Value = doublet_thresh,
+        Description = &quot;Maximum threshold for doublet score&quot;
     ),
     list(
         Parameter = &quot;counts_mads&quot;,
@@ -2468,62 +3023,67 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">counts_thresh</td>
-<td align="left">2.3594</td>
+<td align="left">2.309</td>
 <td align="left">Minimum threshold for (log10) total counts</td>
 </tr>
 <tr class="even">
 <td align="left">features_thresh</td>
-<td align="left">2.4029</td>
+<td align="left">2.3659</td>
 <td align="left">Minimum threshold for (log10) total features</td>
 </tr>
 <tr class="odd">
 <td align="left">mt_thresh</td>
-<td align="left">8.1978</td>
+<td align="left">8.2411</td>
 <td align="left">Maximum threshold for percentage counts mitochondrial</td>
 </tr>
 <tr class="even">
+<td align="left">doublet_thresh</td>
+<td align="left">1.5459</td>
+<td align="left">Maximum threshold for doublet score</td>
+</tr>
+<tr class="odd">
 <td align="left">counts_mads</td>
 <td align="left">4</td>
 <td align="left">MADs for (log10) total counts threshold</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">features_mads</td>
 <td align="left">4</td>
 <td align="left">MADs for (log10) total features threshold</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">mt_mads</td>
 <td align="left">4</td>
 <td align="left">MADs for percentage counts mitochondrial threshold</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">min_count</td>
 <td align="left">1</td>
 <td align="left">Minimum count per cell for gene filtering</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">min_cells</td>
 <td align="left">2</td>
 <td align="left">Minimum cells with min_count counts for gene filtering</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">n_cells</td>
-<td align="left">8036</td>
+<td align="left">8052</td>
 <td align="left">Number of cells in the filtered dataset</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">n_genes</td>
-<td align="left">22734</td>
+<td align="left">22738</td>
 <td align="left">Number of genes in the filtered dataset</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">median_genes</td>
-<td align="left">2512</td>
+<td align="left">2505</td>
 <td align="left">Median number of expressed genes per cell in the filtered dataset</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">median_counts</td>
-<td align="left">7872</td>
+<td align="left">7836</td>
 <td align="left">Median number of counts per cell in the filtered dataset</td>
 </tr>
 </tbody>
@@ -2539,10 +3099,18 @@ readr::write_lines(params, here::here(&quot;output&quot;, DOCNAME, &quot;paramet
 
 knitr::kable(data.frame(
     File = c(
-        getDownloadLink(&quot;parameters.json&quot;, DOCNAME)
+        getDownloadLink(&quot;parameters.json&quot;, DOCNAME),
+        getDownloadLink(&quot;qc-thresholds.png&quot;, DOCNAME),
+        getDownloadLink(&quot;qc-thresholds.pdf&quot;, DOCNAME),
+        getDownloadLink(&quot;qc-validation.png&quot;, DOCNAME),
+        getDownloadLink(&quot;qc-validation.pdf&quot;, DOCNAME)
     ),
     Description = c(
-        &quot;Parameters set and used in this analysis&quot;
+        &quot;Parameters set and used in this analysis&quot;,
+        &quot;Quality control thresholds figure (PNG)&quot;,
+        &quot;Quality control thresholds figure (PDF)&quot;,
+        &quot;Quality control validation figure (PNG)&quot;,
+        &quot;Quality control validation figure (PDF)&quot;
     )
 ))</code></pre>
 <table>
@@ -2556,6 +3124,22 @@ knitr::kable(data.frame(
 <tr class="odd">
 <td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/02-quality-control/parameters.json">parameters.json</a></td>
 <td align="left">Parameters set and used in this analysis</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/02-quality-control/qc-thresholds.png">qc-thresholds.png</a></td>
+<td align="left">Quality control thresholds figure (PNG)</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/02-quality-control/qc-thresholds.pdf">qc-thresholds.pdf</a></td>
+<td align="left">Quality control thresholds figure (PDF)</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/02-quality-control/qc-validation.png">qc-validation.png</a></td>
+<td align="left">Quality control validation figure (PNG)</td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/02-quality-control/qc-validation.pdf">qc-validation.pdf</a></td>
+<td align="left">Quality control validation figure (PDF)</td>
 </tr>
 </tbody>
 </table>
@@ -2573,7 +3157,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-08                  
+ date     2019-02-23                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
@@ -2613,7 +3197,7 @@ knitr::kable(data.frame(
    ggplot2              * 3.1.0     2018-10-25 [1] CRAN (R 3.5.0)
    git2r                  0.24.0    2019-01-07 [1] CRAN (R 3.5.0)
    glue                   1.3.0     2018-07-17 [1] CRAN (R 3.5.0)
-   gridExtra              2.3       2017-09-09 [1] CRAN (R 3.5.0)
+   gridExtra            * 2.3       2017-09-09 [1] CRAN (R 3.5.0)
    gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
    haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
    HDF5Array              1.10.1    2018-12-05 [1] Bioconductor  
