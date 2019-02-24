@@ -1,7 +1,7 @@
 [
   {
     "Parameter": ["sel_genes"],
-    "Value": [1954],
+    "Value": [1948],
     "Description": ["Number of selected genes"]
   },
   {
@@ -21,12 +21,12 @@
   },
   {
     "Parameter": ["res"],
-    "Value": [0.3],
+    "Value": [0.4],
     "Description": ["Selected resolution parameter for clustering"]
   },
   {
     "Parameter": ["n_clusts"],
-    "Value": [12],
+    "Value": [13],
     "Description": ["Number of clusters produced by selected resolution"]
   }
 ]

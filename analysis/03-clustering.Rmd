@@ -47,6 +47,7 @@ library("clustree")
 # Plotting
 library("viridis")
 library("ggforce")
+library("cowplot")
 
 # Presentation
 library("knitr")
@@ -57,6 +58,7 @@ library("tidyverse")
 
 ```{r source, cache = FALSE}
 source(here::here("R/output.R"))
+source(here::here("R/crossover.R"))
 ```
 
 ```{r depends-paths}
@@ -130,10 +132,10 @@ plot_data <- seurat@hvg.info %>%
 ggplot(plot_data,
        aes(x = gene.mean, y = gene.dispersion.scaled, colour = Selected)) +
     geom_point(size = 1, alpha = 0.5) +
-    geom_vline(xintercept = x_low, colour = "red") +
+    geom_vline(xintercept = x_low,  colour = "red") +
     geom_vline(xintercept = x_high, colour = "red") +
-    geom_hline(yintercept = y_low, colour = "red") +
-    geom_hline(yintercept = y_low, colour = "red") +
+    geom_hline(yintercept = y_low,  colour = "red") +
+    geom_hline(yintercept = y_high, colour = "red") +
     scale_colour_manual(values = c("black", "dodgerblue")) +
     annotate("text", x = x_low + 0.5 * (x_high - x_low), y = 10,
              colour = "dodgerblue", size = 5,
@@ -551,7 +553,7 @@ Selection
 ---------
 
 ```{r select-res}
-res <- 0.3
+res <- 0.4
 seurat <- SetIdent(seurat, ident.use = seurat@meta.data[, paste0("res.", res)])
 n_clusts <- length(unique(seurat@ident))
 
@@ -949,6 +951,327 @@ plotReducedDim(sce, "SeuratUMAP", colour_by = "DoubletScore",
     theme_minimal()
 ```
 
+Comparison
+==========
+
+Because we have previously published an analysis of this dataset we can check
+to see how similar these clusters are to what we observed previously and whether
+the different decisions we have made have significantly changed the results.
+
+```{r load-assignments}
+assignments <- read_csv(here::here("data/published/cluster_assignments.csv"),
+                        col_types = cols(.default = col_character())) %>%
+    filter(Dataset == "Organoid123") %>%
+    mutate(BarcodeSample = paste(Barcode, Sample, sep = "-")) %>%
+    select(BarcodeSample, PubCluster = Cluster) %>%
+    mutate(PubCluster = factor(
+        PubCluster,
+        levels = as.character(0:12),
+        labels = c("O0 (Stroma)", "O1 (Stroma)", "O2 (Podocyte)",
+                   "O3 (Stroma)", "O4 (Cell cycle)", "O5 (Endothelium)",
+                   "O6 (Cell cycle)", "O7 (Stroma)", "O8 (Glial)",
+                   "O9 (Epithelium)", "010 (Muscle progenitor)",
+                   "O11 (Neural progenitor)", "O12 (Endothelium)") 
+    ))
+
+cell_data <- cell_data %>%
+    mutate(BarcodeSample = paste(Barcode, Sample, sep = "-")) %>%
+    left_join(assignments, by = "BarcodeSample")
+```
+
+First let's look at how many of the cells in each cluster were present in our
+previous analysis:
+
+```{r comp-present}
+plot_data <- cell_data %>%
+    mutate(Present = !is.na(PubCluster)) %>%
+    group_by(Cluster) %>%
+    summarise(PropPresent = sum(Present) / n())
+
+ggplot(plot_data, aes(x = Cluster, y = PropPresent, fill = Cluster)) +
+    geom_col()
+```
+
+Perhaps more importantly is how the cells that are present match up with the
+clusters we described previously. We can do this by making a heatmap of the
+Jaccard Index which measures the overlap between two sets (in this case of
+cells).
+
+```{r comp-jaccard}
+plot_data <- summariseClusts(cell_data, Cluster, PubCluster) %>%
+    replace_na(list(Jaccard = 0))
+
+ggplot(plot_data, aes(x = Cluster, y = PubCluster, fill = Jaccard)) +
+    geom_tile() +
+    scale_fill_viridis_c(limits = c(0, 1), name = "Jaccard\nindex") +
+    coord_equal() +
+    xlab("Cluster") +
+    ylab("Published cluster") +
+    theme_minimal() +
+    theme(axis.text = element_text(size = 10, colour = "black"),
+          axis.ticks = element_blank(),
+          axis.title = element_text(size = 15),
+          legend.key.height = unit(30, "pt"),
+          legend.title = element_text(size = 15),
+          legend.text = element_text(size = 10),
+          panel.grid = element_blank())
+```
+
+Figures
+=======
+
+Gene selection
+--------------
+
+```{r fig-gene-sel}
+plot_data <- rowData(sce) %>%
+    as.data.frame() %>%
+    select(SeuratMean, SeuratDispScaled, SeuratSelected, M3DropAvgExpr, 
+           M3DropDropoutRate, M3DropDropoutExp, M3DropSelected, SelMethod)
+
+plot_data_sel <- plot_data %>%
+    filter(SelMethod != "False")
+
+seurat_plot <- ggplot(plot_data,
+       aes(x = SeuratMean, y = SeuratDispScaled, colour = SeuratSelected)) +
+    geom_point(alpha = 0.3) +
+    geom_vline(xintercept = x_low,  colour = "#7A52C7") +
+    annotate("text", x = x_low, y = Inf, colour = "#7A52C7",
+             label = x_low, angle = 90, hjust = 1, vjust = -1) +
+    geom_vline(xintercept = x_high, colour = "#7A52C7") +
+    annotate("text", x = x_high, y = Inf, colour = "#7A52C7",
+             label = x_high, angle = 90, hjust = 1, vjust = -1) +
+    geom_hline(yintercept = y_low,  colour = "#7A52C7") +
+    annotate("text", x = Inf, y = y_low, colour = "#7A52C7",
+             label = y_low, hjust = 1, vjust = -1) +
+    scale_colour_manual(values = c("grey50", "#00ADEF"), name = "Selected") +
+    annotate("text", x = x_low + 0.5 * (x_high - x_low), y = 10,
+             colour = "#00ADEF", size = 5,
+             label = paste(sum(plot_data$SeuratSelected), "selected")) +
+    ggtitle("Seurat gene selection") +
+    xlab("Gene mean (log)") +
+    ylab("Seurat gene dispersion (scaled)") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+
+m3drop_plot <- ggplot(plot_data,
+       aes(x = M3DropAvgExpr, y = M3DropDropoutRate, colour = M3DropSelected)) +
+    geom_point(alpha = 0.3) +
+    geom_line(aes(y = M3DropDropoutExp), colour = "#7A52C7", size = 1) +
+    annotate("text", x = 2, y = 0.9, colour = "#EC008C", size = 5,
+             label = paste(sum(plot_data$M3DropSelected), "selected")) +
+    scale_colour_manual(values = c("grey50", "#EC008C"), name = "Selected") +
+    ggtitle("M3Drop gene selection") +
+    xlab("M3Drop average expression") +
+    ylab("M3Drop dropout rate") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+
+comp_plot <- ggplot(plot_data_sel, aes(x = SelMethod, fill = SelMethod)) +
+    geom_bar() +
+    scale_fill_manual(values = c("#8DC63F", "#EC008C", "#00ADEF")) +
+    coord_flip() +
+    ggtitle("Overlap of selected genes") +
+    ylab("Number of genes") +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.title.y = element_blank())
+
+fig <- plot_grid(seurat_plot, m3drop_plot, comp_plot, nrow = 1,
+                 rel_widths = c(1, 1, 0.8), labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "gene-selection.pdf"), fig,
+       width = 10, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "gene-selection.png"), fig,
+       width = 10, height = 4, scale = 2)
+
+fig
+```
+
+Resolution
+----------
+
+```{r fig-resolution}
+res_y <- 10 - res / 0.1
+
+ct_plot <- clustree(seurat) +
+    annotate("rect",
+             xmin = -11.8, xmax = 8, ymin = res_y - 0.4, ymax = res_y + 0.6,
+             fill = alpha("grey", 0), colour = "#EC008C", size = 1) +
+    theme(legend.position = "none")
+
+gene_list <- c("TAGLN", "MAB21L2", "COL9A3", "NPHS2", "PECAM1", "TTYH1",
+               "STMN2", "PAX2", "MYOG")
+
+plot_list <- lapply(gene_list, function(gene) {
+    clustree(seurat, node_colour = gene, node_colour_aggr = "mean",
+             exprs = "scale.data", node_size_range = c(2, 6),
+             edge_width = 0.5, node_text_size = 0) +
+        scale_colour_viridis_c(option = "plasma", begin = 0.3) +
+        ggtitle(gene) +
+        theme(legend.position = "none",
+              plot.title = element_text(size = rel(1.2), hjust = 0.5, 
+                                        vjust = 1, margin = margin(5.5)))
+})
+
+genes_plot <- plot_grid(plotlist = plot_list, nrow = 3)
+
+fig <- plot_grid(ct_plot, genes_plot, nrow = 1, labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "resolution-selection.pdf"), fig,
+       width = 8, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "resolution-selection.png"), fig,
+       width = 8, height = 4, scale = 2)
+
+fig
+```
+
+Validation
+----------
+
+```{r fig-validation}
+plot_data <- reducedDim(sce, "SeuratUMAP") %>%
+    as.data.frame() %>%
+    rename(UMAP1 = V1, UMAP2 = V2) %>%
+    mutate(Cluster = colData(sce)$Cluster)
+
+label_data <- plot_data %>%
+    group_by(Cluster) %>%
+    summarise(UMAP1 = mean(UMAP1),
+              UMAP2 = mean(UMAP2))
+
+umap_plot <- ggplot(plot_data, aes(x = UMAP1, y = UMAP2, colour = Cluster)) +
+    geom_point(alpha = 0.3) +
+    geom_point(data = label_data, shape = 21, size = 6, stroke = 1,
+               fill = "white") +
+    geom_text(data = label_data, aes(label = Cluster)) +
+    ggtitle("Clusters in UMAP space") +
+    theme_minimal() +
+    theme(legend.position = "none")
+
+sizes_plot <- ggplot(cell_data, aes(x = Cluster, fill = Cluster)) +
+    geom_bar() +
+    scale_y_continuous(breaks = seq(0, 1500, 200)) +
+    ggtitle("Cluster sizes") +
+    ylab("Number of cells") +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.title.x = element_blank())
+
+plot_data <- cell_data %>%
+    group_by(Cluster, SelMethod) %>%
+    summarise(Count = n()) %>%
+    mutate(Prop = Count / sum(Count)) %>%
+    mutate(SelMethod = factor(
+        SelMethod, 
+        levels = c("Both", "CellRanger", "emptyDrops"),
+        labels = c("Both", "Cell Ranger v3 only", "emptyDrops only")
+    ))
+
+sel_plot <- ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
+    geom_col() +
+    scale_fill_manual(values = c("#00ADEF", "#F47920", "#EC008C")) +
+    ggtitle("Selection method by cluster") +
+    ylab("Proportion of cluster") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          axis.title.x = element_blank(),
+          legend.title = element_blank())
+
+plot_data <- cell_data %>%
+    group_by(Cluster, CellCycle) %>%
+    summarise(Count = n()) %>%
+    mutate(Prop = Count / sum(Count))
+
+cycle_plot <- ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
+    geom_col() +
+    scale_fill_manual(values = c("#EC008C", "#00ADEF", "#8DC63F")) +
+    ggtitle("Cell cycle phase by cluster") +
+    ylab("Proportion of cluster") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          axis.title.x = element_blank(),
+          legend.title = element_blank())
+
+counts_plot <- ggplot(cell_data, aes(x = Cluster, y = log10_total_counts)) +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    ggtitle("Total counts by cluster") +
+    ylab("Total counts (log10)") +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.title.x = element_blank())
+
+mt_plot <- ggplot(cell_data, aes(x = Cluster, y = pct_counts_MT)) +
+    geom_sina(aes(colour = Cluster), size = 0.5) +
+    ggtitle("Mitochondrial counts by cluster") +
+    ylab("% counts mitochondrial") +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.title.x = element_blank())
+
+fig <- plot_grid(umap_plot, sizes_plot, sel_plot, cycle_plot, counts_plot,
+                 mt_plot, ncol = 2, rel_heights = c(1, 0.6, 0.8),
+                 labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "cluster-validation.pdf"), fig,
+       width = 7, height = 6, scale = 2)
+ggsave(here::here("output", DOCNAME, "cluster-validation.png"), fig,
+       width = 7, height = 6, scale = 2)
+
+fig
+```
+
+Comparison
+----------
+
+```{r fig-comp}
+plot_data <- cell_data %>%
+    mutate(Present = !is.na(PubCluster)) %>%
+    group_by(Cluster) %>%
+    summarise(PropPresent = sum(Present) / n())
+
+present_plot <- ggplot(plot_data, 
+                       aes(x = Cluster, y = PropPresent, fill = Cluster)) +
+    geom_col() +
+    ggtitle("Presence in published analysis") +
+    ylab("Proportion of cluster") +
+    theme_minimal() +
+    theme(legend.position = "none",
+          axis.title.x = element_blank())
+
+plot_data <- summariseClusts(cell_data, Cluster, PubCluster) %>%
+    replace_na(list(Jaccard = 0))
+
+overlap_plot <- ggplot(plot_data,
+                       aes(x = Cluster, y = PubCluster, fill = Jaccard)) +
+    geom_tile() +
+    scale_fill_viridis_c(limits = c(0, 1), name = "Jaccard\nindex") +
+    coord_equal() +
+    ggtitle("Overlap with published clusters") +
+    xlab("Cluster") +
+    ylab("Published cluster") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = rel(1.2), hjust = -0.5, vjust = 1.5,
+                                    margin = margin(1)),
+          axis.text = element_text(size = 9, colour = "black"),
+          axis.ticks = element_blank(),
+          axis.title = element_text(size = 12),
+          legend.key.height = unit(30, "pt"),
+          legend.title = element_text(size = 12),
+          legend.text = element_text(size = 9),
+          panel.grid = element_blank())
+
+fig <- plot_grid(present_plot, overlap_plot, nrow = 1,
+                 rel_widths = c(0.7, 1), labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "cluster-comparison.pdf"), fig,
+       width = 7, height = 3, scale = 2)
+ggsave(here::here("output", DOCNAME, "cluster-comparison.png"), fig,
+       width = 7, height = 3, scale = 2)
+
+fig
+```
+
 Summary
 =======
 
@@ -1060,14 +1383,30 @@ knitr::kable(data.frame(
     File = c(
         getDownloadLink("parameters.json", DOCNAME),
         getDownloadLink("selected_genes.csv.zip", DOCNAME),
-        getDownloadLink("cluster_assignments.tsv.gz"),
-        getDownloadLink("cluster_expression.tsv.gz")
+        getDownloadLink("cluster_assignments.tsv.gz", DOCNAME),
+        getDownloadLink("cluster_expression.tsv.gz", DOCNAME),
+        getDownloadLink("gene-selection.png", DOCNAME),
+        getDownloadLink("gene-selection.pdf", DOCNAME),
+        getDownloadLink("resolution-selection.png", DOCNAME),
+        getDownloadLink("resolution-selection.pdf", DOCNAME),
+        getDownloadLink("cluster-validation.png", DOCNAME),
+        getDownloadLink("cluster-validation.pdf", DOCNAME),
+        getDownloadLink("cluster-comparison.png", DOCNAME),
+        getDownloadLink("cluster-comparison.pdf", DOCNAME)
     ),
     Description = c(
         "Parameters set and used in this analysis",
         "Selected genes (zipped CSV)",
         "Cluster assignments for each cell (gzipped TSV)",
-        "Cluster expression for each gene (gzipped TSV)"
+        "Cluster expression for each gene (gzipped TSV)",
+        "Gene selection figure (PNG)",
+        "Gene selection figure (PDF)",
+        "Resolution selection figure (PNG)",
+        "Resolution selection figure (PDF)",
+        "Cluster validation figure (PNG)",
+        "Cluster validation figure (PDF)",
+        "Cluster comparison figure (PNG)",
+        "Cluster comparison figure (PDF)"
     )
 ))
 ```
