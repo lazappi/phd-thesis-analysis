@@ -36,10 +36,13 @@ knitr::opts_chunk$set(
 ```{r libaries, cache = FALSE}
 # scRNA-seq
 library("SingleCellExperiment")
-library("zinbwave")
+library("scater")
 
 # Differential expression
 library("edgeR")
+
+# Plotting
+library("cowplot")
 
 # Presentation
 library("knitr")
@@ -49,6 +52,7 @@ library("tidyverse")
 ```
 
 ```{r source, cache = FALSE}
+source(here::here("R/plotting.R"))
 source(here::here("R/output.R"))
 ```
 
@@ -76,7 +80,38 @@ if (file.exists(clust_path)) {
          "Please run '03-clustering.Rmd' first.",
          call. = FALSE)
 }
+
+n_clusts <- length(unique(colData(sce)$Cluster))
 ```
+
+Filtering
+=========
+
+Before testing we will perform some additional gene filtering. We are trying to
+identify markers that are highly expressed in a cluster compared to other cells
+so we can remove genes that are not sufficiently expressed in any cluster (have
+a low maximum mean cluster expression).
+
+```{r filter}
+cluster_means <- map(levels(colData(sce)$Cluster), function(clust) {
+    calcAverage(sce[, colData(sce)$Cluster == clust])
+})
+cluster_means <- do.call("cbind", cluster_means)
+rowData(sce)$ClusterMaxMean <- rowMax(cluster_means)
+rowData(sce)$log10_ClusterMaxMean <- log10(rowData(sce)$ClusterMaxMean)
+
+outlierHistogram(as.data.frame(rowData(sce)), "log10_ClusterMaxMean",
+                 mads = seq(0.5, 3, 0.5))
+
+maxmean_mads  <- 0.5
+maxmean_out   <- isOutlier(rowData(sce)$log10_ClusterMaxMean,
+                           nmads = maxmean_mads, type = "lower")
+maxmean_thresh <- attr(maxmean_out, "thresholds")["lower"]
+
+sce_filt <- sce[rowData(sce)$log10_ClusterMaxMean > maxmean_thresh, ]
+```
+
+Selecting a threshold of `r maxmean_thresh` removes `r sum(maxmean_out)` genes.
 
 Fitting
 =======
@@ -93,17 +128,16 @@ normalisation factors, estimate dispersions and fit the model.
 
 ```{r fit, cache.lazy = FALSE}
 # Cell detection rate
-det_rate <- scale(Matrix::colMeans(counts(sce) > 0))
+det_rate <- scale(Matrix::colMeans(counts(sce_filt) > 0))
 
 # Create design matrix
-n_clusts <- length(unique(colData(sce)$Cluster))
-design <- model.matrix(~ 0 + det_rate + colData(sce)$Cluster)
+design <- model.matrix(~ 0 + det_rate + colData(sce_filt)$Cluster)
 colnames(design) <- c("DetRate", paste0("C", seq_len(n_clusts) - 1))
 
 # Create DGEList
-dge <- DGEList(counts(sce))
+dge <- DGEList(counts(sce_filt))
 # Add gene annotation
-dge$genes <- rowData(sce)[, c("Name", "ID", "entrezgene", "description")]
+dge$genes <- rowData(sce_filt)[, c("Name", "ID", "entrezgene", "description")]
 # Calculate norm factors
 dge <- calcNormFactors(dge)
 # Estimate dispersions
@@ -118,7 +152,7 @@ Mean
 ----
 
 ```{r mean-fit}
-plot_data <- tibble(Observed = log1p(Matrix::rowMeans(counts(sce))),
+plot_data <- tibble(Observed = log1p(Matrix::rowMeans(counts(sce_filt))),
                     Expected = log1p(rowMeans(de_fit$fitted.values))) %>%
     mutate(Mean = 0.5 * (Observed + Expected),
            Difference = Observed - Expected)
@@ -137,7 +171,7 @@ Zeros
 -----
 
 ```{r zeros-fit}
-plot_data <- tibble(Observed = Matrix::rowMeans(counts(sce) == 0),
+plot_data <- tibble(Observed = Matrix::rowMeans(counts(sce_filt) == 0),
                     Expected = rowMeans(
                         (1 + de_fit$fitted.values * dge$tagwise.dispersion) ^ 
                             (-1 / dge$tagwise.dispersion)
@@ -169,7 +203,6 @@ QL Dispersions
 plotQLDisp(de_fit)
 ```
 
-
 These plots suggest that the fit is fairly good and there isn't an excessive
 amount of zero inflation we would need to account for using other methods.
 
@@ -184,7 +217,7 @@ de_tests <- bplapply(seq_len(n_clusts), function(idx) {
     contrast[idx] <- 1
     contrast <- c(0, contrast)
     glmQLFTest(de_fit, contrast = contrast)
-}, BPPARAM = bpparam3)
+}, BPPARAM = bpparam5)
 ```
 
 ```{r summarise-tests}
@@ -327,7 +360,9 @@ known_genes <- c(
     # Epithelium
     "PAX2", "PAX8", "KRT19",
     # Muscle
-    "MYOG", "MYOD1"
+    "MYOG", "MYOD1",
+    # Immune
+    "TYROBP", "MPO", "S100A9"
 )
 
 known_types <- factor(c(
@@ -337,7 +372,8 @@ known_types <- factor(c(
     rep("Endothelium", 4),
     rep("Neural", 4),
     rep("Epithelium", 3),
-    rep("Muscle", 2)
+    rep("Muscle", 2),
+    rep("Immune", 3)
 ))
 names(known_types) <- known_genes
 ```
@@ -350,9 +386,9 @@ of cells expressing the gene.
 
 ```{r known-genes-expr}
 plot_data <- map_df(seq_len(n_clusts), function(idx) {
-    clust_cells <- colData(sce)$Cluster == idx - 1
-    means <- Matrix::rowMeans(logcounts(sce)[known_genes, clust_cells])
-    props <- Matrix::rowSums(counts(sce)[known_genes, clust_cells] > 0) /
+    clust_cells <- colData(sce_filt)$Cluster == idx - 1
+    means <- Matrix::rowMeans(logcounts(sce_filt)[known_genes, clust_cells])
+    props <- Matrix::rowSums(counts(sce_filt)[known_genes, clust_cells] > 0) /
                                  sum(clust_cells)
     tibble(Cluster = idx - 1,
            Gene = known_genes,
@@ -406,6 +442,123 @@ ggplot(plot_data,
           legend.position = "none")
 ```
 
+Figures
+=======
+
+```{r figure}
+plot_data <- tibble(Observed = log1p(Matrix::rowMeans(counts(sce_filt))),
+                    Expected = log1p(rowMeans(de_fit$fitted.values))) %>%
+    mutate(Mean = 0.5 * (Observed + Expected),
+           Difference = Observed - Expected)
+
+mean_plot <- ggplot(plot_data, aes(x = Mean, y = Difference)) +
+    geom_point(alpha = 0.3, colour = "#7A52C7") +
+    geom_smooth(method = "loess", colour = "#00ADEF",
+                fill = "#00ADEF", size = 1) +
+    geom_hline(yintercept = 0, colour = "#EC008C", size = 1) +
+    xlab("0.5 * (Observed mean + Expected mean)") +
+    ylab("Observed mean - Expected mean") +
+    ggtitle("Fit of gene means") +
+    theme_minimal()
+
+plot_data <- tibble(Observed = Matrix::rowMeans(counts(sce_filt) == 0),
+                    Expected = rowMeans(
+                        (1 + de_fit$fitted.values * dge$tagwise.dispersion) ^ 
+                            (-1 / dge$tagwise.dispersion)
+                    )) %>%
+    mutate(Mean = 0.5 * (Observed + Expected),
+           Difference = Observed - Expected)
+
+zeros_plot <- ggplot(plot_data, aes(x = Mean, y = Difference)) +
+    geom_point(alpha = 0.3, colour = "#7A52C7") +
+    geom_smooth(method = "loess", colour = "#00ADEF",
+                fill = "#00ADEF", size = 1) +
+    geom_hline(yintercept = 0, colour = "#EC008C", size = 1) +
+    xlab("0.5 * (Observed proportion zeros + Expected proportion zeros)") +
+    ylab("Observed proportion zeros - Expected proportion zeros") +
+    ggtitle("Fit of gene proportion of zeros") +
+    theme_minimal()
+
+plot_data <- tibble(
+    AvgLogCPM = dge$AveLogCPM,
+    Tagwise = dge$tagwise.dispersion,
+    Trended = dge$trended.dispersion
+)
+
+bcv_plot <- ggplot(plot_data, aes(x = AvgLogCPM)) +
+    geom_point(aes(y = sqrt(Tagwise)), alpha = 0.3, colour = "#7A52C7") +
+    geom_hline(yintercept = sqrt(dge$common.dispersion),
+               colour = "#EC008C", size = 1) +
+    geom_line(aes(y = sqrt(Trended)), colour = "#00ADEF", size = 1) +
+    ggtitle("edgeR biological coefficient of variation") +
+    xlab("Average log CPM") +
+    ylab("Biological coefficient of variation") +
+    theme_minimal()
+
+plot_data <- de_list %>%
+    bind_rows() %>%
+    filter(FDR < 0.05) %>%
+    mutate(IsUp = logFC > 0) %>%
+    filter(IsUp) %>%
+    mutate(MaxLogFC = max(logFC)) %>%
+    group_by(Cluster) %>%
+    mutate(logFCScaled = scales::rescale(
+        logFC, from = c(0, max(MaxLogFC)), to = c(0, n()))
+    ) %>%
+    ungroup() %>%
+    mutate(Cluster = factor(Cluster, levels = 0:(n_clusts - 1)))
+
+counts_plot <- ggplot(plot_data, aes(x = Cluster)) +
+    geom_bar(aes(fill = Cluster), alpha = 0.3) +
+    geom_jitter(aes(y = logFCScaled, colour = logFC),
+                position = position_jitter(height = 0, width = 0.4, seed = 1)) +
+    geom_text(aes(label=..count..), stat = "count",
+              vjust = -0.5, size = 4, colour = "grey10") +
+    scale_fill_discrete(guide = FALSE) +
+    scale_colour_viridis_c(option = "plasma") +
+    ggtitle("Up-regulated DE genes by cluster") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
+                                    vjust = 1, margin = margin(1)),
+          axis.title = element_blank(),
+          axis.text.y = element_blank(),
+          panel.grid = element_blank())
+
+plot_data <- map_df(seq_len(n_clusts), function(idx) {
+    de_list[[idx]] %>%
+        filter(Name %in% known_genes)
+}) %>%
+    mutate(FDR = if_else(logFC < 0, 1, FDR)) %>%
+    mutate(logFC = if_else(logFC < 0, 0, logFC)) %>%
+    mutate(Type = known_types[Name]) %>%
+    mutate(Cluster = factor(Cluster, levels = (n_clusts - 1):0),
+           Gene = factor(Name, levels = known_genes),
+           Type = factor(Type, levels = unique(known_types)))
+
+genes_plot <- ggplot(plot_data,
+       aes(x = Gene, y = Cluster, size = logFC, alpha = -FDR, colour = Type)) +
+    geom_point() +
+    facet_grid(~ Type, scales = "free_x", space = "free_x") +
+    ggtitle("DE results for some published markers by cluster") +
+    theme_minimal() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          legend.position = "none")
+
+p1 <- plot_grid(mean_plot, zeros_plot, bcv_plot, counts_plot,
+                ncol = 2, labels = "AUTO")
+
+fig <- plot_grid(p1, genes_plot, ncol = 1, labels = c("", "E"),
+                 rel_heights = c(1, 0.5))
+
+ggsave(here::here("output", DOCNAME, "de-results.pdf"), fig,
+       width = 7, height = 8, scale = 2)
+ggsave(here::here("output", DOCNAME, "de-results.png"), fig,
+       width = 7, height = 8, scale = 2)
+
+fig
+```
+
 Summary
 =======
 
@@ -418,15 +571,16 @@ tribble(
          "0",            "Stroma",
          "1",            "Stroma",
          "2",        "Cell cycle",
-         "3",       "Endothelium",
-         "4",          "Podocyte",
-         "5",            "Stroma",
-         "6",         "Stroma???",
-         "7",       "Endothelium",
-         "8",             "Glial",
-         "9",        "Epithelium",
-        "10", "Muscle progenitor",
-        "11",  "Neural progenitor"
+         "3",            "Stroma",
+         "4",       "Endothelium",
+         "5",          "Podocyte",
+         "6",            "Stroma",
+         "7",   "Possible immune",
+         "8",       "Endothelium",
+         "9",             "Glial",
+        "10",        "Epithelium",
+        "11", "Muscle progenitor",
+        "12", "Neural progenitor"
 )
 ```
 
@@ -437,7 +591,16 @@ This table describes parameters used and set in this document.
 
 ```{r parameters, cache.lazy = FALSE}
 params <- list(
-
+    list(
+        Parameter = "maxmean_thresh",
+        Value = maxmean_thresh,
+        Description = "Minimum threshold for (log10) maxium cluster mean"
+    ),
+    list(
+        Parameter = "maxmean_mads",
+        Value = maxmean_mads,
+        Description = "MADs for (log10) maxium cluster mean"
+    )
 )
 
 names(params) <- map_chr(params, magrittr::extract2, "Parameter")
@@ -470,13 +633,17 @@ knitr::kable(data.frame(
     File = c(
         getDownloadLink("parameters.json", DOCNAME),
         getDownloadLink("de_genes.xlsx", DOCNAME),
-        getDownloadLink("de_genes.csv.zip", DOCNAME)
+        getDownloadLink("de_genes.csv.zip", DOCNAME),
+        getDownloadLink("de-results.png", DOCNAME),
+        getDownloadLink("de-results.pdf", DOCNAME)
     ),
     Description = c(
         "Parameters set and used in this analysis",
         paste("Results of marker gene testing in XLSX format with one tab",
               "per cluster"),
-        "Results of marker gene testing in zipped CSV format"
+        "Results of marker gene testing in zipped CSV format",
+        "DE results figure (PNG)",
+        "DE results figure (PDF)"
     )
 ))
 ```
