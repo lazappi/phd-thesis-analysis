@@ -40,6 +40,9 @@ library("SingleCellExperiment")
 # System
 library("processx")
 
+# Plotting
+library("cowplot")
+
 # Presentation
 library("knitr")
 
@@ -267,6 +270,53 @@ out <- knit_child(text = unlist(src_list), options = list(cache = FALSE))
 
 `r out`
 
+Figures
+=======
+
+```{r figure}
+clust_plot <- ggplot(clust_embedding, aes(x = X, y = Y)) +
+    geom_segment(data = clust_edges,
+                 aes(x = FromX, y = FromY, xend = ToX, yend = ToY,
+                     colour = Connectivity, alpha = Connectivity), size = 4) +
+    scale_colour_viridis_c(limits = c(0, 1)) +
+    scale_alpha_continuous(limits = c(0, 1), range = c(0, 1), guide = FALSE) +
+    geom_point(aes(fill = Cluster, size = Size), shape = 21) +
+    geom_text(aes(label = Cluster)) +
+    scale_size(range = c(6, 20), guide = FALSE) +
+    scale_fill_discrete(guide = FALSE) +
+    ggtitle("PAGA cluster graph") +
+    theme_void() +
+    theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
+                                    vjust = 1, margin = margin(5)),
+          legend.position = "bottom")
+
+cell_plot <- ggplot(cell_embedding, aes(x = X, y = Y)) +
+    geom_segment(data = cell_edges,
+                 aes(x = FromX, y = FromY, xend = ToX, yend = ToY,
+                     colour = Connectivity, alpha = Connectivity),
+                 size = 0.5) +
+    geom_point(aes(fill = Cluster), shape = 21, stroke = 0, size = 1.5) +
+    scale_colour_viridis_c(limits = c(0, 1), guide = FALSE) +
+    scale_alpha_continuous(limits = c(0, 1), range = c(0, 1), guide = FALSE) +
+    scale_fill_discrete(guide = guide_legend(
+        nrow = 2, override.aes = list(size = 2)
+    )) +
+    ggtitle("Cell shared nearest neighbour graph") +
+    theme_void() +
+    theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
+                                    vjust = 1, margin = margin(5)),
+          legend.position = "bottom")
+
+fig <- plot_grid(clust_plot, cell_plot, nrow = 1, labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "paga-results.pdf"), fig,
+       width = 7, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "paga-results.png"), fig,
+       width = 7, height = 4, scale = 2)
+
+fig
+```
+
 Summary
 =======
 
@@ -312,7 +362,9 @@ knitr::kable(data.frame(
         getDownloadLink("cluster_edges.csv", DOCNAME),
         getDownloadLink("cluster_tree_edges.csv", DOCNAME),
         getDownloadLink("cell_embedding.csv", DOCNAME),
-        getDownloadLink("cell_edges.csv", DOCNAME)
+        getDownloadLink("cell_edges.csv", DOCNAME),
+        getDownloadLink("paga-results.png", DOCNAME),
+        getDownloadLink("paga-results.pdf", DOCNAME)
     ),
     Description = c(
         "Parameters set and used in this analysis",
@@ -320,7 +372,9 @@ knitr::kable(data.frame(
         "Edges for PAGA cluster graph",
         "Tree edges for PAGA cluster graph",
         "Embedding for cells from PAGA",
-        "Edges for cell graph" 
+        "Edges for cell graph",
+        "PAGA results figure (PNG)",
+        "PAGA results figure (PDF)"
     )
 ))
 ```
