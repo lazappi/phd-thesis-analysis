@@ -38,6 +38,9 @@ knitr::opts_chunk$set(
 library("SingleCellExperiment")
 library("velocyto.R")
 
+# Plotting
+library("cowplot")
+
 # Tidyverse
 library("tidyverse")
 ```
@@ -129,31 +132,38 @@ velocity <- gene.relative.velocity.estimates(
     n.cores      = 10
 )
 
-vel_embedding <- show.velocity.on.embedding.cor(
+tSNE_embedding <- show.velocity.on.embedding.cor(
     reducedDim(sce, "SeuratTSNE"), velocity,
+    n.cores = 10, show.grid.flow = TRUE, return.details = TRUE
+)
+
+umap_embedding <- show.velocity.on.embedding.cor(
+    reducedDim(sce, "SeuratUMAP"), velocity,
     n.cores = 10, show.grid.flow = TRUE, return.details = TRUE
 )
 ```
 
-By cell
+By cell {.tabset}
 -------
 
 This plot shows the velocity of individual cells. The direction of each arrow
 indicates where each cell is headed in this space based on the genes that are
 being actively transcribed and the length is an indication of rate.
 
+### t-SNE
+
 ```{r velo-tsne}
-plot_data <- reducedDim(sce, "SeuratTSNE") %>%
+tSNE_data <- reducedDim(sce, "SeuratTSNE") %>%
     as.data.frame() %>%
-    mutate(X0 = vel_embedding$arrows[, "x0"],
-           X1 = vel_embedding$arrows[, "x1"],
-           Y0 = vel_embedding$arrows[, "y0"],
-           Y1 = vel_embedding$arrows[, "y1"]) %>%
+    mutate(X0 = tSNE_embedding$arrows[, "x0"],
+           X1 = tSNE_embedding$arrows[, "x1"],
+           Y0 = tSNE_embedding$arrows[, "y0"],
+           Y1 = tSNE_embedding$arrows[, "y1"]) %>%
     mutate(X2 = X0 + (X1 - X0) * 4,
            Y2 = Y0 + (Y1 - Y0) * 4) %>%
     mutate(Cluster = colData(sce)$Cluster)
 
-ggplot(plot_data) +
+ggplot(tSNE_data) +
     geom_point(aes(x = tSNE_1, y = tSNE_2, colour = Cluster)) +
     geom_segment(aes(x = X0, xend = X2, y = Y0, yend = Y2),
                  arrow = arrow(length = unit(3, "points"), type = "closed"),
@@ -161,7 +171,29 @@ ggplot(plot_data) +
     theme_minimal()
 ```
 
-Vector field
+### UMAP
+
+```{r velo-umap}
+umap_data <- reducedDim(sce, "SeuratUMAP") %>%
+    as.data.frame() %>%
+    setNames(c("UMAP1", "UMAP2")) %>%
+    mutate(X0 = umap_embedding$arrows[, "x0"],
+           X1 = umap_embedding$arrows[, "x1"],
+           Y0 = umap_embedding$arrows[, "y0"],
+           Y1 = umap_embedding$arrows[, "y1"]) %>%
+    mutate(X2 = X0 + (X1 - X0) * 1,
+           Y2 = Y0 + (Y1 - Y0) * 1) %>%
+    mutate(Cluster = colData(sce)$Cluster)
+
+ggplot(umap_data) +
+    geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster)) +
+    geom_segment(aes(x = X0, xend = X2, y = Y0, yend = Y2),
+                 arrow = arrow(length = unit(3, "points"), type = "closed"),
+                 colour = "grey20", alpha = 0.8) +
+    theme_minimal()
+```
+
+Vector field {.tabset}
 ------------
 
 It can be hard to see all the arrows for individual cells and noise in the data
@@ -170,20 +202,86 @@ summarise the data by building a grid field of vectors that show the average
 velocity of nearby cells. This gives us a global view of the transcriptional
 direction of of the dataset.
 
+### t-SNE
+
 ```{r velo-tsne-field}
-field_arrows <- vel_embedding$garrows %>%
+tSNE_arrows <- tSNE_embedding$garrows %>%
     as.data.frame() %>%
     mutate(x2 = x0 + (x1 - x0) * 10,
            y2 = y0 + (y1 - y0) * 10)
 
-ggplot(plot_data) +
+ggplot(tSNE_data) +
     geom_point(aes(x = tSNE_1, y = tSNE_2, colour = Cluster)) +
-    geom_segment(data = field_arrows,
+    geom_segment(data = tSNE_arrows,
                  aes(x = x0, xend = x2, y = y0, yend = y2),
                  size = 1,
                  arrow = arrow(length = unit(4, "points"), type = "closed"),
                  colour = "grey20", alpha = 0.8) +
     theme_minimal()
+```
+
+### UMAP
+
+```{r velo-umap-field}
+umap_arrows <- umap_embedding$garrows %>%
+    as.data.frame() %>%
+    mutate(x2 = x0 + (x1 - x0) * 5,
+           y2 = y0 + (y1 - y0) * 5)
+
+ggplot(umap_data) +
+    geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster)) +
+    geom_segment(data = umap_arrows,
+                 aes(x = x0, xend = x2, y = y0, yend = y2),
+                 size = 1,
+                 arrow = arrow(length = unit(4, "points"), type = "closed"),
+                 colour = "grey20", alpha = 0.8) +
+    theme_minimal()
+```
+
+Figures
+=======
+
+```{r figure}
+label_data <- umap_data %>%
+    group_by(Cluster) %>%
+    summarise(UMAP1 = mean(UMAP1),
+              UMAP2 = mean(UMAP2))
+
+cell_plot <- ggplot(umap_data) +
+    geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster), alpha = 0.3) +
+    geom_segment(aes(x = X0, xend = X2, y = Y0, yend = Y2),
+                 arrow = arrow(length = unit(3, "points"), type = "closed"),
+                 colour = "grey20", alpha = 0.3) +
+    geom_point(data = label_data, aes(x = UMAP1, y = UMAP2, colour = Cluster),
+               shape = 21, size = 6, stroke = 1, fill = "white") +
+    geom_text(data = label_data,
+              aes(x = UMAP1, y = UMAP2, colour = Cluster, label = Cluster)) +
+    ggtitle("Individual cell velocity estimates") +
+    theme_minimal() +
+    theme(legend.position = "none")
+
+field_plot <- ggplot(umap_data) +
+    geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster), alpha = 0.3) +
+    geom_segment(data = umap_arrows,
+                 aes(x = x0, xend = x2, y = y0, yend = y2),
+                 arrow = arrow(length = unit(4, "points"), type = "closed"),
+                 size = 1, colour = "grey20", alpha = 0.6) +
+    geom_point(data = label_data, aes(x = UMAP1, y = UMAP2, colour = Cluster),
+               shape = 21, size = 6, stroke = 1, fill = "white") +
+    geom_text(data = label_data,
+              aes(x = UMAP1, y = UMAP2, colour = Cluster, label = Cluster)) +
+    ggtitle("Cell velocity field") +
+    theme_minimal() +
+    theme(legend.position = "none")
+
+fig <- plot_grid(cell_plot, field_plot, nrow = 1, labels = "AUTO")
+
+ggsave(here::here("output", DOCNAME, "cell-velocity.pdf"), fig,
+       width = 7, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "cell-velocity.png"), fig,
+       width = 7, height = 4, scale = 2)
+
+fig
 ```
 
 Summary
@@ -222,10 +320,14 @@ dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
 
 knitr::kable(data.frame(
     File = c(
-        getDownloadLink("parameters.json", DOCNAME)
+        getDownloadLink("parameters.json", DOCNAME),
+        getDownloadLink("cell-velocity.png", DOCNAME),
+        getDownloadLink("cell-velocity.pdf", DOCNAME)
     ),
     Description = c(
-        "Parameters set and used in this analysis"
+        "Parameters set and used in this analysis",
+        "Cell velocity figure (PNG)",
+        "Cell velocity figure (PDF)"
     )
 ))
 ```
