@@ -1286,6 +1286,29 @@ This table describes parameters used and set in this document.
 ```{r parameters}
 params <- list(
     list(
+        Parameter = "seurat_thresh",
+        Value = c(exp_low = x_low, exp_high = x_high, disp_low = y_low,
+                  disp_high = y_high),
+        Description = paste("Seurat selection thresholds",
+                            "(low expression, high expression,",
+                            "low dispersion, high dispersion)")
+    ),
+    list(
+        Parameter = "sel_seurat",
+        Value = sum(rowData(sce)$SeuratSelected),
+        Description = "Number of genes selected by the Seurat method"
+    ),
+    list(
+        Parameter = "m3drop_thresh",
+        Value = m3drop_q,
+        Description = "M3Drop q-value threshold"
+    ),
+    list(
+        Parameter = "sel_m3drop",
+        Value = sum(rowData(sce)$M3DropSelected),
+        Description = "Number of genes selected by the M3Drop method"
+    ),
+    list(
         Parameter = "sel_genes",
         Value = length(seurat@var.genes),
         Description = "Number of selected genes"
@@ -1317,10 +1340,6 @@ params <- list(
     )
 )
 
-names(params) <- map_chr(params, magrittr::extract2, "Parameter")
-metadata(sce)$Params[[DOCNAME]] <- params
-
-names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```

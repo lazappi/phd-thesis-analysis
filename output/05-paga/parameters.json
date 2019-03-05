@@ -1,0 +1,7 @@
+[
+  {
+    "Parameter": ["con_thresh"],
+    "Value": [0.7],
+    "Description": ["Connectivity threshold for PAGA graph"]
+  }
+]

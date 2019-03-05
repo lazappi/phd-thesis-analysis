@@ -229,9 +229,12 @@ de_list <- lapply(seq_len(n_clusts), function(idx) {
 })
 names(de_list) <- paste("Cluster", 0:(n_clusts - 1))
 
+fdr_thresh <- 0.05
+logFC_thresh <- 1
+
 markers_list <- lapply(de_list, function(de) {
     de %>%
-        filter(FDR < 0.05, logFC > 1) %>%
+        filter(FDR < fdr_thresh, logFC > logFC_thresh) %>%
         select(Name, logFC, PValue, FDR)
 })
 ```
@@ -574,8 +577,8 @@ tribble(
          "3",            "Stroma",
          "4",       "Endothelium",
          "5",          "Podocyte",
-         "6",            "Stroma",
-         "7",   "Possible immune",
+         "6",   "Possible immune",
+         "7",            "Stroma",
          "8",       "Endothelium",
          "9",             "Glial",
         "10",        "Epithelium",
@@ -600,13 +603,19 @@ params <- list(
         Parameter = "maxmean_mads",
         Value = maxmean_mads,
         Description = "MADs for (log10) maxium cluster mean"
+    ),
+    list(
+        Parameter = "fdr_thresh",
+        Value = fdr_thresh,
+        Description = "FDR threshold for significant marker genes"
+    ),
+    list(
+        Parameter = "logFC_thresh",
+        Value = logFC_thresh,
+        Description = "Log foldchange threshold for significant marker genes"
     )
 )
 
-names(params) <- map_chr(params, magrittr::extract2, "Parameter")
-metadata(sce)$Params[[DOCNAME]] <- params
-
-names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
@@ -618,6 +627,7 @@ This table describes the output files produced by this document. Right click
 and _Save Link As..._ to download the results.
 
 ```{r save}
+write_rds(sce, here::here("data/processed/04-markers.Rds"))
 write_rds(de_fit, here::here("data/processed/04-DGEGLM.Rds"))
 ```
 

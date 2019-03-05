@@ -16,7 +16,7 @@
   },
   {
     "Parameter": ["doublet_thresh"],
-    "Value": [1.5459],
+    "Value": [1.5572],
     "Description": ["Maximum threshold for doublet score"]
   },
   {
@@ -46,22 +46,22 @@
   },
   {
     "Parameter": ["n_cells"],
-    "Value": [8052],
+    "Value": [8059],
     "Description": ["Number of cells in the filtered dataset"]
   },
   {
     "Parameter": ["n_genes"],
-    "Value": [22738],
+    "Value": [22739],
     "Description": ["Number of genes in the filtered dataset"]
   },
   {
     "Parameter": ["median_genes"],
-    "Value": [2505],
+    "Value": [2506],
     "Description": ["Median number of expressed genes per cell in the filtered dataset"]
   },
   {
     "Parameter": ["median_counts"],
-    "Value": [7836],
+    "Value": [7838],
     "Description": ["Median number of counts per cell in the filtered dataset"]
   }
 ]

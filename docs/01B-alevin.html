@@ -423,6 +423,9 @@ div.tocify {
   </ul>
 </li>
 <li>
+  <a href="methods.html">Methods</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -465,7 +468,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-22</p>
+<p><strong>Last updated:</strong> 2019-03-05</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -489,7 +492,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/aca8ec37768f4afd7b5f20c411f4704b0a7c277a" target="_blank">aca8ec3</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -500,9 +503,10 @@ Ignored files:
     Ignored:    analysis/cache/
     Ignored:    build-logs/
     Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
     Ignored:    output/04-marker-genes/de_genes.csv.zip
-    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -511,22 +515,40 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
+    Untracked:  output/05-paga/parameters.json
+    Untracked:  output/06-velocyto/parameters.json
+    Untracked:  output/90-methods/
     Untracked:  workflowr-build.e2538443
     Untracked:  workflowr-build.e2545370
     Untracked:  workflowr-build.o2538443
     Untracked:  workflowr-build.o2545370
 
 Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   env-velocyto.yml
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
     Modified:   output/02-quality-control/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
     Modified:   output/03-clustering/cluster_assignments.tsv.gz
     Modified:   output/03-clustering/cluster_expression.tsv.gz
+    Modified:   output/03-clustering/gene-selection.pdf
     Modified:   output/03-clustering/parameters.json
+    Modified:   output/03-clustering/resolution-selection.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
     Modified:   output/04-marker-genes/de_genes.xlsx
+    Modified:   output/04-marker-genes/parameters.json
     Modified:   output/05-paga/cell_edges.csv
     Modified:   output/05-paga/cell_embedding.csv
     Modified:   output/05-paga/cluster_edges.csv
     Modified:   output/05-paga/cluster_embedding.csv
     Modified:   output/05-paga/cluster_tree_edges.csv
+    Modified:   output/05-paga/paga-results.pdf
+    Modified:   output/06-velocyto/cell-velocity.pdf
     Modified:   scripts/build.pbs
 
 </code></pre>
@@ -561,7 +583,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/aca8ec37768f4afd7b5f20c411f4704b0a7c277a/analysis/01B-alevin.Rmd" target="_blank">aca8ec3</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/01B-alevin.Rmd" target="_blank">1b07d72</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+<td style="text-align:left;">
+Add methods page
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/eac25501ae649a431d4f3154590e1eb367f7429e/docs/01B-alevin.html" target="_blank">eac2550</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -751,6 +790,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/cell-selection-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-selection-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -801,6 +851,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/cell-counts-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-counts-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -847,6 +908,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/cell-counts-log-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-counts-log-1.png" target="_blank">8f826ef</a>
@@ -900,6 +972,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/cell-features-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-features-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -946,6 +1029,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/cell-features-log-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/cell-features-log-1.png" target="_blank">8f826ef</a>
@@ -998,6 +1092,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/top-100-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/top-100-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1047,6 +1152,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-counts-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-counts-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1092,6 +1208,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-counts-log-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-counts-log-1.png" target="_blank">8f826ef</a>
@@ -1140,6 +1267,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-cells-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-cells-1.png" target="_blank">8f826ef</a>
@@ -1191,6 +1329,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-means-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-means-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1236,6 +1385,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-means-log-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/gene-means-log-1.png" target="_blank">8f826ef</a>
@@ -1291,6 +1451,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/counts-zeros-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/01B-alevin.Rmd/counts-zeros-1.png" target="_blank">8f826ef</a>
@@ -1412,6 +1583,36 @@ ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;alevin-comparison.png&quot;
 
 fig</code></pre>
 <p><img src="figure/01B-alevin.Rmd/make-fig-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of make-fig-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/make-fig-1.png" target="_blank">88dd94a</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
@@ -1420,16 +1621,38 @@ fig</code></pre>
 <h2>Parameters</h2>
 <p>This table describes parameters used and set in this document.</p>
 <pre class="r"><code>params &lt;- list(
-    
+    list(
+        Parameter = &quot;n_cells&quot;,
+        Value = ncol(alevin),
+        Description = &quot;Number of cells in Alevin dataset&quot;
+    ),
+    list(
+        Parameter = &quot;n_genes&quot;,
+        Value = nrow(alevin),
+        Description = &quot;Number of genes in Alevin dataset&quot;
+    )
 )
 
 params &lt;- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))</code></pre>
-<table class="kable_wrapper">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
 <tbody>
-<tr>
-<td>
-</td>
+<tr class="odd">
+<td align="left">n_cells</td>
+<td align="left">10423</td>
+<td align="left">Number of cells in Alevin dataset</td>
+</tr>
+<tr class="even">
+<td align="left">n_genes</td>
+<td align="left">37247</td>
+<td align="left">Number of genes in Alevin dataset</td>
 </tr>
 </tbody>
 </table>
@@ -1490,14 +1713,14 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-22                  
+ date     2019-03-05                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
    assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
    backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
    bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
-   bindrcpp             * 0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
    Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
    BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
    BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
@@ -1506,7 +1729,6 @@ knitr::kable(data.frame(
    callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
    cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
    cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
- P codetools              0.2-15    2016-10-05 [5] CRAN (R 3.5.0)
    colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
    cowplot              * 0.9.4     2019-01-08 [1] CRAN (R 3.5.0)
    crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
@@ -1529,7 +1751,6 @@ knitr::kable(data.frame(
    gtable                 0.2.0     2016-02-26 [1] CRAN (R 3.5.0)
    haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
    here                   0.1       2017-05-28 [1] CRAN (R 3.5.0)
-   highr                  0.7       2018-06-09 [1] CRAN (R 3.5.0)
    hms                    0.4.2     2018-03-10 [1] CRAN (R 3.5.0)
    htmltools              0.3.6     2017-04-28 [1] CRAN (R 3.5.0)
    httr                   1.4.0     2018-12-11 [1] CRAN (R 3.5.0)

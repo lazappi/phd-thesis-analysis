@@ -516,7 +516,16 @@ This table describes parameters used and set in this document.
 
 ```{r parameters}
 params <- list(
-    
+    list(
+        Parameter = "n_cells",
+        Value = ncol(alevin),
+        Description = "Number of cells in Alevin dataset"
+    ),
+    list(
+        Parameter = "n_genes",
+        Value = nrow(alevin),
+        Description = "Number of genes in Alevin dataset"
+    )
 )
 
 params <- jsonlite::toJSON(params, pretty = TRUE)

@@ -423,6 +423,9 @@ div.tocify {
   </ul>
 </li>
 <li>
+  <a href="methods.html">Methods</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -465,7 +468,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-20</p>
+<p><strong>Last updated:</strong> 2019-03-05</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -489,7 +492,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/edc3720c9eb9c094ddce926f2396b70c2a6d8058" target="_blank">edc3720</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -500,9 +503,10 @@ Ignored files:
     Ignored:    analysis/cache/
     Ignored:    build-logs/
     Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
     Ignored:    output/04-marker-genes/de_genes.csv.zip
-    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -511,14 +515,40 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/01-preprocessing/selection-comparison.pdf
+    Untracked:  output/05-paga/parameters.json
+    Untracked:  output/06-velocyto/parameters.json
+    Untracked:  output/90-methods/
+    Untracked:  workflowr-build.e2538443
+    Untracked:  workflowr-build.e2545370
+    Untracked:  workflowr-build.o2538443
+    Untracked:  workflowr-build.o2545370
 
 Unstaged changes:
-    Modified:   output/01-preprocessing/barcodes_Org1.tsv
-    Modified:   output/01-preprocessing/barcodes_Org2.tsv
-    Modified:   output/01-preprocessing/barcodes_Org3.tsv
-    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   analysis/_site.yml
+    Modified:   env-velocyto.yml
     Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
+    Modified:   output/02-quality-control/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
+    Modified:   output/03-clustering/cluster_assignments.tsv.gz
+    Modified:   output/03-clustering/cluster_expression.tsv.gz
+    Modified:   output/03-clustering/gene-selection.pdf
+    Modified:   output/03-clustering/parameters.json
+    Modified:   output/03-clustering/resolution-selection.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
+    Modified:   output/04-marker-genes/de_genes.xlsx
+    Modified:   output/04-marker-genes/parameters.json
+    Modified:   output/05-paga/cell_edges.csv
+    Modified:   output/05-paga/cell_embedding.csv
+    Modified:   output/05-paga/cluster_edges.csv
+    Modified:   output/05-paga/cluster_embedding.csv
+    Modified:   output/05-paga/cluster_tree_edges.csv
+    Modified:   output/05-paga/paga-results.pdf
+    Modified:   output/06-velocyto/cell-velocity.pdf
     Modified:   scripts/build.pbs
 
 </code></pre>
@@ -553,7 +583,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/edc3720c9eb9c094ddce926f2396b70c2a6d8058/analysis/01-preprocessing.Rmd" target="_blank">edc3720</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/01-preprocessing.Rmd" target="_blank">1b07d72</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+<td style="text-align:left;">
+Add methods page
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/4a2f37648e8180329dc37f9c65a5ddf168ace8a9/docs/01-preprocessing.html" target="_blank">4a2f376</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -1093,6 +1140,7 @@ Luke Zappia
 <h1>Selection</h1>
 <p>We are going to perform further quality control of these cells anyway so at this stage we will keep those that were selected by either Cell Ranger v3 or <code>emptyDrops</code>.</p>
 <pre class="r"><code>selected &lt;- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
+selected &lt;- selected[Matrix::rowSums(counts(selected)) &gt; 0, ]
 
 colData(selected)$SelMethod &lt;- &quot;Both&quot;
 colData(selected)$SelMethod[!colData(selected)$CellRangerFilt] &lt;- &quot;emptyDrops&quot;
@@ -1128,9 +1176,9 @@ $ EmpDropsLimited                                &lt;lgl&gt; TRUE, TRUE, TRUE,�
 $ EmpDropsFDR                                    &lt;dbl&gt; 0.000000000, 0.00…
 $ EmpDropsFilt                                   &lt;lgl&gt; TRUE, TRUE, TRUE,…
 $ SelMethod                                      &lt;chr&gt; &quot;Both&quot;, &quot;Both&quot;, &quot;…
-$ G1Score                                        &lt;dbl&gt; 0.026, 0.421, 0.9…
-$ SScore                                         &lt;dbl&gt; 0.026, 0.421, 0.9…
-$ G2MScore                                       &lt;dbl&gt; 0.516, 0.104, 0.0…
+$ G1Score                                        &lt;dbl&gt; 0.035, 0.398, 0.9…
+$ SScore                                         &lt;dbl&gt; 0.035, 0.398, 0.9…
+$ G2MScore                                       &lt;dbl&gt; 0.561, 0.100, 0.0…
 $ CellCycle                                      &lt;chr&gt; &quot;G2M&quot;, &quot;S&quot;, &quot;G1&quot;,…
 $ is_cell_control                                &lt;lgl&gt; FALSE, FALSE, FAL…
 $ total_features_by_counts                       &lt;int&gt; 3193, 2663, 108, …
@@ -1169,7 +1217,7 @@ $ pct_counts_in_top_100_features_MT              &lt;dbl&gt; 100, 100, NaN, 10�
 $ pct_counts_in_top_200_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…
 $ pct_counts_in_top_500_features_MT              &lt;dbl&gt; 100, 100, NaN, 10…</code></pre>
 <pre class="r"><code>glimpse(as.data.frame(rowData(selected)))</code></pre>
-<pre><code>Observations: 25,020
+<pre><code>Observations: 24,812
 Variables: 20
 $ ID                         &lt;chr&gt; &quot;ENSG00000243485&quot;, &quot;ENSG00000238009&quot;,…
 $ Symbol                     &lt;chr&gt; &quot;MIR1302-2HG&quot;, &quot;AL627309.1&quot;, &quot;AL62730…
@@ -1335,7 +1383,12 @@ ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;selection-comparison.png&qu
 <h2>Parameters</h2>
 <p>This table describes parameters used and set in this document.</p>
 <pre class="r"><code>params &lt;- list(
-     list(
+    list(
+        Parameter = &quot;n_droplets&quot;,
+        Value = ncol(raw),
+        Description = &quot;Number of droplets in the raw dataset&quot;
+    ),
+    list(
         Parameter = &quot;empty_thresh&quot;,
         Value = empty_thresh,
         Description = &quot;Droplets with less than this many counts are empty&quot;
@@ -1351,16 +1404,27 @@ ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;selection-comparison.png&qu
         Description = &quot;FDR cutoff for emptyDrops&quot;
     ),
     list(
+        Parameter = &quot;n_default&quot;,
+        Value = sum(colData(raw)$DefaultFilt),
+        Description = &quot;Number of cells selected by the default Cell Ranger method&quot;
+    ),
+    list(
+        Parameter = &quot;n_cellranger&quot;,
+        Value = sum(colData(raw)$CellRangerFilt),
+        Description = &quot;Number of cells selected by the Cell Ranger v3 method&quot;
+    ),
+    list(
+        Parameter = &quot;n_empdrops&quot;,
+        Value = sum(colData(raw)$EmpDropsFilt),
+        Description = &quot;Number of cells selected by the emptyDrops method&quot;
+    ),
+    list(
         Parameter = &quot;n_cells&quot;,
         Value = ncol(selected),
         Description = &quot;Number of cells selected&quot;
     )
 )
 
-names(params) &lt;- map_chr(params, magrittr::extract2, &quot;Parameter&quot;)
-metadata(selected)$Params[[DOCNAME]] &lt;- params
-
-names(params) &lt;- NULL
 params &lt;- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <table>
@@ -1373,19 +1437,39 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">n_droplets</td>
+<td align="left">945038</td>
+<td align="left">Number of droplets in the raw dataset</td>
+</tr>
+<tr class="even">
 <td align="left">empty_thresh</td>
 <td align="left">100</td>
 <td align="left">Droplets with less than this many counts are empty</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">emp_iters</td>
 <td align="left">30000</td>
 <td align="left">Number of iterations for emptyDrops p-values</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">emp_fdr</td>
 <td align="left">0.01</td>
 <td align="left">FDR cutoff for emptyDrops</td>
+</tr>
+<tr class="odd">
+<td align="left">n_default</td>
+<td align="left">7006</td>
+<td align="left">Number of cells selected by the default Cell Ranger method</td>
+</tr>
+<tr class="even">
+<td align="left">n_cellranger</td>
+<td align="left">8291</td>
+<td align="left">Number of cells selected by the Cell Ranger v3 method</td>
+</tr>
+<tr class="odd">
+<td align="left">n_empdrops</td>
+<td align="left">9858</td>
+<td align="left">Number of cells selected by the emptyDrops method</td>
 </tr>
 <tr class="even">
 <td align="left">n_cells</td>
@@ -1493,7 +1577,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-20                  
+ date     2019-03-05                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        

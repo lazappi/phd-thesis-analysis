@@ -423,6 +423,9 @@ div.tocify {
   </ul>
 </li>
 <li>
+  <a href="methods.html">Methods</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -465,7 +468,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-23</p>
+<p><strong>Last updated:</strong> 2019-03-05</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -489,7 +492,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1ecb5c649308b98934f37c9b753e0f5095a7e73e" target="_blank">1ecb5c6</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -500,9 +503,10 @@ Ignored files:
     Ignored:    analysis/cache/
     Ignored:    build-logs/
     Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
     Ignored:    output/04-marker-genes/de_genes.csv.zip
-    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -511,24 +515,40 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/02-quality-control/qc-thresholds.pdf
-    Untracked:  output/02-quality-control/qc-validation.pdf
+    Untracked:  output/05-paga/parameters.json
+    Untracked:  output/06-velocyto/parameters.json
+    Untracked:  output/90-methods/
     Untracked:  workflowr-build.e2538443
     Untracked:  workflowr-build.e2545370
     Untracked:  workflowr-build.o2538443
     Untracked:  workflowr-build.o2545370
 
 Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   env-velocyto.yml
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
     Modified:   output/02-quality-control/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
     Modified:   output/03-clustering/cluster_assignments.tsv.gz
     Modified:   output/03-clustering/cluster_expression.tsv.gz
+    Modified:   output/03-clustering/gene-selection.pdf
     Modified:   output/03-clustering/parameters.json
+    Modified:   output/03-clustering/resolution-selection.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
     Modified:   output/04-marker-genes/de_genes.xlsx
+    Modified:   output/04-marker-genes/parameters.json
     Modified:   output/05-paga/cell_edges.csv
     Modified:   output/05-paga/cell_embedding.csv
     Modified:   output/05-paga/cluster_edges.csv
     Modified:   output/05-paga/cluster_embedding.csv
     Modified:   output/05-paga/cluster_tree_edges.csv
+    Modified:   output/05-paga/paga-results.pdf
+    Modified:   output/06-velocyto/cell-velocity.pdf
     Modified:   scripts/build.pbs
 
 </code></pre>
@@ -563,7 +583,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1ecb5c649308b98934f37c9b753e0f5095a7e73e/analysis/02-quality-control.Rmd" target="_blank">1ecb5c6</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/02-quality-control.Rmd" target="_blank">1b07d72</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+<td style="text-align:left;">
+Add methods page
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/02-quality-control.html" target="_blank">52e85ed</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -749,6 +786,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/counts-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/counts-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -806,6 +854,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/features-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/features-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -861,6 +920,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/percent-MT-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/percent-MT-1.png" target="_blank">8f826ef</a>
@@ -938,6 +1008,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/pca-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1001,6 +1082,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/t-sne-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/t-sne-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1062,6 +1154,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/umap-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-1.png" target="_blank">8f826ef</a>
@@ -1128,6 +1231,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/exp-vars-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exp-vars-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1192,6 +1306,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/cell-cycle-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/cell-cycle-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1237,15 +1362,15 @@ Luke Zappia
 <tbody>
 <tr class="odd">
 <td align="left">G1</td>
-<td align="right">5701</td>
+<td align="right">5721</td>
 </tr>
 <tr class="even">
 <td align="left">G2M</td>
-<td align="right">1362</td>
+<td align="right">1371</td>
 </tr>
 <tr class="odd">
 <td align="left">S</td>
-<td align="right">2730</td>
+<td align="right">2701</td>
 </tr>
 <tr class="even">
 <td align="left">NA</td>
@@ -1277,6 +1402,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/exprs-mean-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-mean-1.png" target="_blank">8f826ef</a>
@@ -1334,6 +1470,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/exprs-total-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-total-1.png" target="_blank">8f826ef</a>
@@ -1394,6 +1541,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/exprs-mean-expressed-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-mean-expressed-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1450,6 +1608,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/exprs-total-expressed-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/exprs-total-expressed-1.png" target="_blank">8f826ef</a>
@@ -1509,6 +1678,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/high-exprs-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/high-exprs-1.png" target="_blank">8f826ef</a>
@@ -1572,6 +1752,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/freq-by-mean-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/freq-by-mean-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1633,6 +1824,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/ncells-by-mean-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/ncells-by-mean-1.png" target="_blank">8f826ef</a>
@@ -1776,6 +1978,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/pca-outliers-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-outliers-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1886,6 +2099,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/pca-summary-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-summary-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -1949,6 +2173,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/tSNE-summary-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/tSNE-summary-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2010,6 +2245,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/umap-summary-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-summary-1.png" target="_blank">8f826ef</a>
@@ -2093,6 +2339,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/pca-doublets-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-doublets-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2150,6 +2407,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/tSNE-doublets-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/tSNE-doublets-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2205,6 +2473,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/umap-doublets-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-doublets-1.png" target="_blank">8f826ef</a>
@@ -2265,6 +2544,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/hist-doublets-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/hist-doublets-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2307,7 +2597,7 @@ Luke Zappia
 doublet_thresh &lt;- attr(doublet_out, &quot;thresholds&quot;)[&quot;higher&quot;]
 
 filtered &lt;- filtered[, !doublet_out]</code></pre>
-<p>We choose a threshold for the doublet score that removes around the number of cells as the expected doublet frequency for a 10x experiment (around 1 percent). A threshold of 1.55 identifies 134 doublets leaving us with 8052 cells.</p>
+<p>We choose a threshold for the doublet score that removes around the number of cells as the expected doublet frequency for a 10x experiment (around 1 percent). A threshold of 1.56 identifies 127 doublets leaving us with 8059 cells.</p>
 </div>
 </div>
 <div id="gene-filtering" class="section level1">
@@ -2340,6 +2630,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/mean-histogram-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/mean-histogram-1.png" target="_blank">8f826ef</a>
@@ -2401,6 +2702,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/cells-histogram-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/cells-histogram-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2451,7 +2763,7 @@ filtered &lt;- normalize(filtered)
 filtered &lt;- runPCA(filtered, method = &quot;irlba&quot;)
 filtered &lt;- runTSNE(filtered)
 filtered &lt;- runUMAP(filtered)</code></pre>
-<p>We use a minimal filter that keeps genes with at least 1 counts in at least 2 cells. After filtering we have reduced the number of features from 25020 to 22738.</p>
+<p>We use a minimal filter that keeps genes with at least 1 counts in at least 2 cells. After filtering we have reduced the number of features from 24812 to 22739.</p>
 </div>
 </div>
 <div id="validation" class="section level1">
@@ -2507,6 +2819,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/kept-lost-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/kept-lost-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2548,7 +2871,7 @@ Luke Zappia
     head(100)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Gene"],"name":[1],"type":["chr"],"align":["left"]},{"label":["LogFC"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Lost"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["LostProp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Kept"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["KeptProp"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"AC005523.2","2":"3.635019","3":"0.6516544","4":"0.0030769231","5":"0.0095422077","6":"0.0069547938","_rn_":"1"},{"1":"OCLM","2":"3.634619","3":"0.6186724","4":"0.0015384615","5":"0.0000000000","6":"0.0000000000","_rn_":"2"},{"1":"LINC00843","2":"3.627595","3":"0.6188241","4":"0.0015384615","5":"0.0010000186","6":"0.0012419275","_rn_":"3"},{"1":"AL627309.1","2":"3.626357","3":"0.6183744","4":"0.0005128205","5":"0.0010373655","6":"0.0013661202","_rn_":"4"},{"1":"LINC02067","2":"3.626263","3":"0.6187791","4":"0.0020512821","5":"0.0011686541","6":"0.0009935420","_rn_":"5"},{"1":"AC025569.1","2":"3.625177","3":"0.6186560","4":"0.0015384615","5":"0.0012809951","6":"0.0012419275","_rn_":"6"},{"1":"ITPKA","2":"3.624939","3":"0.6183744","4":"0.0005128205","5":"0.0012310157","6":"0.0016145057","_rn_":"7"},{"1":"GCNT4","2":"3.618081","3":"0.6200749","4":"0.0051282051","5":"0.0026706230","6":"0.0027322404","_rn_":"8"},{"1":"AC010761.1","2":"3.617089","3":"0.6188909","4":"0.0020512821","5":"0.0024583284","6":"0.0034773969","_rn_":"9"},{"1":"LINC00921","2":"3.616814","3":"0.6236870","4":"0.0015384615","5":"0.0039093119","6":"0.0040983607","_rn_":"10"},{"1":"AC008738.2","2":"3.611973","3":"0.6185993","4":"0.0010256410","5":"0.0030765406","6":"0.0037257824","_rn_":"11"},{"1":"HSF4","2":"3.610516","3":"0.6185008","4":"0.0015384615","5":"0.0032483670","6":"0.0028564332","_rn_":"12"},{"1":"NR5A2","2":"3.602700","3":"0.6457632","4":"0.0030769231","5":"0.0124417608","6":"0.0096870343","_rn_":"13"},{"1":"AC091057.3","2":"3.602354","3":"0.6185985","4":"0.0025641026","5":"0.0044068971","6":"0.0017386985","_rn_":"14"},{"1":"AP000350.7","2":"3.599396","3":"0.6192983","4":"0.0041025641","5":"0.0050265154","6":"0.0048435171","_rn_":"15"},{"1":"GOLGA8N","2":"3.598908","3":"0.6209606","4":"0.0020512821","5":"0.0055903891","6":"0.0054644809","_rn_":"16"},{"1":"TSPAN32","2":"3.594678","3":"0.6184650","4":"0.0015384615","5":"0.0054351453","6":"0.0045951316","_rn_":"17"},{"1":"AL023583.1","2":"3.592251","3":"0.6186173","4":"0.0020512821","5":"0.0058196554","6":"0.0069547938","_rn_":"18"},{"1":"CYP26B1","2":"3.577206","3":"0.6186427","4":"0.0025641026","5":"0.0079411164","6":"0.0062096374","_rn_":"19"},{"1":"SIGLEC9","2":"3.565557","3":"0.6184914","4":"0.0015384615","5":"0.0095469085","6":"0.0064580229","_rn_":"20"},{"1":"MAEL","2":"3.562359","3":"0.6284263","4":"0.0041025641","5":"0.0130426667","6":"0.0100596125","_rn_":"21"},{"1":"PRLR","2":"3.522047","3":"0.6213000","4":"0.0097435897","5":"0.0167189306","6":"0.0172627919","_rn_":"22"},{"1":"LINC01550","2":"3.505192","3":"0.6252766","4":"0.0071794872","5":"0.0204826501","6":"0.0176353701","_rn_":"23"},{"1":"CEBPA-DT","2":"3.499416","3":"0.6189028","4":"0.0035897436","5":"0.0193130620","6":"0.0175111773","_rn_":"24"},{"1":"LAIR1","2":"3.480355","3":"0.6244778","4":"0.0092307692","5":"0.0239800410","6":"0.0258320914","_rn_":"25"},{"1":"LINC00663","2":"3.474967","3":"0.6323884","4":"0.0046153846","5":"0.0273741644","6":"0.0265772479","_rn_":"26"},{"1":"AC093297.2","2":"3.416611","3":"0.6409620","4":"0.0133333333","5":"0.0394899790","6":"0.0326626925","_rn_":"27"},{"1":"U2AF1","2":"3.383492","3":"0.6239254","4":"0.0102564103","5":"0.0390532383","6":"0.0409836066","_rn_":"28"},{"1":"SLC6A9","2":"3.321640","3":"0.6247693","4":"0.0133333333","5":"0.0496471957","6":"0.0500496771","_rn_":"29"},{"1":"HAPLN3","2":"3.274634","3":"0.6313026","4":"0.0179487179","5":"0.0602173825","6":"0.0567560854","_rn_":"30"},{"1":"PLCG2","2":"3.274065","3":"2.2665229","4":"0.0471794872","5":"0.6713586045","6":"0.0579980129","_rn_":"31"},{"1":"WHAMM","2":"3.168022","3":"0.6355718","4":"0.0220512821","5":"0.0815721614","6":"0.0776204670","_rn_":"32"},{"1":"TAAR6","2":"3.100570","3":"0.4124151","4":"0.0010256410","5":"0.0008057090","6":"0.0009935420","_rn_":"33"},{"1":"TIMM23B","2":"3.092388","3":"0.6341008","4":"0.0266666667","5":"0.0958793748","6":"0.0894187779","_rn_":"34"},{"1":"FAM163A","2":"3.075382","3":"0.4125344","4":"0.0015384615","5":"0.0043200066","6":"0.0050919026","_rn_":"35"},{"1":"ADAM32","2":"2.997302","3":"0.4130398","4":"0.0051282051","5":"0.0156794619","6":"0.0151515152","_rn_":"36"},{"1":"PUS7","2":"2.826371","3":"0.4598842","4":"0.0200000000","5":"0.0661574311","6":"0.0670640835","_rn_":"37"},{"1":"HEY2","2":"2.700293","3":"0.4357629","4":"0.0200000000","5":"0.0766667115","6":"0.0648286140","_rn_":"38"},{"1":"ZNF417","2":"2.588510","3":"0.3108073","4":"0.0056410256","5":"0.0235226474","6":"0.0243417784","_rn_":"39"},{"1":"ZNF587B","2":"2.539163","3":"0.3198342","4":"0.0123076923","5":"0.0367690819","6":"0.0319175360","_rn_":"40"},{"1":"ZNF773","2":"2.533278","3":"0.3164197","4":"0.0092307692","5":"0.0355875609","6":"0.0341530055","_rn_":"41"},{"1":"AL158063.1","2":"2.439953","3":"0.2473771","4":"0.0010256410","5":"0.0050579596","6":"0.0042225534","_rn_":"42"},{"1":"TRG-AS1","2":"2.261453","3":"0.2258190","4":"0.0015384615","5":"0.0152628134","6":"0.0062096374","_rn_":"43"},{"1":"HSPB3","2":"2.205283","3":"0.2075662","4":"0.0010256410","5":"0.0093361390","6":"0.0037257824","_rn_":"44"},{"1":"ZNF248","2":"2.139649","3":"0.2863377","4":"0.0256410256","5":"0.0835036970","6":"0.0801043219","_rn_":"45"},{"1":"ZNF134","2":"2.139583","3":"0.3952443","4":"0.0492307692","5":"0.1728594744","6":"0.1490312966","_rn_":"46"},{"1":"TMEM8A","2":"2.131796","3":"0.3128934","4":"0.0415384615","5":"0.1069315308","6":"0.0834575261","_rn_":"47"},{"1":"SPINDOC","2":"2.091960","3":"0.2487743","4":"0.0164102564","5":"0.0610416581","6":"0.0577496274","_rn_":"48"},{"1":"TXLNB","2":"2.048525","3":"0.1779426","4":"0.0025641026","5":"0.0069991058","6":"0.0049677099","_rn_":"49"},{"1":"C7orf31","2":"2.040978","3":"0.2280509","4":"0.0128205128","5":"0.0520778890","6":"0.0512916046","_rn_":"50"},{"1":"HNF1A","2":"1.948858","3":"0.1569682","4":"0.0061538462","5":"0.0018678647","6":"0.0021112767","_rn_":"51"},{"1":"LINC01535","2":"1.944586","3":"0.1545936","4":"0.0005128205","5":"0.0002241155","6":"0.0003725782","_rn_":"52"},{"1":"SLC9C1","2":"1.934490","3":"0.1547364","4":"0.0020512821","5":"0.0017359717","6":"0.0012419275","_rn_":"53"},{"1":"BCL6B","2":"1.930667","3":"0.4123793","4":"0.0348717949","5":"0.2465553464","6":"0.0710382514","_rn_":"54"},{"1":"EVA1C","2":"1.920059","3":"0.1547417","4":"0.0015384615","5":"0.0037271162","6":"0.0040983607","_rn_":"55"},{"1":"AL157373.2","2":"1.880708","3":"0.1554969","4":"0.0061538462","5":"0.0099864631","6":"0.0100596125","_rn_":"56"},{"1":"MYCL","2":"1.874204","3":"0.1661709","4":"0.0082051282","5":"0.0214413504","6":"0.0182563338","_rn_":"57"},{"1":"RPP25","2":"1.868627","3":"0.2768677","4":"0.0174358974","5":"0.1318567977","6":"0.0946348733","_rn_":"58"},{"1":"ZNF286A","2":"1.861842","3":"0.1971722","4":"0.0169230769","5":"0.0541425703","6":"0.0555141580","_rn_":"59"},{"1":"CLEC18A","2":"1.844292","3":"0.2011516","4":"0.0271794872","5":"0.0612079350","6":"0.0289369101","_rn_":"60"},{"1":"ZDHHC13","2":"1.844028","3":"0.2210730","4":"0.0225641026","5":"0.0813135339","6":"0.0773720815","_rn_":"61"},{"1":"LRRC8A","2":"1.836192","3":"0.3118799","4":"0.0430769231","5":"0.1747524316","6":"0.1342523597","_rn_":"62"},{"1":"SPOCK2","2":"1.835524","3":"0.6785678","4":"0.0835897436","5":"0.5463174568","6":"0.1164927968","_rn_":"63"},{"1":"NPHS1","2":"1.788047","3":"0.5629659","4":"0.0630769231","5":"0.4501438515","6":"0.1004719324","_rn_":"64"},{"1":"VKORC1L1","2":"1.782003","3":"0.2392987","4":"0.0451282051","5":"0.1126455291","6":"0.1068057625","_rn_":"65"},{"1":"PRMT7","2":"1.776295","3":"0.2218749","4":"0.0307692308","5":"0.0954814767","6":"0.0880526577","_rn_":"66"},{"1":"TGFBR3","2":"1.773812","3":"0.6715729","4":"0.0764102564","5":"0.5713573227","6":"0.1321410830","_rn_":"67"},{"1":"HTRA1","2":"1.760182","3":"0.5350875","4":"0.0953846154","5":"0.4329921130","6":"0.2076502732","_rn_":"68"},{"1":"OCLN","2":"1.745441","3":"0.1612394","4":"0.0189743590","5":"0.0364079985","6":"0.0327868852","_rn_":"69"},{"1":"SEMA3B","2":"1.743318","3":"0.4383789","4":"0.0743589744","5":"0.3359712867","6":"0.1219572777","_rn_":"70"},{"1":"ITIH5","2":"1.740656","3":"0.3906168","4":"0.0507692308","5":"0.2852907230","6":"0.0797317437","_rn_":"71"},{"1":"C20orf194","2":"1.734314","3":"0.2500051","4":"0.0430769231","5":"0.1346443407","6":"0.1183556880","_rn_":"72"},{"1":"UPP1","2":"1.729652","3":"0.2346395","4":"0.0220512821","5":"0.1189662279","6":"0.0656979632","_rn_":"73"},{"1":"CLDN5","2":"1.728449","3":"1.9292669","4":"0.1446153846","5":"1.9678361717","6":"0.2127421759","_rn_":"74"},{"1":"DHRS12","2":"1.718579","3":"0.2186401","4":"0.0400000000","5":"0.1038187165","6":"0.0887978142","_rn_":"75"},{"1":"FAM81B","2":"1.717799","3":"0.1562093","4":"0.0148717949","5":"0.0353726176","6":"0.0170144064","_rn_":"76"},{"1":"SLC44A3","2":"1.716112","3":"0.1493974","4":"0.0261538462","5":"0.0281484615","6":"0.0213611525","_rn_":"77"},{"1":"PIM3","2":"1.706853","3":"0.4736157","4":"0.0528205128","5":"0.3886025856","6":"0.1720069548","_rn_":"78"},{"1":"SLC13A4","2":"1.704358","3":"0.1237382","4":"0.0010256410","5":"0.0015186460","6":"0.0013661202","_rn_":"79"},{"1":"NACAD","2":"1.702137","3":"0.1500295","4":"0.0097435897","5":"0.0310308838","6":"0.0285643318","_rn_":"80"},{"1":"JUP","2":"1.689218","3":"0.4911416","4":"0.0825641026","5":"0.4154354333","6":"0.1830601093","_rn_":"81"},{"1":"TRIB1","2":"1.689132","3":"0.2091029","4":"0.0256410256","5":"0.0993063999","6":"0.0673124690","_rn_":"82"},{"1":"COL18A1","2":"1.680575","3":"0.2806379","4":"0.0810256410","5":"0.1817298612","6":"0.1151266766","_rn_":"83"},{"1":"AC104825.1","2":"1.673136","3":"0.1409846","4":"0.0102564103","5":"0.0253849290","6":"0.0239692002","_rn_":"84"},{"1":"ZMYM3","2":"1.667953","3":"0.2795827","4":"0.0579487179","5":"0.1838472743","6":"0.1544957774","_rn_":"85"},{"1":"MT-ND6","2":"1.666265","3":"0.6183971","4":"0.2005128205","5":"0.5701711607","6":"0.3440139096","_rn_":"86"},{"1":"CDK20","2":"1.660835","3":"0.1559337","4":"0.0148717949","5":"0.0443689809","6":"0.0413561848","_rn_":"87"},{"1":"NAP1L2","2":"1.653669","3":"0.1352734","4":"0.0092307692","5":"0.0218284772","6":"0.0207401888","_rn_":"88"},{"1":"DEAF1","2":"1.652136","3":"0.3515678","4":"0.0605128205","5":"0.2708240405","6":"0.2155986090","_rn_":"89"},{"1":"MRC2","2":"1.635314","3":"0.4276607","4":"0.0979487179","5":"0.3648395365","6":"0.2526080477","_rn_":"90"},{"1":"RNPEPL1","2":"1.632485","3":"0.1573059","4":"0.0225641026","5":"0.0507355642","6":"0.0432190760","_rn_":"91"},{"1":"PCDH12","2":"1.627950","3":"0.3159704","4":"0.0430769231","5":"0.2370796848","6":"0.0649528068","_rn_":"92"},{"1":"HSPG2","2":"1.624165","3":"0.4887699","4":"0.0866666667","5":"0.4408480839","6":"0.1748633880","_rn_":"93"},{"1":"PIK3R4","2":"1.621539","3":"0.1540198","4":"0.0138461538","5":"0.0487528881","6":"0.0449577745","_rn_":"94"},{"1":"PNPO","2":"1.618300","3":"0.1366913","4":"0.0138461538","5":"0.0288998513","6":"0.0275707899","_rn_":"95"},{"1":"AC008496.2","2":"1.617934","3":"0.1127712","4":"0.0015384615","5":"0.0007858811","6":"0.0006209637","_rn_":"96"},{"1":"TPPP3","2":"1.613301","3":"0.7192356","4":"0.0702564103","5":"0.7179555127","6":"0.1286636860","_rn_":"97"},{"1":"ANXA4","2":"1.612196","3":"0.2934641","4":"0.0558974359","5":"0.2152214677","6":"0.1443119722","_rn_":"98"},{"1":"RAB3IP","2":"1.611946","3":"0.1766059","4":"0.0348717949","5":"0.0770952751","6":"0.0602334824","_rn_":"99"},{"1":"CPXM1","2":"1.610263","3":"1.6028010","4":"0.1902564103","5":"1.7660131664","6":"0.4063586687","_rn_":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Gene"],"name":[1],"type":["chr"],"align":["left"]},{"label":["LogFC"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Lost"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["LostProp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Kept"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["KeptProp"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"AC005523.2","2":"3.633061","3":"0.6346228","4":"0.003088008","5":"0.0095467716","6":"0.0069487529","_rn_":"1"},{"1":"OCLM","2":"3.632253","3":"0.6025028","4":"0.001544004","5":"0.0000000000","6":"0.0000000000","_rn_":"2"},{"1":"LINC00843","2":"3.625275","3":"0.6026506","4":"0.001544004","5":"0.0010004969","6":"0.0012408487","_rn_":"3"},{"1":"AL627309.1","2":"3.624039","3":"0.6022126","4":"0.000514668","5":"0.0010378617","6":"0.0013649336","_rn_":"4"},{"1":"LINC02067","2":"3.623951","3":"0.6026068","4":"0.002058672","5":"0.0011692130","6":"0.0009926790","_rn_":"5"},{"1":"AC025569.1","2":"3.622870","3":"0.6024868","4":"0.001544004","5":"0.0012816078","6":"0.0012408487","_rn_":"6"},{"1":"ITPKA","2":"3.622630","3":"0.6022126","4":"0.000514668","5":"0.0012316045","6":"0.0016131034","_rn_":"7"},{"1":"GCNT4","2":"3.615836","3":"0.6038687","4":"0.005146680","5":"0.0026719004","6":"0.0027298672","_rn_":"8"},{"1":"AC010761.1","2":"3.614835","3":"0.6027156","4":"0.002058672","5":"0.0024595042","6":"0.0034743765","_rn_":"9"},{"1":"LINC00921","2":"3.614623","3":"0.6073864","4":"0.001544004","5":"0.0039111817","6":"0.0040948008","_rn_":"10"},{"1":"AC008738.2","2":"3.609746","3":"0.6024316","4":"0.001029336","5":"0.0030780121","6":"0.0037225462","_rn_":"11"},{"1":"HSF4","2":"3.608297","3":"0.6023357","4":"0.001544004","5":"0.0032499207","6":"0.0028539521","_rn_":"12"},{"1":"NR5A2","2":"3.600864","3":"0.6288856","4":"0.003088008","5":"0.0124477115","6":"0.0096786202","_rn_":"13"},{"1":"AC091057.3","2":"3.600186","3":"0.6024309","4":"0.002573340","5":"0.0044090048","6":"0.0017371882","_rn_":"14"},{"1":"AP000350.7","2":"3.597255","3":"0.6031124","4":"0.004117344","5":"0.0050289195","6":"0.0048393101","_rn_":"15"},{"1":"GOLGA8N","2":"3.596791","3":"0.6047312","4":"0.002058672","5":"0.0055930628","6":"0.0054597345","_rn_":"16"},{"1":"TSPAN32","2":"3.592555","3":"0.6023009","4":"0.001544004","5":"0.0054377449","6":"0.0045911403","_rn_":"17"},{"1":"AL023583.1","2":"3.590145","3":"0.6024492","4":"0.002058672","5":"0.0058224388","6":"0.0069487529","_rn_":"18"},{"1":"CYP26B1","2":"3.575191","3":"0.6024739","4":"0.002573340","5":"0.0079449145","6":"0.0062042437","_rn_":"19"},{"1":"SIGLEC9","2":"3.563610","3":"0.6023266","4":"0.001544004","5":"0.0095514746","6":"0.0064524135","_rn_":"20"},{"1":"MAEL","2":"3.560552","3":"0.6120018","4":"0.004117344","5":"0.0130489047","6":"0.0100508748","_rn_":"21"},{"1":"PRLR","2":"3.520250","3":"0.6050451","4":"0.009264025","5":"0.0167419351","6":"0.0173718824","_rn_":"22"},{"1":"LINC01550","2":"3.502218","3":"0.6087554","4":"0.006690685","5":"0.0206534522","6":"0.0177441370","_rn_":"23"},{"1":"CEBPA-DT","2":"3.497857","3":"0.6027272","4":"0.003602676","5":"0.0193222990","6":"0.0174959672","_rn_":"24"},{"1":"LAIR1","2":"3.478968","3":"0.6081565","4":"0.009264025","5":"0.0239915102","6":"0.0258096538","_rn_":"25"},{"1":"LINC00663","2":"3.473700","3":"0.6158604","4":"0.004632012","5":"0.0273872569","6":"0.0265541630","_rn_":"26"},{"1":"AC093297.2","2":"3.415747","3":"0.6242099","4":"0.013381369","5":"0.0395088664","6":"0.0326343219","_rn_":"27"},{"1":"U2AF1","2":"3.382902","3":"0.6076553","4":"0.010808029","5":"0.0390388633","6":"0.0408239236","_rn_":"28"},{"1":"SLC6A9","2":"3.320968","3":"0.6084237","4":"0.012866701","5":"0.0496859491","6":"0.0501302891","_rn_":"29"},{"1":"PLCG2","2":"3.278489","3":"2.2072676","4":"0.047349460","5":"0.6716956584","6":"0.0579476362","_rn_":"30"},{"1":"HAPLN3","2":"3.272510","3":"0.6145432","4":"0.016469377","5":"0.0604797668","6":"0.0570790421","_rn_":"31"},{"1":"WHAMM","2":"3.167899","3":"0.6189021","4":"0.021101390","5":"0.0816637538","6":"0.0778012160","_rn_":"32"},{"1":"TAAR6","2":"3.096765","3":"0.4014751","4":"0.000514668","5":"0.0009510417","6":"0.0011167639","_rn_":"33"},{"1":"TIMM23B","2":"3.092490","3":"0.6174543","4":"0.025733402","5":"0.0959915107","6":"0.0895892791","_rn_":"34"},{"1":"FAM163A","2":"3.073302","3":"0.4017525","4":"0.001544004","5":"0.0043220728","6":"0.0050874798","_rn_":"35"},{"1":"ADAM32","2":"2.995020","3":"0.4021719","4":"0.004632012","5":"0.0157523871","6":"0.0152624395","_rn_":"36"},{"1":"PUS7","2":"2.824805","3":"0.4476680","4":"0.018013381","5":"0.0663659473","6":"0.0675021715","_rn_":"37"},{"1":"HEY2","2":"2.700562","3":"0.4243772","4":"0.020072054","5":"0.0767003425","6":"0.0647723043","_rn_":"38"},{"1":"ZNF417","2":"2.587321","3":"0.3026879","4":"0.005661348","5":"0.0235304960","6":"0.0243206353","_rn_":"39"},{"1":"ZNF587B","2":"2.538384","3":"0.3114750","4":"0.012352033","5":"0.0367866679","6":"0.0318898126","_rn_":"40"},{"1":"ZNF773","2":"2.532465","3":"0.3081498","4":"0.009264025","5":"0.0356045818","6":"0.0341233404","_rn_":"41"},{"1":"AL158063.1","2":"2.438069","3":"0.2409117","4":"0.001029336","5":"0.0050603788","6":"0.0042188857","_rn_":"42"},{"1":"TRG-AS1","2":"2.260028","3":"0.2199170","4":"0.001544004","5":"0.0152701133","6":"0.0062042437","_rn_":"43"},{"1":"HSPB3","2":"2.203652","3":"0.2021413","4":"0.001029336","5":"0.0093406043","6":"0.0037225462","_rn_":"44"},{"1":"ZNF248","2":"2.141527","3":"0.2790047","4":"0.026762738","5":"0.0834081234","6":"0.0797865740","_rn_":"45"},{"1":"ZNF134","2":"2.140074","3":"0.3846985","4":"0.048378796","5":"0.1731361061","6":"0.1491500186","_rn_":"46"},{"1":"TMEM8A","2":"2.133114","3":"0.3047557","4":"0.041688111","5":"0.1069465836","6":"0.0833850354","_rn_":"47"},{"1":"SPINDOC","2":"2.091227","3":"0.2421960","4":"0.015440041","5":"0.0611395298","6":"0.0579476362","_rn_":"48"},{"1":"TXLNB","2":"2.046864","3":"0.1732920","4":"0.002573340","5":"0.0070024534","6":"0.0049633950","_rn_":"49"},{"1":"C7orf31","2":"2.039942","3":"0.2220096","4":"0.012352033","5":"0.0521756214","6":"0.0513711379","_rn_":"50"},{"1":"HNF1A","2":"1.947031","3":"0.1528657","4":"0.006176016","5":"0.0018687580","6":"0.0021094429","_rn_":"51"},{"1":"LINC01535","2":"1.942692","3":"0.1505531","4":"0.000514668","5":"0.0002242226","6":"0.0003722546","_rn_":"52"},{"1":"SLC9C1","2":"1.932664","3":"0.1506923","4":"0.002058672","5":"0.0017368020","6":"0.0012408487","_rn_":"53"},{"1":"BCL6B","2":"1.931106","3":"0.4012234","4":"0.033968091","5":"0.2470131819","6":"0.0712247177","_rn_":"54"},{"1":"EVA1C","2":"1.918322","3":"0.1506973","4":"0.001544004","5":"0.0037288988","6":"0.0040948008","_rn_":"55"},{"1":"AL157373.2","2":"1.879236","3":"0.1514329","4":"0.006176016","5":"0.0099912394","6":"0.0100508748","_rn_":"56"},{"1":"MYCL","2":"1.873151","3":"0.1618279","4":"0.008234689","5":"0.0214516054","6":"0.0182404765","_rn_":"57"},{"1":"RPP25","2":"1.872165","3":"0.2698773","4":"0.018528049","5":"0.1316988909","6":"0.0943045043","_rn_":"58"},{"1":"ZNF286A","2":"1.859866","3":"0.1918465","4":"0.015954709","5":"0.0543234923","6":"0.0557141085","_rn_":"59"},{"1":"ZDHHC13","2":"1.845416","3":"0.2153762","4":"0.023160062","5":"0.0812793989","6":"0.0771807917","_rn_":"60"},{"1":"CLEC18A","2":"1.844407","3":"0.1958943","4":"0.027277406","5":"0.0612372096","6":"0.0289117757","_rn_":"61"},{"1":"SPOCK2","2":"1.841723","3":"0.6613510","4":"0.084920226","5":"0.5461127049","6":"0.1161434421","_rn_":"62"},{"1":"LRRC8A","2":"1.836696","3":"0.3035231","4":"0.043232115","5":"0.1750208378","6":"0.1341357489","_rn_":"63"},{"1":"NPHS1","2":"1.794081","3":"0.5487301","4":"0.063818837","5":"0.4499294533","6":"0.1002605782","_rn_":"64"},{"1":"VKORC1L1","2":"1.780979","3":"0.2328049","4":"0.043746783","5":"0.1129148441","6":"0.1070852463","_rn_":"65"},{"1":"TGFBR3","2":"1.780095","3":"0.6545450","4":"0.077714874","5":"0.5711590322","6":"0.1317781362","_rn_":"66"},{"1":"PRMT7","2":"1.776089","3":"0.2159651","4":"0.029850746","5":"0.0956268703","6":"0.0882243455","_rn_":"67"},{"1":"HTRA1","2":"1.764382","3":"0.5211758","4":"0.094184251","5":"0.4331333726","6":"0.2078421640","_rn_":"68"},{"1":"SEMA3B","2":"1.747829","3":"0.4271258","4":"0.073597530","5":"0.3359481522","6":"0.1220995161","_rn_":"69"},{"1":"OCLN","2":"1.745175","3":"0.1570454","4":"0.019042717","5":"0.0364073664","6":"0.0327584068","_rn_":"70"},{"1":"ITIH5","2":"1.744620","3":"0.3805547","4":"0.051466804","5":"0.2852949589","6":"0.0795384043","_rn_":"71"},{"1":"C20orf194","2":"1.736553","3":"0.2435492","4":"0.042202779","5":"0.1346383817","6":"0.1185010547","_rn_":"72"},{"1":"CLDN5","2":"1.733499","3":"1.8783652","4":"0.144621719","5":"1.9692077579","6":"0.2126814741","_rn_":"73"},{"1":"UPP1","2":"1.728817","3":"0.2282747","4":"0.020586722","5":"0.1192320914","6":"0.0660131530","_rn_":"74"},{"1":"DHRS12","2":"1.718209","3":"0.2127794","4":"0.038600103","5":"0.1039999738","6":"0.0890929396","_rn_":"75"},{"1":"FAM81B","2":"1.717728","3":"0.1521634","4":"0.015440041","5":"0.0353564823","6":"0.0168755429","_rn_":"76"},{"1":"SLC44A3","2":"1.715354","3":"0.1454927","4":"0.026248070","5":"0.0281619244","6":"0.0213425983","_rn_":"77"},{"1":"PIM3","2":"1.708055","3":"0.4607441","4":"0.051466804","5":"0.3892320424","6":"0.1722298052","_rn_":"78"},{"1":"SLC13A4","2":"1.702638","3":"0.1205042","4":"0.001029336","5":"0.0015193723","6":"0.0013649336","_rn_":"79"},{"1":"NACAD","2":"1.698985","3":"0.1459158","4":"0.008749357","5":"0.0312189459","6":"0.0287876908","_rn_":"80"},{"1":"JUP","2":"1.691460","3":"0.4779821","4":"0.082346886","5":"0.4159246999","6":"0.1830251892","_rn_":"81"},{"1":"TRIB1","2":"1.690938","3":"0.2037200","4":"0.026248070","5":"0.0992799714","6":"0.0671299169","_rn_":"82"},{"1":"COL18A1","2":"1.683459","3":"0.2733934","4":"0.081317550","5":"0.1817356771","6":"0.1150266782","_rn_":"83"},{"1":"AC104825.1","2":"1.673399","3":"0.1373810","4":"0.010808029","5":"0.0253240443","6":"0.0238242958","_rn_":"84"},{"1":"MT-ND6","2":"1.668928","3":"0.6018042","4":"0.198661863","5":"0.5708310586","6":"0.3443355255","_rn_":"85"},{"1":"ZMYM3","2":"1.668306","3":"0.2720397","4":"0.057128152","5":"0.1841473932","6":"0.1546097531","_rn_":"86"},{"1":"CDK20","2":"1.660587","3":"0.1518582","4":"0.014925373","5":"0.0443902017","6":"0.0413202631","_rn_":"87"},{"1":"DEAF1","2":"1.657381","3":"0.3427295","4":"0.061760165","5":"0.2706385732","6":"0.2151631716","_rn_":"88"},{"1":"NAP1L2","2":"1.652734","3":"0.1317379","4":"0.009264025","5":"0.0218389174","6":"0.0207221740","_rn_":"89"},{"1":"MRC2","2":"1.639251","3":"0.4165503","4":"0.098301595","5":"0.3649537902","6":"0.2523886338","_rn_":"90"},{"1":"RNPEPL1","2":"1.632422","3":"0.1531946","4":"0.022645394","5":"0.0507598300","6":"0.0431815362","_rn_":"91"},{"1":"PCDH12","2":"1.630451","3":"0.3076788","4":"0.042717447","5":"0.2372230918","6":"0.0650204740","_rn_":"92"},{"1":"HSPG2","2":"1.626789","3":"0.4757233","4":"0.086464231","5":"0.4413037521","6":"0.1748355875","_rn_":"93"},{"1":"PIK3R4","2":"1.621884","3":"0.1500311","4":"0.014410705","5":"0.0487431523","6":"0.0447946395","_rn_":"94"},{"1":"TPPP3","2":"1.619768","3":"0.7009723","4":"0.070509521","5":"0.7178181052","6":"0.1285519295","_rn_":"95"},{"1":"PNPO","2":"1.617614","3":"0.1331188","4":"0.013896037","5":"0.0289136736","6":"0.0275468420","_rn_":"96"},{"1":"CPXM1","2":"1.616791","3":"1.5614920","4":"0.189912506","5":"1.7663347789","6":"0.4062538777","_rn_":"97"},{"1":"AC008496.2","2":"1.616233","3":"0.1098238","4":"0.001544004","5":"0.0007862570","6":"0.0006204244","_rn_":"98"},{"1":"ANXA4","2":"1.614333","3":"0.2857396","4":"0.055584148","5":"0.2153735530","6":"0.1443107085","_rn_":"99"},{"1":"RAB3IP","2":"1.612928","3":"0.1720269","4":"0.035512095","5":"0.0770990950","6":"0.0600570790","_rn_":"100"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -2581,6 +2904,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/pca-valid-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/pca-valid-1.png" target="_blank">8f826ef</a>
@@ -2646,6 +2980,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/t-sne-valid-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/t-sne-valid-1.png" target="_blank">8f826ef</a>
 </td>
 <td style="text-align:left;">
@@ -2707,6 +3052,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/umap-valid-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/8f826ef56354de386e0c839fdcc4da527fcda3b5/docs/figure/02-quality-control.Rmd/umap-valid-1.png" target="_blank">8f826ef</a>
@@ -2847,6 +3203,36 @@ ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;qc-thresholds.png&quot;), f
 
 fig</code></pre>
 <p><img src="figure/02-quality-control.Rmd/fig-thresholds-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of fig-thresholds-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/fig-thresholds-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="validation-1" class="section level2">
 <h2>Validation</h2>
@@ -2928,11 +3314,41 @@ ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;qc-validation.png&quot;), f
 
 fig</code></pre>
 <p><img src="figure/02-quality-control.Rmd/fig-validation-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of fig-validation-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/52e85ede67e70bb5d4a697e98c9736de7af6868a/docs/figure/02-quality-control.Rmd/fig-validation-1.png" target="_blank">52e85ed</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-23
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
-<p>After quality control we have a dataset with 8052 cells and 22738 genes.</p>
+<p>After quality control we have a dataset with 8059 cells and 22739 genes.</p>
 <div id="parameters" class="section level2">
 <h2>Parameters</h2>
 <p>This table describes parameters used and set in this document.</p>
@@ -3006,10 +3422,7 @@ fig</code></pre>
     )
 )
 
-names(params) &lt;- map_chr(params, magrittr::extract2, &quot;Parameter&quot;)
-metadata(filtered)$Params[[DOCNAME]] &lt;- params
 
-names(params) &lt;- NULL
 params &lt;- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <table>
@@ -3038,7 +3451,7 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </tr>
 <tr class="even">
 <td align="left">doublet_thresh</td>
-<td align="left">1.5459</td>
+<td align="left">1.5572</td>
 <td align="left">Maximum threshold for doublet score</td>
 </tr>
 <tr class="odd">
@@ -3068,22 +3481,22 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </tr>
 <tr class="even">
 <td align="left">n_cells</td>
-<td align="left">8052</td>
+<td align="left">8059</td>
 <td align="left">Number of cells in the filtered dataset</td>
 </tr>
 <tr class="odd">
 <td align="left">n_genes</td>
-<td align="left">22738</td>
+<td align="left">22739</td>
 <td align="left">Number of genes in the filtered dataset</td>
 </tr>
 <tr class="even">
 <td align="left">median_genes</td>
-<td align="left">2505</td>
+<td align="left">2506</td>
 <td align="left">Median number of expressed genes per cell in the filtered dataset</td>
 </tr>
 <tr class="odd">
 <td align="left">median_counts</td>
-<td align="left">7836</td>
+<td align="left">7838</td>
 <td align="left">Median number of counts per cell in the filtered dataset</td>
 </tr>
 </tbody>
@@ -3157,7 +3570,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-23                  
+ date     2019-03-05                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        

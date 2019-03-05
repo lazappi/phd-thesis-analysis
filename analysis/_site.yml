@@ -21,6 +21,8 @@ navbar:
           href: 05-paga.html
         - text: "Velocyto"
           href: 06-velocyto.html
+    - text: "Methods"
+      href: methods.html
     - text: "About"
       href: about.html
     - text: "License"

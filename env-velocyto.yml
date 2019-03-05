@@ -82,5 +82,11 @@ dependencies:
   - xorg-xproto=7.0.31=h14c3975_1007
   - xz=5.2.4=h14c3975_1001
   - zlib=1.2.11=h14c3975_1004
+  - pip:
+    - loompy==2.0.16
+    - pandas==0.24.0
+    - pysam==0.15.2
+    - pytz==2018.9
+    - velocyto==0.17.16
 prefix: /group/bioi1/luke/miniconda2/envs/velocyto
 

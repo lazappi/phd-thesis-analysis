@@ -927,10 +927,7 @@ params <- list(
     )
 )
 
-names(params) <- map_chr(params, magrittr::extract2, "Parameter")
-metadata(filtered)$Params[[DOCNAME]] <- params
 
-names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```

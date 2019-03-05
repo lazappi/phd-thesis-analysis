@@ -282,6 +282,7 @@ this stage we will keep those that were selected by either Cell Ranger v3 or
 
 ```{r select}
 selected <- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
+selected <- selected[Matrix::rowSums(counts(selected)) > 0, ]
 
 colData(selected)$SelMethod <- "Both"
 colData(selected)$SelMethod[!colData(selected)$CellRangerFilt] <- "emptyDrops"
@@ -433,7 +434,12 @@ This table describes parameters used and set in this document.
 
 ```{r parameters}
 params <- list(
-     list(
+    list(
+        Parameter = "n_droplets",
+        Value = ncol(raw),
+        Description = "Number of droplets in the raw dataset"
+    ),
+    list(
         Parameter = "empty_thresh",
         Value = empty_thresh,
         Description = "Droplets with less than this many counts are empty"
@@ -449,16 +455,27 @@ params <- list(
         Description = "FDR cutoff for emptyDrops"
     ),
     list(
+        Parameter = "n_default",
+        Value = sum(colData(raw)$DefaultFilt),
+        Description = "Number of cells selected by the default Cell Ranger method"
+    ),
+    list(
+        Parameter = "n_cellranger",
+        Value = sum(colData(raw)$CellRangerFilt),
+        Description = "Number of cells selected by the Cell Ranger v3 method"
+    ),
+    list(
+        Parameter = "n_empdrops",
+        Value = sum(colData(raw)$EmpDropsFilt),
+        Description = "Number of cells selected by the emptyDrops method"
+    ),
+    list(
         Parameter = "n_cells",
         Value = ncol(selected),
         Description = "Number of cells selected"
     )
 )
 
-names(params) <- map_chr(params, magrittr::extract2, "Parameter")
-metadata(selected)$Params[[DOCNAME]] <- params
-
-names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```

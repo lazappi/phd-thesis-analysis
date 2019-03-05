@@ -85,7 +85,7 @@ if (file.exists(clust_path)) {
 PAGA
 ====
 
-PAGA is available as part of the `scanpy` Pyhon package. The PAGA analysis is
+PAGA is available as part of the `scanpy` Python package. The PAGA analysis is
 performed using the following Python script.
 
 ```{r paga, comment = "", cache.extra = c(tools::md5sum(paga_path), tools::md5sum(clust_path))}
@@ -328,16 +328,12 @@ This table describes parameters used and set in this document.
 ```{r parameters, cache.lazy = FALSE}
 params <- list(
     list(
-        Parameter = "col_thresh",
+        Parameter = "con_thresh",
         Value = con_thresh,
         Description = "Connectivity threshold for PAGA graph"
     )
 )
 
-names(params) <- map_chr(params, magrittr::extract2, "Parameter")
-metadata(sce)$Params[[DOCNAME]] <- params
-
-names(params) <- NULL
 params <- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))
 ```
@@ -354,6 +350,8 @@ and _Save Link As..._ to download the results.
 
 ```{r output}
 dir.create(here::here("output", DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
 
 knitr::kable(data.frame(
     File = c(

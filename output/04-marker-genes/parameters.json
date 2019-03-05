@@ -1,12 +1,22 @@
 [
   {
     "Parameter": ["maxmean_thresh"],
-    "Value": [-1.3508],
+    "Value": [-1.3505],
     "Description": ["Minimum threshold for (log10) maxium cluster mean"]
   },
   {
     "Parameter": ["maxmean_mads"],
     "Value": [0.5],
     "Description": ["MADs for (log10) maxium cluster mean"]
+  },
+  {
+    "Parameter": ["fdr_thresh"],
+    "Value": [0.05],
+    "Description": ["FDR threshold for significant marker genes"]
+  },
+  {
+    "Parameter": ["logFC_thresh"],
+    "Value": [1],
+    "Description": ["Log foldchange threshold for significant marker genes"]
   }
 ]

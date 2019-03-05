@@ -1,5 +1,10 @@
 [
   {
+    "Parameter": ["n_droplets"],
+    "Value": [945038],
+    "Description": ["Number of droplets in the raw dataset"]
+  },
+  {
     "Parameter": ["empty_thresh"],
     "Value": [100],
     "Description": ["Droplets with less than this many counts are empty"]
@@ -13,6 +18,21 @@
     "Parameter": ["emp_fdr"],
     "Value": [0.01],
     "Description": ["FDR cutoff for emptyDrops"]
+  },
+  {
+    "Parameter": ["n_default"],
+    "Value": [7006],
+    "Description": ["Number of cells selected by the default Cell Ranger method"]
+  },
+  {
+    "Parameter": ["n_cellranger"],
+    "Value": [8291],
+    "Description": ["Number of cells selected by the Cell Ranger v3 method"]
+  },
+  {
+    "Parameter": ["n_empdrops"],
+    "Value": [9858],
+    "Description": ["Number of cells selected by the emptyDrops method"]
   },
   {
     "Parameter": ["n_cells"],

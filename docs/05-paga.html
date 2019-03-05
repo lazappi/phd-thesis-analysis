@@ -423,6 +423,9 @@ div.tocify {
   </ul>
 </li>
 <li>
+  <a href="methods.html">Methods</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -465,7 +468,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-02-28</p>
+<p><strong>Last updated:</strong> 2019-03-05</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -489,7 +492,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/4a6fdd5fefe333a00872c1f5110899e56b6b967a" target="_blank">4a6fdd5</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -500,9 +503,10 @@ Ignored files:
     Ignored:    analysis/cache/
     Ignored:    build-logs/
     Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
     Ignored:    output/04-marker-genes/de_genes.csv.zip
-    Ignored:    output/06-velocyto/
     Ignored:    packrat/.DS_Store
     Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
@@ -511,18 +515,40 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/05-paga/paga-results.pdf
+    Untracked:  output/05-paga/parameters.json
+    Untracked:  output/06-velocyto/parameters.json
+    Untracked:  output/90-methods/
     Untracked:  workflowr-build.e2538443
     Untracked:  workflowr-build.e2545370
     Untracked:  workflowr-build.o2538443
     Untracked:  workflowr-build.o2545370
 
 Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   env-velocyto.yml
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
+    Modified:   output/02-quality-control/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
+    Modified:   output/03-clustering/cluster_assignments.tsv.gz
+    Modified:   output/03-clustering/cluster_expression.tsv.gz
+    Modified:   output/03-clustering/gene-selection.pdf
+    Modified:   output/03-clustering/parameters.json
+    Modified:   output/03-clustering/resolution-selection.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
+    Modified:   output/04-marker-genes/de_genes.xlsx
+    Modified:   output/04-marker-genes/parameters.json
     Modified:   output/05-paga/cell_edges.csv
     Modified:   output/05-paga/cell_embedding.csv
     Modified:   output/05-paga/cluster_edges.csv
     Modified:   output/05-paga/cluster_embedding.csv
     Modified:   output/05-paga/cluster_tree_edges.csv
+    Modified:   output/05-paga/paga-results.pdf
+    Modified:   output/06-velocyto/cell-velocity.pdf
     Modified:   scripts/build.pbs
 
 </code></pre>
@@ -557,7 +583,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/4a6fdd5fefe333a00872c1f5110899e56b6b967a/analysis/05-paga.Rmd" target="_blank">4a6fdd5</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/05-paga.Rmd" target="_blank">1b07d72</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+<td style="text-align:left;">
+Add methods page
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/05-paga.html" target="_blank">fefdd07</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -656,7 +699,7 @@ paga_path &lt;- here::here(&quot;scripts/paga.py&quot;)</code></pre>
 </div>
 <div id="paga" class="section level1">
 <h1>PAGA</h1>
-<p>PAGA is available as part of the <code>scanpy</code> Pyhon package. The PAGA analysis is performed using the following Python script.</p>
+<p>PAGA is available as part of the <code>scanpy</code> Python package. The PAGA analysis is performed using the following Python script.</p>
 <pre class="r"><code>cat(readLines(paga_path), sep = &quot;\n&quot;)</code></pre>
 <pre><code>#!/usr/bin/env python3
 
@@ -862,51 +905,351 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 <h3>Con 0</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.1" class="section level3 unnumbered">
 <h3>Con 0.1</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.1)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.2" class="section level3 unnumbered">
 <h3>Con 0.2</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.2)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.3" class="section level3 unnumbered">
 <h3>Con 0.3</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.3)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.3-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.4" class="section level3 unnumbered">
 <h3>Con 0.4</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.4)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.4-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.4-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.5" class="section level3 unnumbered">
 <h3>Con 0.5</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.5)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.5-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.5-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.6" class="section level3 unnumbered">
 <h3>Con 0.6</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.6)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.6-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.7" class="section level3 unnumbered">
 <h3>Con 0.7</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.7)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.7-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.7-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.7-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.8" class="section level3 unnumbered">
 <h3>Con 0.8</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.8)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.8-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.8-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="con-0.9" class="section level3 unnumbered">
 <h3>Con 0.9</h3>
 <pre class="r"><code>plotPAGAClustGraph(clust_embedding, clust_edges, thresh = 0.9)</code></pre>
 <p><img src="figure/05-paga.Rmd/clust-paga-0.9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of clust-paga-0.9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/clust-paga-0.9-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="edges-by-threshold" class="section level2">
@@ -929,6 +1272,36 @@ ggplot(plot_data, aes(x = Threshold, y = Edges)) +
     ylab(&quot;Number of edges&quot;) +
     theme_minimal()</code></pre>
 <p><img src="figure/05-paga.Rmd/thresh-edges-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of thresh-edges-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/thresh-edges-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Here we have selected a connectivity threshold of 0.7.</p>
 </div>
 </div>
@@ -937,6 +1310,36 @@ ggplot(plot_data, aes(x = Threshold, y = Edges)) +
 <p>The cluster graph can be used as a starting point to layout individual cells, allowing us to see things at a higher resolution.</p>
 <pre class="r"><code>plotPAGACellGraph(cell_embedding, cell_edges, thresh = 0.1)</code></pre>
 <p><img src="figure/05-paga.Rmd/cell-paga-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of cell-paga-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/cell-paga-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="compare" class="section level1">
 <h1>Compare</h1>
@@ -944,6 +1347,36 @@ ggplot(plot_data, aes(x = Threshold, y = Edges)) +
 <pre class="r"><code>plotPAGACompare(clust_embedding, clust_edges, clust_thresh = con_thresh,
                 cell_embedding, cell_edges, cell_thresh = 0.1)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-paga-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-paga-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-paga-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <div id="genes" class="section level2 tabset">
 <h2>Genes</h2>
 <pre class="r"><code>known_genes &lt;- c(
@@ -994,6 +1427,36 @@ out &lt;- knit_child(text = unlist(src_list), options = list(cache = FALSE))</co
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;TAGLN&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-TAGLN-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-TAGLN-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-TAGLN-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="acta2" class="section level3 unnumbered">
 <h3>ACTA2</h3>
@@ -1001,6 +1464,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;ACTA2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-ACTA2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-ACTA2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-ACTA2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="mab21l2" class="section level3 unnumbered">
 <h3>MAB21L2</h3>
@@ -1008,6 +1501,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;MAB21L2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-MAB21L2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-MAB21L2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-MAB21L2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="dlk1" class="section level3 unnumbered">
 <h3>DLK1</h3>
@@ -1015,6 +1538,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;DLK1&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-DLK1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-DLK1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-DLK1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="gata3" class="section level3 unnumbered">
 <h3>GATA3</h3>
@@ -1022,6 +1575,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;GATA3&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-GATA3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-GATA3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-GATA3-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="col2a1" class="section level3 unnumbered">
 <h3>COL2A1</h3>
@@ -1029,6 +1612,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;COL2A1&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-COL2A1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-COL2A1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-COL2A1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="col9a3" class="section level3 unnumbered">
 <h3>COL9A3</h3>
@@ -1036,6 +1649,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;COL9A3&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-COL9A3-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-COL9A3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-COL9A3-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="podxl" class="section level3 unnumbered">
 <h3>PODXL</h3>
@@ -1043,6 +1686,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;PODXL&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-PODXL-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-PODXL-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-PODXL-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="nphs2" class="section level3 unnumbered">
 <h3>NPHS2</h3>
@@ -1050,6 +1723,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;NPHS2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-NPHS2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-NPHS2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-NPHS2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="tcf21" class="section level3 unnumbered">
 <h3>TCF21</h3>
@@ -1057,6 +1760,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;TCF21&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-TCF21-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-TCF21-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-TCF21-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="hist1h4c" class="section level3 unnumbered">
 <h3>HIST1H4C</h3>
@@ -1064,6 +1797,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;HIST1H4C&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-HIST1H4C-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-HIST1H4C-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-HIST1H4C-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pclaf" class="section level3 unnumbered">
 <h3>PCLAF</h3>
@@ -1071,6 +1834,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;PCLAF&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-PCLAF-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-PCLAF-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-PCLAF-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="cenpf" class="section level3 unnumbered">
 <h3>CENPF</h3>
@@ -1078,6 +1871,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;CENPF&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-CENPF-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-CENPF-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-CENPF-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="hmgb2" class="section level3 unnumbered">
 <h3>HMGB2</h3>
@@ -1085,6 +1908,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;HMGB2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-HMGB2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-HMGB2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-HMGB2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="cldn5" class="section level3 unnumbered">
 <h3>CLDN5</h3>
@@ -1092,6 +1945,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;CLDN5&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-CLDN5-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-CLDN5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-CLDN5-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pecam1" class="section level3 unnumbered">
 <h3>PECAM1</h3>
@@ -1099,6 +1982,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;PECAM1&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-PECAM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-PECAM1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-PECAM1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="kdr" class="section level3 unnumbered">
 <h3>KDR</h3>
@@ -1106,6 +2019,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;KDR&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-KDR-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-KDR-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-KDR-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="calm1" class="section level3 unnumbered">
 <h3>CALM1</h3>
@@ -1113,6 +2056,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;CALM1&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-CALM1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-CALM1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-CALM1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="ttyh1" class="section level3 unnumbered">
 <h3>TTYH1</h3>
@@ -1120,6 +2093,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;TTYH1&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-TTYH1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-TTYH1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-TTYH1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="sox2" class="section level3 unnumbered">
 <h3>SOX2</h3>
@@ -1127,6 +2130,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;SOX2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-SOX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-SOX2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-SOX2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="hes6" class="section level3 unnumbered">
 <h3>HES6</h3>
@@ -1134,6 +2167,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;HES6&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-HES6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-HES6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-HES6-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="stmn2" class="section level3 unnumbered">
 <h3>STMN2</h3>
@@ -1141,6 +2204,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;STMN2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-STMN2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-STMN2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-STMN2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pax2" class="section level3 unnumbered">
 <h3>PAX2</h3>
@@ -1148,6 +2241,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;PAX2&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-PAX2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-PAX2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-PAX2-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="pax8" class="section level3 unnumbered">
 <h3>PAX8</h3>
@@ -1155,6 +2278,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;PAX8&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-PAX8-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-PAX8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-PAX8-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="krt19" class="section level3 unnumbered">
 <h3>KRT19</h3>
@@ -1162,6 +2315,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;KRT19&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-KRT19-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-KRT19-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-KRT19-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="myog" class="section level3 unnumbered">
 <h3>MYOG</h3>
@@ -1169,6 +2352,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;MYOG&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-MYOG-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-MYOG-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-MYOG-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="myod1" class="section level3 unnumbered">
 <h3>MYOD1</h3>
@@ -1176,6 +2389,36 @@ clust_thresh = con_thresh, cell_embedding, cell_edges,
 clust_thresh = con_thresh, cell_embedding, cell_edges,
         cell_thresh = 0.1, colour = &#39;MYOD1&#39;)</code></pre>
 <p><img src="figure/05-paga.Rmd/compare-MYOD1-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of compare-MYOD1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/compare-MYOD1-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 </div>
@@ -1223,6 +2466,36 @@ ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;paga-results.png&quot;), fi
 
 fig</code></pre>
 <p><img src="figure/05-paga.Rmd/figure-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of figure-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/figure-1.png" target="_blank">fefdd07</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-02-28
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
@@ -1231,16 +2504,12 @@ fig</code></pre>
 <p>This table describes parameters used and set in this document.</p>
 <pre class="r"><code>params &lt;- list(
     list(
-        Parameter = &quot;col_thresh&quot;,
+        Parameter = &quot;con_thresh&quot;,
         Value = con_thresh,
         Description = &quot;Connectivity threshold for PAGA graph&quot;
     )
 )
 
-names(params) &lt;- map_chr(params, magrittr::extract2, &quot;Parameter&quot;)
-metadata(sce)$Params[[DOCNAME]] &lt;- params
-
-names(params) &lt;- NULL
 params &lt;- jsonlite::toJSON(params, pretty = TRUE)
 knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <table>
@@ -1253,7 +2522,7 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">col_thresh</td>
+<td align="left">con_thresh</td>
 <td align="left">0.7</td>
 <td align="left">Connectivity threshold for PAGA graph</td>
 </tr>
@@ -1264,6 +2533,8 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <h2>Output files</h2>
 <p>This table describes the output files produced by this document. Right click and <em>Save Link As…</em> to download the results.</p>
 <pre class="r"><code>dir.create(here::here(&quot;output&quot;, DOCNAME), showWarnings = FALSE)
+
+readr::write_lines(params, here::here(&quot;output&quot;, DOCNAME, &quot;parameters.json&quot;))
 
 knitr::kable(data.frame(
     File = c(
@@ -1343,14 +2614,14 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-02-28                  
+ date     2019-03-05                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
    assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
    backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
    bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
-   bindrcpp             * 0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
    Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
    BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
    BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
@@ -1359,7 +2630,6 @@ knitr::kable(data.frame(
    callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
    cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
    cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
- P codetools              0.2-15    2016-10-05 [5] CRAN (R 3.5.0)
    colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
    cowplot              * 0.9.4     2019-01-08 [1] CRAN (R 3.5.0)
    crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
@@ -1387,7 +2657,6 @@ knitr::kable(data.frame(
    IRanges              * 2.16.0    2018-10-30 [1] Bioconductor  
    jsonlite               1.6       2018-12-07 [1] CRAN (R 3.5.0)
    knitr                * 1.21      2018-12-10 [1] CRAN (R 3.5.0)
-   labeling               0.3       2014-08-23 [1] CRAN (R 3.5.0)
  P lattice                0.20-35   2017-03-25 [5] CRAN (R 3.5.0)
    lazyeval               0.2.1     2017-10-29 [1] CRAN (R 3.5.0)
    lubridate              1.7.4     2018-04-11 [1] CRAN (R 3.5.0)
@@ -1434,7 +2703,6 @@ knitr::kable(data.frame(
    tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
    tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
    usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
-   viridisLite            0.3.0     2018-02-01 [1] CRAN (R 3.5.0)
    whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
    withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)
    workflowr              1.1.1     2018-07-06 [1] CRAN (R 3.5.0)

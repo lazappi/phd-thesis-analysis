@@ -1,0 +1,12 @@
+[
+  {
+    "Parameter": ["spliced_minmax"],
+    "Value": [0.2],
+    "Description": ["Minimum spliced expression in at least one cluster"]
+  },
+  {
+    "Parameter": ["unspliced_minmax"],
+    "Value": [0.05],
+    "Description": ["Minimum unspliced expression in at least one cluster"]
+  }
+]

@@ -15,3 +15,5 @@ Analysis steps:
 * [Marker genes](04-marker-genes.html)
 * [PAGA](05-paga.html)
 * [Velocyto](06-velocyto.html)
+
+[Methods](90-methods.html)

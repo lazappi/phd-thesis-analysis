@@ -1,7 +1,27 @@
 [
   {
+    "Parameter": ["seurat_thresh"],
+    "Value": [0.0125, 3.5, 1, "Inf"],
+    "Description": ["Seurat selection thresholds (low expression, high expression, low dispersion, high dispersion)"]
+  },
+  {
+    "Parameter": ["sel_seurat"],
+    "Value": [2457],
+    "Description": ["Number of genes selected by the Seurat method"]
+  },
+  {
+    "Parameter": ["m3drop_thresh"],
+    "Value": [0.01],
+    "Description": ["M3Drop q-value threshold"]
+  },
+  {
+    "Parameter": ["sel_m3drop"],
+    "Value": [1952],
+    "Description": ["Number of genes selected by the M3Drop method"]
+  },
+  {
     "Parameter": ["sel_genes"],
-    "Value": [1948],
+    "Value": [1952],
     "Description": ["Number of selected genes"]
   },
   {
