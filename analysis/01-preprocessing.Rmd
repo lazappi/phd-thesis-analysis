@@ -316,24 +316,24 @@ Figure
 ======
 
 ```{r figure}
-plot_data <- colData(raw) %>%
-    as.data.frame() %>%
-    select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %>%
-    group_by(Sample) %>%
-    mutate(Rank = rank(-Total)) %>%
-    arrange(Sample, Rank)
-
-default_plot <- ggplot(plot_data, aes(x = Rank, y = Total)) +
-    geom_point(shape = 1, aes(colour = Kept)) +
-    scale_x_log10(labels = scales::number) +
-    scale_y_log10(labels = scales::number) +
-    scale_colour_manual(values = c("black", "#8DC63F"),
-                        labels = c("Empty", "Cell")) +
-    facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
-    ylab("Total counts") +
-    ggtitle("Cell Ranger") +
-    theme_minimal() +
-    theme(legend.title = element_blank())
+# plot_data <- colData(raw) %>%
+#     as.data.frame() %>%
+#     select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %>%
+#     group_by(Sample) %>%
+#     mutate(Rank = rank(-Total)) %>%
+#     arrange(Sample, Rank)
+# 
+# default_plot <- ggplot(plot_data, aes(x = Rank, y = Total)) +
+#     geom_point(shape = 1, aes(colour = Kept)) +
+#     scale_x_log10(labels = scales::number) +
+#     scale_y_log10(labels = scales::number) +
+#     scale_colour_manual(values = c("black", "#8DC63F"),
+#                         labels = c("Empty", "Cell")) +
+#     facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
+#     ylab("Total counts") +
+#     ggtitle("Cell Ranger") +
+#     theme_minimal() +
+#     theme(legend.title = element_blank())
 
 plot_data <- colData(raw) %>%
     as.data.frame() %>%
@@ -362,37 +362,45 @@ emp_plot <- plot_data %>%
     scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
     scale_colour_manual(values = c("black", "#EC008C"),
                         labels = c("Empty", "Cell")) +
-    ggtitle("emptyDrops") +
+    ggtitle("emptyDrops droplet selection") +
     ylab("Total counts") +
     theme_minimal() +
     theme(legend.position = "bottom",
-          legend.title = element_blank())
+          legend.title = element_blank(),
+          plot.margin = unit(c(5.5, 20, 5.5, 5.5), "points"))
 
-cr_plot <- bc_data %>%
-    filter(Total > 0) %>%
-    ggplot(aes(x = Rank, y = Total)) +
-    geom_point(shape = 1, aes(colour = Kept)) +
-    scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
-    scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
-    scale_colour_manual(values = c("black", "#F47920"),
-                        labels = c("Empty", "Cell")) +
-    ggtitle("Cell Ranger v3") +
-    ylab("Total counts") +
-    theme_minimal() +
-    theme(legend.position = "bottom",
-          legend.title = element_blank())
+ggsave(here::here("output", DOCNAME, "droplet-selection.pdf"), emp_plot,
+       width = 7, height = 5, scale = 1)
+ggsave(here::here("output", DOCNAME, "droplet-selection.png"), emp_plot,
+       width = 7, height = 5, scale = 1)
 
-p1 <- plot_grid(emp_plot, cr_plot, nrow = 1, labels = c("B", "C"))
+emp_plot
 
-fig <- plot_grid(default_plot, p1, ncol = 1, rel_heights = c(0.5, 1),
-                 labels = c("A", ""))
-
-ggsave(here::here("output", DOCNAME, "droplet-selection.pdf"), fig,
-       width = 7, height = 4, scale = 2)
-ggsave(here::here("output", DOCNAME, "droplet-selection.png"), fig,
-       width = 7, height = 4, scale = 2)
-
-fig
+# cr_plot <- bc_data %>%
+#     filter(Total > 0) %>%
+#     ggplot(aes(x = Rank, y = Total)) +
+#     geom_point(shape = 1, aes(colour = Kept)) +
+#     scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
+#     scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
+#     scale_colour_manual(values = c("black", "#F47920"),
+#                         labels = c("Empty", "Cell")) +
+#     ggtitle("Cell Ranger v3") +
+#     ylab("Total counts") +
+#     theme_minimal() +
+#     theme(legend.position = "bottom",
+#           legend.title = element_blank())
+# 
+# p1 <- plot_grid(emp_plot, cr_plot, nrow = 1, labels = c("B", "C"))
+# 
+# fig <- plot_grid(default_plot, p1, ncol = 1, rel_heights = c(0.5, 1),
+#                  labels = c("A", ""))
+# 
+# ggsave(here::here("output", DOCNAME, "droplet-selection.pdf"), fig,
+#        width = 7, height = 6, scale = 2)
+# ggsave(here::here("output", DOCNAME, "droplet-selection.png"), fig,
+#        width = 7, height = 6, scale = 2)
+# 
+# fig
 ```
 
 ```{r fig-comp, collapse = TRUE, fig.show = "hide"}
@@ -411,7 +419,7 @@ plot_data <- colData(raw) %>%
 upset(plot_data, order.by = "freq",
       #boxplot.summary = "Total counts",
       sets.x.label = "Number of cells",
-      text.scale = c(2, 1.2, 2, 1.2, 2, 3),
+      text.scale = c(2, 1.6, 2, 1.3, 2, 3),
       matrix.color = "#7A52C7",
       main.bar.color = "#7A52C7",
       sets.bar.color = "#7A52C7")
@@ -419,9 +427,9 @@ grid.edit("arrange", name = "arrange2")
 comp_plot <- grid.grab()
 
 ggsave(here::here("output", DOCNAME, "selection-comparison.pdf"), comp_plot,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 4, scale = 1.2)
 ggsave(here::here("output", DOCNAME, "selection-comparison.png"), comp_plot,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 4, scale = 1.2)
 ```
 
 Summary

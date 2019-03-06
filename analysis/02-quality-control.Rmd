@@ -745,7 +745,7 @@ plot_data <- reducedDim(selected, "PCA_coldata") %>%
 
 pca_plot <- ggplot(plot_data, aes(x = PC1, y = PC2, colour = Removed)) +
     geom_point(alpha = 0.3) +
-    scale_colour_manual(values = c("#F47920", "#00B7C6", "grey50"),
+    scale_colour_manual(values = c("#F47920", "#EC008C", "grey50"),
                         name = "Removed by") +
     ggtitle("PCA based cell filtering") +
     theme_minimal() +
@@ -755,9 +755,9 @@ fig <- plot_grid(exp_plot, mt_plot, doublet_plot, pca_plot,
                  ncol = 2, labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "qc-thresholds.pdf"), fig,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 6, scale = 1.5)
 ggsave(here::here("output", DOCNAME, "qc-thresholds.png"), fig,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 6, scale = 1.5)
 
 fig
 ```
@@ -776,7 +776,7 @@ fc_plot <- ggplot(plot_data,
     geom_hline(yintercept = 0, colour = "red") +
     scale_x_log10(labels = scales::number_format(accuracy = 0.0001)) +
     scale_colour_viridis_c(
-        name = "Proportion expressed (Removed) - Proportion expressed (Kept)"
+        name = "Prop expressed (Removed) - Prop expressed (Kept)"
     ) +
     ggtitle("Foldchange between removed and kept cells") +
     xlab("0.5 * (Average expression (Kept) + Average expression (Removed))") +
@@ -812,16 +812,20 @@ plot_list <- list(
         ggtitle("Selection method"),
     ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Cell cycle`)) +
         scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F")) +
-        ggtitle("Cell cycle stage"),
+        ggtitle("Cell cycle phase"),
     ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total counts (log10)`)) +
         scale_colour_viridis_c() +
-        ggtitle("Total counts (log10)"),
-    ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total features (log10)`)) +
+        ggtitle("Total counts (log10)") +
+        guides(colour = guide_colourbar(barwidth = 10)),
+    ggplot(plot_data,
+           aes(x = TSNE1, y = TSNE2, colour = `Total features (log10)`)) +
         scale_colour_viridis_c() +
-        ggtitle("Total features (log10)"),
+        ggtitle("Total features (log10)") +
+        guides(colour = guide_colourbar(barwidth = 10)),
     ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `% Mitochondrial`)) +
         scale_colour_viridis_c() +
-        ggtitle("% Mitochondrial")
+        ggtitle("% Mitochondrial") +
+        guides(colour = guide_colourbar(barwidth = 10))
 ) %>%
     lapply(function(x) {
         x + geom_point(alpha = 0.3) +
@@ -838,9 +842,9 @@ fig <- plot_grid(p1, tsne_plot, ncol = 1, labels = c("", "C"),
                  rel_heights = c(0.8, 1))
 
 ggsave(here::here("output", DOCNAME, "qc-validation.pdf"), fig,
-       width = 7, height = 6, scale = 2)
+       width = 7, height = 10, scale = 1.5)
 ggsave(here::here("output", DOCNAME, "qc-validation.png"), fig,
-       width = 7, height = 6, scale = 2)
+       width = 7, height = 10, scale = 1.5)
 
 fig
 ```

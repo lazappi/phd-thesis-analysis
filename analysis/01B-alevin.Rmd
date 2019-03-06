@@ -403,7 +403,7 @@ plot_data <- cell_data %>%
 
 upset(plot_data, order.by = "freq",
       sets.x.label = "Number of cells",
-      text.scale = c(2, 1.2, 2, 1.2, 2, 2),
+      text.scale = c(1.5, 1.2, 1.5, 1, 1.5, 1.5),
       matrix.color = "#7A52C7",
       main.bar.color = "#7A52C7",
       sets.bar.color = "#7A52C7")
@@ -493,9 +493,9 @@ fig <- plot_grid(comp_plot, counts_plot, mean_plot, zeros_plot,
           nrow = 2, labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "alevin-comparison.pdf"), fig,
-       width = 7, height = 6, scale = 2)
+       width = 7, height = 6, scale = 1.5)
 ggsave(here::here("output", DOCNAME, "alevin-comparison.png"), fig,
-       width = 7, height = 6, scale = 2)
+       width = 7, height = 6, scale = 1.5)
 
 fig
 ```

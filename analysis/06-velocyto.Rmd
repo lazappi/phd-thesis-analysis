@@ -249,18 +249,18 @@ label_data <- umap_data %>%
     summarise(UMAP1 = mean(UMAP1),
               UMAP2 = mean(UMAP2))
 
-cell_plot <- ggplot(umap_data) +
-    geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster), alpha = 0.3) +
-    geom_segment(aes(x = X0, xend = X2, y = Y0, yend = Y2),
-                 arrow = arrow(length = unit(3, "points"), type = "closed"),
-                 colour = "grey20", alpha = 0.3) +
-    geom_point(data = label_data, aes(x = UMAP1, y = UMAP2, colour = Cluster),
-               shape = 21, size = 6, stroke = 1, fill = "white") +
-    geom_text(data = label_data,
-              aes(x = UMAP1, y = UMAP2, colour = Cluster, label = Cluster)) +
-    ggtitle("Individual cell velocity estimates") +
-    theme_minimal() +
-    theme(legend.position = "none")
+# cell_plot <- ggplot(umap_data) +
+#     geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster), alpha = 0.3) +
+#     geom_segment(aes(x = X0, xend = X2, y = Y0, yend = Y2),
+#                  arrow = arrow(length = unit(3, "points"), type = "closed"),
+#                  colour = "grey20", alpha = 0.3) +
+#     geom_point(data = label_data, aes(x = UMAP1, y = UMAP2, colour = Cluster),
+#                shape = 21, size = 6, stroke = 1, fill = "white") +
+#     geom_text(data = label_data,
+#               aes(x = UMAP1, y = UMAP2, colour = Cluster, label = Cluster)) +
+#     ggtitle("Individual cell velocity estimates") +
+#     theme_minimal() +
+#     theme(legend.position = "none")
 
 field_plot <- ggplot(umap_data) +
     geom_point(aes(x = UMAP1, y = UMAP2, colour = Cluster), alpha = 0.3) +
@@ -276,14 +276,14 @@ field_plot <- ggplot(umap_data) +
     theme_minimal() +
     theme(legend.position = "none")
 
-fig <- plot_grid(cell_plot, field_plot, nrow = 1, labels = "AUTO")
+#fig <- plot_grid(cell_plot, field_plot, nrow = 1, labels = "AUTO")
 
-ggsave(here::here("output", DOCNAME, "cell-velocity.pdf"), fig,
-       width = 7, height = 4, scale = 2)
-ggsave(here::here("output", DOCNAME, "cell-velocity.png"), fig,
-       width = 7, height = 4, scale = 2)
+ggsave(here::here("output", DOCNAME, "cell-velocity.pdf"), field_plot,
+       width = 7, height = 6, scale = 1)
+ggsave(here::here("output", DOCNAME, "cell-velocity.png"), field_plot,
+       width = 7, height = 6, scale = 1)
 
-fig
+field_plot
 ```
 
 Summary

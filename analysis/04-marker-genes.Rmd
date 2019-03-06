@@ -514,7 +514,8 @@ plot_data <- de_list %>%
 counts_plot <- ggplot(plot_data, aes(x = Cluster)) +
     geom_bar(aes(fill = Cluster), alpha = 0.3) +
     geom_jitter(aes(y = logFCScaled, colour = logFC),
-                position = position_jitter(height = 0, width = 0.4, seed = 1)) +
+                position = position_jitter(height = 0, width = 0.35, seed = 1),
+                alpha = 0.3) +
     geom_text(aes(label=..count..), stat = "count",
               vjust = -0.5, size = 4, colour = "grey10") +
     scale_fill_discrete(guide = FALSE) +
@@ -542,7 +543,7 @@ genes_plot <- ggplot(plot_data,
        aes(x = Gene, y = Cluster, size = logFC, alpha = -FDR, colour = Type)) +
     geom_point() +
     facet_grid(~ Type, scales = "free_x", space = "free_x") +
-    ggtitle("DE results for some published markers by cluster") +
+    ggtitle("edgeR results for some published markers by cluster") +
     theme_minimal() +
     theme(axis.title = element_blank(),
           axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
@@ -555,9 +556,9 @@ fig <- plot_grid(p1, genes_plot, ncol = 1, labels = c("", "E"),
                  rel_heights = c(1, 0.5))
 
 ggsave(here::here("output", DOCNAME, "de-results.pdf"), fig,
-       width = 7, height = 8, scale = 2)
+       width = 7, height = 10, scale = 1.5)
 ggsave(here::here("output", DOCNAME, "de-results.png"), fig,
-       width = 7, height = 8, scale = 2)
+       width = 7, height = 10, scale = 1.5)
 
 fig
 ```
@@ -569,7 +570,7 @@ Based on the detected markers we will assign the following cell types to the
 clusters.
 
 ```{r assignment}
-tribble(
+assignments <- tribble(
     ~Cluster,         ~Assignment,
          "0",            "Stroma",
          "1",            "Stroma",
@@ -585,6 +586,8 @@ tribble(
         "11", "Muscle progenitor",
         "12", "Neural progenitor"
 )
+
+assignments
 ```
 
 Parameters
@@ -638,12 +641,14 @@ readr::write_lines(params, here::here("output", DOCNAME, "parameters.json"))
 writeGeneTable(de_list, here::here("output", DOCNAME, "de_genes.xlsx"))
 writeGeneTable(bind_rows(de_list),
                here::here("output", DOCNAME, "de_genes.csv"))
+readr::write_tsv(assignments, here::here("output", DOCNAME, "assignments.tsv"))
 
 knitr::kable(data.frame(
     File = c(
         getDownloadLink("parameters.json", DOCNAME),
         getDownloadLink("de_genes.xlsx", DOCNAME),
         getDownloadLink("de_genes.csv.zip", DOCNAME),
+        getDownloadLink("assignments.csv", DOCNAME),
         getDownloadLink("de-results.png", DOCNAME),
         getDownloadLink("de-results.pdf", DOCNAME)
     ),
@@ -652,6 +657,7 @@ knitr::kable(data.frame(
         paste("Results of marker gene testing in XLSX format with one tab",
               "per cluster"),
         "Results of marker gene testing in zipped CSV format",
+        "Cluster assignments (TSV)",
         "DE results figure (PNG)",
         "DE results figure (PDF)"
     )

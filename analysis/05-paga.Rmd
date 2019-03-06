@@ -284,6 +284,7 @@ clust_plot <- ggplot(clust_embedding, aes(x = X, y = Y)) +
     geom_text(aes(label = Cluster)) +
     scale_size(range = c(6, 20), guide = FALSE) +
     scale_fill_discrete(guide = FALSE) +
+    guides(colour = guide_colourbar(barwidth = 20)) +
     ggtitle("PAGA cluster graph") +
     theme_void() +
     theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
@@ -293,26 +294,25 @@ clust_plot <- ggplot(clust_embedding, aes(x = X, y = Y)) +
 cell_plot <- ggplot(cell_embedding, aes(x = X, y = Y)) +
     geom_segment(data = cell_edges,
                  aes(x = FromX, y = FromY, xend = ToX, yend = ToY,
-                     colour = Connectivity, alpha = Connectivity),
-                 size = 0.5) +
-    geom_point(aes(fill = Cluster), shape = 21, stroke = 0, size = 1.5) +
-    scale_colour_viridis_c(limits = c(0, 1), guide = FALSE) +
-    scale_alpha_continuous(limits = c(0, 1), range = c(0, 1), guide = FALSE) +
-    scale_fill_discrete(guide = guide_legend(
-        nrow = 2, override.aes = list(size = 2)
+                     size = Connectivity, alpha = Connectivity)) +
+    geom_point(aes(colour = Cluster), size = 1) +
+    scale_alpha_continuous(limits = c(0, 1), range = c(0, 0.5), guide = FALSE) +
+    scale_colour_discrete(guide = guide_legend(
+        nrow = 1, override.aes = list(size = 4)
     )) +
+    scale_size(range = c(0.1, 0.5), guide = FALSE) +
     ggtitle("Cell shared nearest neighbour graph") +
     theme_void() +
     theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
                                     vjust = 1, margin = margin(5)),
           legend.position = "bottom")
 
-fig <- plot_grid(clust_plot, cell_plot, nrow = 1, labels = "AUTO")
+fig <- plot_grid(clust_plot, cell_plot, nrow = 2, labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "paga-results.pdf"), fig,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 8, scale = 1.5)
 ggsave(here::here("output", DOCNAME, "paga-results.png"), fig,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 8, scale = 1.5)
 
 fig
 ```

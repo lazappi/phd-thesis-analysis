@@ -511,20 +511,11 @@ Version: 1.2.0
 Hash: a76a309884277a4fd8a5d741965fbef5
 
 Package: clustree
-Source: github
-Version: 0.2.2.9001
-Hash: 3ea1180440a2a0c9f014fb25fb4246e9
+Source: CRAN
+Version: 0.3.0
+Hash: 7b423233b4b757cb0e9b232b62ee770a
 Requires: checkmate, dplyr, ggplot2, ggraph, ggrepel, igraph, rlang,
     tidygraph, viridis
-GithubRepo: clustree
-GithubUsername: lazappi
-GithubRef: develop
-GithubSha1: 63cc1ebf5e0b3ac617b3379a09007d90a9a1b1ca
-RemoteHost: api.github.com
-RemoteRepo: clustree
-RemoteUsername: lazappi
-RemoteRef: develop
-RemoteSha: 63cc1ebf5e0b3ac617b3379a09007d90a9a1b1ca
 
 Package: colorspace
 Source: CRAN

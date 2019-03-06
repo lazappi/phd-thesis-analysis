@@ -468,7 +468,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-03-05</p>
+<p><strong>Last updated:</strong> 2019-03-06</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -492,7 +492,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/e8364c4ba39c6a9783636209644e9e3f97cf355b" target="_blank">e8364c4</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -515,40 +515,23 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/05-paga/parameters.json
-    Untracked:  output/06-velocyto/parameters.json
-    Untracked:  output/90-methods/
-    Untracked:  workflowr-build.e2538443
-    Untracked:  workflowr-build.e2545370
-    Untracked:  workflowr-build.o2538443
-    Untracked:  workflowr-build.o2545370
+    Untracked:  output/04-marker-genes/assignments.tsv
 
 Unstaged changes:
-    Modified:   analysis/_site.yml
-    Modified:   env-velocyto.yml
-    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   output/01-preprocessing/selection-comparison.pdf
     Modified:   output/01B-alevin/alevin-comparison.pdf
-    Modified:   output/01B-alevin/parameters.json
-    Modified:   output/02-quality-control/parameters.json
     Modified:   output/02-quality-control/qc-thresholds.pdf
     Modified:   output/02-quality-control/qc-validation.pdf
     Modified:   output/03-clustering/cluster-comparison.pdf
     Modified:   output/03-clustering/cluster-validation.pdf
-    Modified:   output/03-clustering/cluster_assignments.tsv.gz
-    Modified:   output/03-clustering/cluster_expression.tsv.gz
     Modified:   output/03-clustering/gene-selection.pdf
-    Modified:   output/03-clustering/parameters.json
     Modified:   output/03-clustering/resolution-selection.pdf
     Modified:   output/04-marker-genes/de-results.pdf
     Modified:   output/04-marker-genes/de_genes.xlsx
-    Modified:   output/04-marker-genes/parameters.json
-    Modified:   output/05-paga/cell_edges.csv
-    Modified:   output/05-paga/cell_embedding.csv
-    Modified:   output/05-paga/cluster_edges.csv
-    Modified:   output/05-paga/cluster_embedding.csv
-    Modified:   output/05-paga/cluster_tree_edges.csv
     Modified:   output/05-paga/paga-results.pdf
     Modified:   output/06-velocyto/cell-velocity.pdf
+    Modified:   packrat/packrat.lock
     Modified:   scripts/build.pbs
 
 </code></pre>
@@ -580,10 +563,10 @@ Message
 <tbody>
 <tr>
 <td style="text-align:left;">
-Rmd
+html
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/05-paga.Rmd" target="_blank">1b07d72</a>
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/05-paga.html" target="_blank">2693e97</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -2434,6 +2417,7 @@ Luke Zappia
     geom_text(aes(label = Cluster)) +
     scale_size(range = c(6, 20), guide = FALSE) +
     scale_fill_discrete(guide = FALSE) +
+    guides(colour = guide_colourbar(barwidth = 20)) +
     ggtitle(&quot;PAGA cluster graph&quot;) +
     theme_void() +
     theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
@@ -2443,26 +2427,25 @@ Luke Zappia
 cell_plot &lt;- ggplot(cell_embedding, aes(x = X, y = Y)) +
     geom_segment(data = cell_edges,
                  aes(x = FromX, y = FromY, xend = ToX, yend = ToY,
-                     colour = Connectivity, alpha = Connectivity),
-                 size = 0.5) +
-    geom_point(aes(fill = Cluster), shape = 21, stroke = 0, size = 1.5) +
-    scale_colour_viridis_c(limits = c(0, 1), guide = FALSE) +
-    scale_alpha_continuous(limits = c(0, 1), range = c(0, 1), guide = FALSE) +
-    scale_fill_discrete(guide = guide_legend(
-        nrow = 2, override.aes = list(size = 2)
+                     size = Connectivity, alpha = Connectivity)) +
+    geom_point(aes(colour = Cluster), size = 1) +
+    scale_alpha_continuous(limits = c(0, 1), range = c(0, 0.5), guide = FALSE) +
+    scale_colour_discrete(guide = guide_legend(
+        nrow = 1, override.aes = list(size = 4)
     )) +
+    scale_size(range = c(0.1, 0.5), guide = FALSE) +
     ggtitle(&quot;Cell shared nearest neighbour graph&quot;) +
     theme_void() +
     theme(plot.title = element_text(size = rel(1.2), hjust = 0.1, 
                                     vjust = 1, margin = margin(5)),
           legend.position = &quot;bottom&quot;)
 
-fig &lt;- plot_grid(clust_plot, cell_plot, nrow = 1, labels = &quot;AUTO&quot;)
+fig &lt;- plot_grid(clust_plot, cell_plot, nrow = 2, labels = &quot;AUTO&quot;)
 
 ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;paga-results.pdf&quot;), fig,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 8, scale = 1.5)
 ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;paga-results.png&quot;), fig,
-       width = 7, height = 4, scale = 2)
+       width = 7, height = 8, scale = 1.5)
 
 fig</code></pre>
 <p><img src="figure/05-paga.Rmd/figure-1.png" width="960" style="display: block; margin: auto;" /></p>
@@ -2482,6 +2465,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/05-paga.Rmd/figure-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/fefdd07c2dfdf6a37242f9e84a3acafdc5fab507/docs/figure/05-paga.Rmd/figure-1.png" target="_blank">fefdd07</a>
@@ -2614,14 +2608,14 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-03-05                  
+ date     2019-03-06                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
    assertthat             0.2.0     2017-04-11 [1] CRAN (R 3.5.0)
    backports              1.1.3     2018-12-14 [1] CRAN (R 3.5.0)
    bindr                  0.1.1     2018-03-13 [1] CRAN (R 3.5.0)
-   bindrcpp               0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
+   bindrcpp             * 0.2.2     2018-03-29 [1] CRAN (R 3.5.0)
    Biobase              * 2.42.0    2018-10-30 [1] Bioconductor  
    BiocGenerics         * 0.28.0    2018-10-30 [1] Bioconductor  
    BiocParallel         * 1.16.5    2019-01-04 [1] Bioconductor  
@@ -2630,6 +2624,7 @@ knitr::kable(data.frame(
    callr                  3.1.1     2018-12-21 [1] CRAN (R 3.5.0)
    cellranger             1.1.0     2016-07-27 [1] CRAN (R 3.5.0)
    cli                    1.0.1     2018-09-25 [1] CRAN (R 3.5.0)
+ P codetools              0.2-15    2016-10-05 [5] CRAN (R 3.5.0)
    colorspace             1.4-0     2019-01-13 [1] CRAN (R 3.5.0)
    cowplot              * 0.9.4     2019-01-08 [1] CRAN (R 3.5.0)
    crayon                 1.3.4     2017-09-16 [1] CRAN (R 3.5.0)
@@ -2657,6 +2652,7 @@ knitr::kable(data.frame(
    IRanges              * 2.16.0    2018-10-30 [1] Bioconductor  
    jsonlite               1.6       2018-12-07 [1] CRAN (R 3.5.0)
    knitr                * 1.21      2018-12-10 [1] CRAN (R 3.5.0)
+   labeling               0.3       2014-08-23 [1] CRAN (R 3.5.0)
  P lattice                0.20-35   2017-03-25 [5] CRAN (R 3.5.0)
    lazyeval               0.2.1     2017-10-29 [1] CRAN (R 3.5.0)
    lubridate              1.7.4     2018-04-11 [1] CRAN (R 3.5.0)
@@ -2703,6 +2699,7 @@ knitr::kable(data.frame(
    tidyselect             0.2.5     2018-10-11 [1] CRAN (R 3.5.0)
    tidyverse            * 1.2.1     2017-11-14 [1] CRAN (R 3.5.0)
    usethis                1.4.0     2018-08-14 [1] CRAN (R 3.5.0)
+   viridisLite            0.3.0     2018-02-01 [1] CRAN (R 3.5.0)
    whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
    withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)
    workflowr              1.1.1     2018-07-06 [1] CRAN (R 3.5.0)

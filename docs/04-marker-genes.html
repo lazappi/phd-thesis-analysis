@@ -468,7 +468,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-03-05</p>
+<p><strong>Last updated:</strong> 2019-03-06</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -492,7 +492,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/e8364c4ba39c6a9783636209644e9e3f97cf355b" target="_blank">e8364c4</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -515,40 +515,22 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/05-paga/parameters.json
-    Untracked:  output/06-velocyto/parameters.json
-    Untracked:  output/90-methods/
-    Untracked:  workflowr-build.e2538443
-    Untracked:  workflowr-build.e2545370
-    Untracked:  workflowr-build.o2538443
-    Untracked:  workflowr-build.o2545370
+    Untracked:  output/04-marker-genes/assignments.tsv
 
 Unstaged changes:
-    Modified:   analysis/_site.yml
-    Modified:   env-velocyto.yml
-    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   output/01-preprocessing/selection-comparison.pdf
     Modified:   output/01B-alevin/alevin-comparison.pdf
-    Modified:   output/01B-alevin/parameters.json
-    Modified:   output/02-quality-control/parameters.json
     Modified:   output/02-quality-control/qc-thresholds.pdf
     Modified:   output/02-quality-control/qc-validation.pdf
     Modified:   output/03-clustering/cluster-comparison.pdf
     Modified:   output/03-clustering/cluster-validation.pdf
-    Modified:   output/03-clustering/cluster_assignments.tsv.gz
-    Modified:   output/03-clustering/cluster_expression.tsv.gz
     Modified:   output/03-clustering/gene-selection.pdf
-    Modified:   output/03-clustering/parameters.json
     Modified:   output/03-clustering/resolution-selection.pdf
     Modified:   output/04-marker-genes/de-results.pdf
-    Modified:   output/04-marker-genes/de_genes.xlsx
-    Modified:   output/04-marker-genes/parameters.json
-    Modified:   output/05-paga/cell_edges.csv
-    Modified:   output/05-paga/cell_embedding.csv
-    Modified:   output/05-paga/cluster_edges.csv
-    Modified:   output/05-paga/cluster_embedding.csv
-    Modified:   output/05-paga/cluster_tree_edges.csv
     Modified:   output/05-paga/paga-results.pdf
     Modified:   output/06-velocyto/cell-velocity.pdf
+    Modified:   packrat/packrat.lock
     Modified:   scripts/build.pbs
 
 </code></pre>
@@ -580,10 +562,10 @@ Message
 <tbody>
 <tr>
 <td style="text-align:left;">
-Rmd
+html
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/04-marker-genes.Rmd" target="_blank">1b07d72</a>
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/04-marker-genes.html" target="_blank">2693e97</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -2700,7 +2682,8 @@ plot_data &lt;- de_list %&gt;%
 counts_plot &lt;- ggplot(plot_data, aes(x = Cluster)) +
     geom_bar(aes(fill = Cluster), alpha = 0.3) +
     geom_jitter(aes(y = logFCScaled, colour = logFC),
-                position = position_jitter(height = 0, width = 0.4, seed = 1)) +
+                position = position_jitter(height = 0, width = 0.35, seed = 1),
+                alpha = 0.3) +
     geom_text(aes(label=..count..), stat = &quot;count&quot;,
               vjust = -0.5, size = 4, colour = &quot;grey10&quot;) +
     scale_fill_discrete(guide = FALSE) +
@@ -2728,7 +2711,7 @@ genes_plot &lt;- ggplot(plot_data,
        aes(x = Gene, y = Cluster, size = logFC, alpha = -FDR, colour = Type)) +
     geom_point() +
     facet_grid(~ Type, scales = &quot;free_x&quot;, space = &quot;free_x&quot;) +
-    ggtitle(&quot;DE results for some published markers by cluster&quot;) +
+    ggtitle(&quot;edgeR results for some published markers by cluster&quot;) +
     theme_minimal() +
     theme(axis.title = element_blank(),
           axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
@@ -2741,9 +2724,9 @@ fig &lt;- plot_grid(p1, genes_plot, ncol = 1, labels = c(&quot;&quot;, &quot;E&q
                  rel_heights = c(1, 0.5))
 
 ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;de-results.pdf&quot;), fig,
-       width = 7, height = 8, scale = 2)
+       width = 7, height = 10, scale = 1.5)
 ggsave(here::here(&quot;output&quot;, DOCNAME, &quot;de-results.png&quot;), fig,
-       width = 7, height = 8, scale = 2)
+       width = 7, height = 10, scale = 1.5)
 
 fig</code></pre>
 <p><img src="figure/04-marker-genes.Rmd/figure-1.png" width="960" style="display: block; margin: auto;" /></p>
@@ -2765,6 +2748,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/04-marker-genes.Rmd/figure-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/b6105063ee99257e9ada2fc3f8672a96297dc1d8/docs/figure/04-marker-genes.Rmd/figure-1.png" target="_blank">b610506</a>
 </td>
 <td style="text-align:left;">
@@ -2781,7 +2775,7 @@ Luke Zappia
 <div id="summary-1" class="section level1">
 <h1>Summary</h1>
 <p>Based on the detected markers we will assign the following cell types to the clusters.</p>
-<pre class="r"><code>tribble(
+<pre class="r"><code>assignments &lt;- tribble(
     ~Cluster,         ~Assignment,
          &quot;0&quot;,            &quot;Stroma&quot;,
          &quot;1&quot;,            &quot;Stroma&quot;,
@@ -2796,7 +2790,9 @@ Luke Zappia
         &quot;10&quot;,        &quot;Epithelium&quot;,
         &quot;11&quot;, &quot;Muscle progenitor&quot;,
         &quot;12&quot;, &quot;Neural progenitor&quot;
-)</code></pre>
+)
+
+assignments</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["Cluster"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Assignment"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"0","2":"Stroma"},{"1":"1","2":"Stroma"},{"1":"2","2":"Cell cycle"},{"1":"3","2":"Stroma"},{"1":"4","2":"Endothelium"},{"1":"5","2":"Podocyte"},{"1":"6","2":"Possible immune"},{"1":"7","2":"Stroma"},{"1":"8","2":"Endothelium"},{"1":"9","2":"Glial"},{"1":"10","2":"Epithelium"},{"1":"11","2":"Muscle progenitor"},{"1":"12","2":"Neural progenitor"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -2873,12 +2869,14 @@ readr::write_lines(params, here::here(&quot;output&quot;, DOCNAME, &quot;paramet
 writeGeneTable(de_list, here::here(&quot;output&quot;, DOCNAME, &quot;de_genes.xlsx&quot;))
 writeGeneTable(bind_rows(de_list),
                here::here(&quot;output&quot;, DOCNAME, &quot;de_genes.csv&quot;))
+readr::write_tsv(assignments, here::here(&quot;output&quot;, DOCNAME, &quot;assignments.tsv&quot;))
 
 knitr::kable(data.frame(
     File = c(
         getDownloadLink(&quot;parameters.json&quot;, DOCNAME),
         getDownloadLink(&quot;de_genes.xlsx&quot;, DOCNAME),
         getDownloadLink(&quot;de_genes.csv.zip&quot;, DOCNAME),
+        getDownloadLink(&quot;assignments.csv&quot;, DOCNAME),
         getDownloadLink(&quot;de-results.png&quot;, DOCNAME),
         getDownloadLink(&quot;de-results.pdf&quot;, DOCNAME)
     ),
@@ -2887,6 +2885,7 @@ knitr::kable(data.frame(
         paste(&quot;Results of marker gene testing in XLSX format with one tab&quot;,
               &quot;per cluster&quot;),
         &quot;Results of marker gene testing in zipped CSV format&quot;,
+        &quot;Cluster assignments (TSV)&quot;,
         &quot;DE results figure (PNG)&quot;,
         &quot;DE results figure (PDF)&quot;
     )
@@ -2912,10 +2911,14 @@ knitr::kable(data.frame(
 <td align="left">Results of marker gene testing in zipped CSV format</td>
 </tr>
 <tr class="even">
+<td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/04-marker-genes/assignments.csv">assignments.csv</a></td>
+<td align="left">Cluster assignments (TSV)</td>
+</tr>
+<tr class="odd">
 <td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/04-marker-genes/de-results.png">de-results.png</a></td>
 <td align="left">DE results figure (PNG)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="http://github.com/lazappi/phd-thesis-analysis/raw/master/output/04-marker-genes/de-results.pdf">de-results.pdf</a></td>
 <td align="left">DE results figure (PDF)</td>
 </tr>
@@ -2935,7 +2938,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-03-05                  
+ date     2019-03-06                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        
@@ -2991,6 +2994,7 @@ knitr::kable(data.frame(
    haven                  2.0.0     2018-11-22 [1] CRAN (R 3.5.0)
    HDF5Array              1.10.1    2018-12-05 [1] Bioconductor  
    here                   0.1       2017-05-28 [1] CRAN (R 3.5.0)
+   highr                  0.7       2018-06-09 [1] CRAN (R 3.5.0)
    hms                    0.4.2     2018-03-10 [1] CRAN (R 3.5.0)
    htmltools              0.3.6     2017-04-28 [1] CRAN (R 3.5.0)
    httr                   1.4.0     2018-12-11 [1] CRAN (R 3.5.0)
@@ -2998,6 +3002,7 @@ knitr::kable(data.frame(
    iterators              1.0.10    2018-07-13 [1] CRAN (R 3.5.0)
    jsonlite               1.6       2018-12-07 [1] CRAN (R 3.5.0)
    knitr                * 1.21      2018-12-10 [1] CRAN (R 3.5.0)
+   labeling               0.3       2014-08-23 [1] CRAN (R 3.5.0)
  P lattice                0.20-35   2017-03-25 [5] CRAN (R 3.5.0)
    lazyeval               0.2.1     2017-10-29 [1] CRAN (R 3.5.0)
    limma                * 3.38.3    2018-12-02 [1] Bioconductor  
@@ -3064,6 +3069,7 @@ knitr::kable(data.frame(
    whisker                0.3-2     2013-04-28 [1] CRAN (R 3.5.0)
    withr                  2.1.2     2018-03-15 [1] CRAN (R 3.5.0)
    workflowr              1.1.1     2018-07-06 [1] CRAN (R 3.5.0)
+   writexl                1.1       2018-12-02 [1] CRAN (R 3.5.0)
    xfun                   0.4       2018-10-23 [1] CRAN (R 3.5.0)
    XML                    3.98-1.16 2018-08-19 [1] CRAN (R 3.5.0)
    xml2                   1.2.0     2018-01-24 [1] CRAN (R 3.5.0)

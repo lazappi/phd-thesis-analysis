@@ -1067,7 +1067,17 @@ m3drop_plot <- ggplot(plot_data,
     theme_minimal() +
     theme(legend.position = "bottom")
 
-comp_plot <- ggplot(plot_data_sel, aes(x = SelMethod, fill = SelMethod)) +
+comp_plot <- ggplot(plot_data, aes(x = SeuratDispScaled, y = M3DropDropoutRate)) +
+    geom_point(alpha = 0.3, colour = "grey") +
+    geom_point(data = plot_data_sel, aes(colour = SelMethod), alpha = 0.3) +
+    scale_colour_manual(values = c("#8DC63F", "#EC008C", "#00ADEF")) +
+    ggtitle("Comparison of gene selection methods") +
+    xlab("Seurat gene dispersion (scaled)") +
+    ylab("M3Drop dropout rate") +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+
+overlap_plot <- ggplot(plot_data_sel, aes(x = SelMethod, fill = SelMethod)) +
     geom_bar() +
     scale_fill_manual(values = c("#8DC63F", "#EC008C", "#00ADEF")) +
     coord_flip() +
@@ -1077,13 +1087,13 @@ comp_plot <- ggplot(plot_data_sel, aes(x = SelMethod, fill = SelMethod)) +
     theme(legend.position = "none",
           axis.title.y = element_blank())
 
-fig <- plot_grid(seurat_plot, m3drop_plot, comp_plot, nrow = 1,
-                 rel_widths = c(1, 1, 0.8), labels = "AUTO")
+fig <- plot_grid(seurat_plot, m3drop_plot, comp_plot, overlap_plot, nrow = 2,
+                 labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "gene-selection.pdf"), fig,
-       width = 10, height = 4, scale = 2)
+       width = 10, height = 8, scale = 1.2)
 ggsave(here::here("output", DOCNAME, "gene-selection.png"), fig,
-       width = 10, height = 4, scale = 2)
+       width = 10, height = 8, scale = 1.2)
 
 fig
 ```
@@ -1094,14 +1104,19 @@ Resolution
 ```{r fig-resolution}
 res_y <- 10 - res / 0.1
 
-ct_plot <- clustree(seurat) +
+ct_plot <- clustree(seurat, show_axis = TRUE) +
     annotate("rect",
              xmin = -11.8, xmax = 8, ymin = res_y - 0.4, ymax = res_y + 0.6,
              fill = alpha("grey", 0), colour = "#EC008C", size = 1) +
-    theme(legend.position = "none")
+    ylab("Resolution") +
+    theme(legend.position = "none",
+          axis.text.y = element_text(),
+          axis.title = element_text(),
+          axis.title.x = element_blank(),
+          panel.grid.major.y = element_line(colour = "grey92"))
 
-gene_list <- c("TAGLN", "MAB21L2", "COL9A3", "NPHS2", "PECAM1", "TTYH1",
-               "STMN2", "PAX2", "MYOG")
+gene_list <- c("TAGLN", "MAB21L2", "NPHS2", "PECAM1", "TTYH1", "STMN2",
+               "PAX2", "MYOG")
 
 plot_list <- lapply(gene_list, function(gene) {
     clustree(seurat, node_colour = gene, node_colour_aggr = "mean",
@@ -1114,14 +1129,14 @@ plot_list <- lapply(gene_list, function(gene) {
                                         vjust = 1, margin = margin(5.5)))
 })
 
-genes_plot <- plot_grid(plotlist = plot_list, nrow = 3)
+genes_plot <- plot_grid(plotlist = plot_list, nrow = 2)
 
-fig <- plot_grid(ct_plot, genes_plot, nrow = 1, labels = "AUTO")
+fig <- plot_grid(ct_plot, genes_plot, nrow = 2, labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "resolution-selection.pdf"), fig,
-       width = 8, height = 4, scale = 2)
+       width = 8, height = 8, scale = 1.3)
 ggsave(here::here("output", DOCNAME, "resolution-selection.png"), fig,
-       width = 8, height = 4, scale = 2)
+       width = 8, height = 8, scale = 1.3)
 
 fig
 ```
@@ -1170,7 +1185,7 @@ plot_data <- cell_data %>%
 
 sel_plot <- ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
     geom_col() +
-    scale_fill_manual(values = c("#00ADEF", "#F47920", "#EC008C")) +
+    scale_fill_manual(values = c("#EC008C", "#00ADEF", "#8DC63F")) +
     ggtitle("Selection method by cluster") +
     ylab("Proportion of cluster") +
     theme_minimal() +
@@ -1210,13 +1225,12 @@ mt_plot <- ggplot(cell_data, aes(x = Cluster, y = pct_counts_MT)) +
           axis.title.x = element_blank())
 
 fig <- plot_grid(umap_plot, sizes_plot, sel_plot, cycle_plot, counts_plot,
-                 mt_plot, ncol = 2, rel_heights = c(1, 0.6, 0.8),
-                 labels = "AUTO")
+                 mt_plot, ncol = 2, labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "cluster-validation.pdf"), fig,
-       width = 7, height = 6, scale = 2)
+       width = 7, height = 10, scale = 1.2)
 ggsave(here::here("output", DOCNAME, "cluster-validation.png"), fig,
-       width = 7, height = 6, scale = 2)
+       width = 7, height = 10, scale = 1.2)
 
 fig
 ```
@@ -1251,7 +1265,7 @@ overlap_plot <- ggplot(plot_data,
     xlab("Cluster") +
     ylab("Published cluster") +
     theme_minimal() +
-    theme(plot.title = element_text(size = rel(1.2), hjust = -0.5, vjust = 1.5,
+    theme(plot.title = element_text(size = rel(1.2), hjust = -0.65, vjust = 1.5,
                                     margin = margin(1)),
           axis.text = element_text(size = 9, colour = "black"),
           axis.ticks = element_blank(),
@@ -1261,13 +1275,13 @@ overlap_plot <- ggplot(plot_data,
           legend.text = element_text(size = 9),
           panel.grid = element_blank())
 
-fig <- plot_grid(present_plot, overlap_plot, nrow = 1,
-                 rel_widths = c(0.7, 1), labels = "AUTO")
+fig <- plot_grid(present_plot, overlap_plot, ncol = 1,
+                 rel_heights = c(0.5, 1), labels = "AUTO")
 
 ggsave(here::here("output", DOCNAME, "cluster-comparison.pdf"), fig,
-       width = 7, height = 3, scale = 2)
+       width = 7, height = 7.5, scale = 1)
 ggsave(here::here("output", DOCNAME, "cluster-comparison.png"), fig,
-       width = 7, height = 3, scale = 2)
+       width = 7, height = 7.5, scale = 1)
 
 fig
 ```
