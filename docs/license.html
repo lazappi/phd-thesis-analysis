@@ -294,15 +294,60 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Home</a>
 </li>
-<li>
-  <a href="about.html">About</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="getting-started.html">Getting started</a>
+    </li>
+    <li>
+      <a href="01-preprocessing.html">Pre-processing</a>
+    </li>
+    <li>
+      <a href="01B-alevin.html">Alevin</a>
+    </li>
+    <li>
+      <a href="02-quality-control.html">Quality control</a>
+    </li>
+    <li>
+      <a href="03-clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="04-marker-genes.html">Marker genes</a>
+    </li>
+    <li>
+      <a href="05-paga.html">PAGA</a>
+    </li>
+    <li>
+      <a href="06-velocyto.html">Cell velocity</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Reports
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="cellranger_web_summary.html">Cell Ranger</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="license.html">License</a>
+  <a href="90-methods.html">Methods</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="license.html">License</a>
+</li>
+<li>
   <a href="https://github.com/lazappi/phd-thesis-analysis">
     <span class="fa fa-github"></span>
      
@@ -337,7 +382,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-01-10</p>
+<p><strong>Last updated:</strong> 2019-03-20</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -346,30 +391,34 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/8b1bef95304bd20c85e27d34dfbc10ac586ad167" target="_blank">8b1bef9</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/20bd9c52271d21d74363dd31694f4a0f46cae2f2" target="_blank">20bd9c5</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    ._.DS_Store
+    Ignored:    analysis/cache/
+    Ignored:    build-logs/
     Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/._.DS_Store
+    Ignored:    output/03-clustering/selected_genes.csv.zip
+    Ignored:    output/04-marker-genes/de_genes.csv.zip
+    Ignored:    packrat/.DS_Store
+    Ignored:    packrat/._.DS_Store
     Ignored:    packrat/lib-R/
     Ignored:    packrat/lib-ext/
     Ignored:    packrat/lib/
     Ignored:    packrat/src/
 
-Unstaged changes:
-    Modified:   .gitignore
-    Deleted:    R/README.md
-    Modified:   README.md
-    Modified:   _workflowr.yml
-    Modified:   analysis/_site.yml
-    Deleted:    output/README.md
-    Modified:   packrat/packrat.opts
+Untracked files:
+    Untracked:  DGEList.Rds
+    Untracked:  scripts/build.pbs
 
-Staged changes:
-    Renamed1:   code/README.md
-    Renamed2:   R/README.md
+Unstaged changes:
+    Modified:   analysis/90-methods.Rmd
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -403,6 +452,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/20bd9c52271d21d74363dd31694f4a0f46cae2f2/analysis/license.Rmd" target="_blank">20bd9c5</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+<td style="text-align:left;">
+Tidy up website
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/fb2eb664f567a816ef5785ade56e150669446c2f/docs/license.html" target="_blank">fb2eb66</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-01-10
+</td>
+<td style="text-align:left;">
+Tidy workflowr and packrat setup
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="http://github.com/lazappi/phd-thesis-analysis/blob/8b1bef95304bd20c85e27d34dfbc10ac586ad167/analysis/license.Rmd" target="_blank">8b1bef9</a>
 </td>
 <td style="text-align:left;">
@@ -420,9 +503,8 @@ Start workflowr project.
 </ul>
 <p></details></p>
 <hr />
-<p>What license are you using for your code? See <a href="http://choosealicense.com/">choosealicense.com</a> for help deciding. It’s a convention to save a file <code>LICENSE</code> in the root of your Git repo that contains the license text.</p>
-<p>What license are you using for the written content on your site? It is traditional to choose a <a href="https://creativecommons.org/choose/">Creative Commons</a> license for this type of content.</p>
-<p>How should others cite your work? It’s a convention to save a file <code>CITATION</code> in the root of your Git repo that contains the citation information.</p>
+<p>The code in this analysis is covered by the <a href="https://choosealicense.com/licenses/gpl-3.0/" title="GPL-3.0 License">GNU General Public License v3.0</a> and the written content on this website is covered by a <a href="https://creativecommons.org/licenses/by/4.0/" title="CC-BY License">Creative Commons CC-BY</a> license.</p>
+<p>The publications mentioned and datasets used are covered by their respective licenses and usage agreements. Please refer to those sources for details.</p>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see

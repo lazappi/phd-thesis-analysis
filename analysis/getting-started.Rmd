@@ -1,0 +1,219 @@
+---
+title: "Getting started"
+output:
+  workflowr::wflow_html:
+    toc: false
+    code_folding: "none"
+---
+
+This page describes how to download the data and code used in this analysis,
+set up the project directory and rerun the analysis. I have use the
+[`workflowr`][workflowr] package to organise the analysis and insert
+reproducibilty information into the output documents. The [`packrat`][packrat]
+package has also been used to manage R package versions and dependencies and
+[`conda`][conda] used to manage Python environments.
+
+Getting the code
+================
+
+All the code and outputs of analysis are available from GitHub at 
+https://github.com/lazappi/phd-thesis-analysis. If you want to replicate the 
+analysis you can either fork the repository and clone it or download the 
+repository as a zipped directory.
+
+Once you have a local copy of the repository you should see the following
+directory structure:
+
+* `analysis/` - Contains the R Markdown documents with the various stages of
+  analysis. These are numbered according to the order they should be run.
+* `data/` - This directory contains the data files used in the analysis with
+  each dataset in it's own sub-directory (see [Getting the data](#data) for
+  details). Processed intermediate data files will also be placed here.
+* `output/` - Directory for output files produced by the analysis, each analysis
+  step has it's own sub-directory.
+* `docs/` - This directory contains the analysis website hosted at 
+  http://lazappi.github.io/phd-thesis-analysis, including image files.
+* `R/` - R scripts with custom functions used in some analysis stages.
+* `scripts/` - Python scripts and examples of how command line tools were run.
+* `packrat/` - Directory created by `packrat` that contains details of the R
+  packages and versions used in the analysis.
+* `env-scanpy.yml` - conda environment for scanpy
+* `env-velocyto.yml` - conda environment for velocyto.py
+* `README.md` - README describing the project.
+* `.Rprofile` - Custom R profile for the project including set up for
+  `packrat` and `workflowr`.
+* `.gitignore` - Details of files and directories that are excluded from the
+  repository.
+* `_workflowr.yml` - Workflowr configuration file.
+* `phd-thesis-analysis.Rproj` - RStudio project file.
+
+Installing R packages
+=====================
+
+R Packages and dependencies for this project are managed using
+[`packrat`][packrat]. This should allow you to install and use the same package
+versions as we have used for the analysis. `packrat` should automatically take
+care of this process for you the first time that you open R in the project
+directory. If for some reason this does not happen you may need to run the
+following commands:
+
+```r
+install.packages("packrat")
+packrat::restore()
+```
+
+Note that a clean install of all the required packages can take a significant
+amount of time when the project is first opened.
+
+Setting up Python environments
+==============================
+
+The PAGA and cell velocity parts of the analysis require the scanpy and velocyto 
+Python packages. I have used `conda` to manage environments for these packages.
+If you have `conda` installed you can set up these environments by running the
+following commands:
+
+```bash
+conda env create -f env-scanpy.yml
+conda env create -f env-velocyto.yml
+```
+
+The environments can then be activated using `conda`:
+
+```bash
+# To use scanpy
+conda activate scanpy
+# To use velocyto
+conda activate velocyto
+```
+
+Getting the data {#data}
+================
+
+In this project I have used the first batch of kidney organoid samples included
+in GEO accession number [GSE114802][geo]. The GEO entry contains processed
+expression matrices from Cell Ranger but for this analysis I started with the
+raw FASTQ files which can be downloaded from SRA accession [SRP148773][sra].
+Some pre-processing of the dataset was done on the command line to produce
+datasets in a form suitable for statistical analysis in R. These steps are 
+described on the methods page and examples of commands for these steps are 
+provided in the `scripts` directory. If you don't want to perform these steps 
+yourself you can download the processed data from this
+[Figshare repository][figshare]. This repository also contains intermediate
+files from the statistical analysis.
+
+Once the processed data has been has been produced or downloaded it needs to be
+placed in the correct location. The analysis code assumes the following
+directory structure inside the `data/` directory:
+
+* `alevin/` - Expression matrices produced by Alevin
+    * `Org1/` - Alevin output for Organoid 1
+        * `quants_mat.gz` - Expression matrix
+        * `quants_mat_cols.txt` - Column labels for expression matrix
+        * `quants_mat_rows.txt` - Row labels for expression matrix
+    * `Org2/` - Alevin output for Organoid 2 (same files as Org1)
+    * `Org3/` - Alevin output for Organoid 3 (same files as Org1)
+* `cellranger/` - Output from the Cell Ranger pipeline
+    * `barcodes.tsv.gz` - Unfiltered list of droplet barcodes
+    * `features.tsv.gz` - List of annotated features in the dataset
+    * `filterered_barcodes.tsv.gz` Filtered list of droplet barcodes
+    * `matrix.mtx.gz` - Unfiltered expression matrix
+* `processed/` - Intermediate files produced during the statistical analysis.
+  This will be produced as code in the R Markdown files is run so aren't
+  required to run the analysis. Files are numbered according to the document
+  that produces them.
+    * `01-selected.Rds` - `SingleCellExperiment` object containing selected
+      cells
+    * `01B-alevin.Rds` - `SingleCellExperiment` object containing the dataset
+      produced by Alevin
+    * `02-filtered.Rds` - `SingleCellExperiment` object following quality
+      control
+    * `03-clustered.Rds` - `SingleCellExperiment` with cluster labels
+    * `03-seurat.Rds` - `seurat` object used during clustering analysis
+    * `03-clustered-sel.loom` - `Loom` file containing genes selected for
+      clustering and used for PAGA analysis
+    * `04-markers.Rds` - `SingleCellExperiment` object following marker gene
+      detection.
+    * `04-DGEGLM.Rds` - `DGEGLM` object used for edgeR differential expression
+      analysis
+    * `05-paga.loom` - `Loom` file with results from PAGA analysis
+    * `06-spliced.Rds` - Spliced expression matrix produced by velocyto
+    * `06-unspliced.Rds` - Unspliced expression matrix produced by velocyto
+    * `06-tSNE-embedding.Rds` - t-SNE cell velocity embedding from velocyto
+    * `06-umap-embedding.Rds` - UMAP cell velocity embedding from velocyto
+* `published/` - Results from the previously published analysis of this dataset
+    * `cluster_assignments.csv` - Cell cluster assignments from published
+      analysis
+* `references/` - References mentioned during the analysis and on the website
+    * `references.bib` - BibTex file of references
+* `velocyto/` - Spliced and unspliced quantification produced by velocyto.py
+    * `Org1.loom` - Loom file produced by velocyto for Organoid 1
+    * `Org2.loom` - Loom file produced by velocyto for Organoid 2
+    * `Org3.loom` - Loom file produced by velocyto for Organoid 3
+
+Running the analysis
+====================
+
+The analysis directory contains the following analysis files:
+
+* `01-preprocessing.html` - Reading of datasets produced using Cell Ranger, 
+  comparison of droplet selection methods, annotation of the dataset.
+* `01B-alevin.html` - Comparison of the alignment-based dataset from
+  Cell Ranger with the same data processed using the Alevin method in Salmon.
+* `02-quality-control.html` - Selection of high-quality cells and removal of
+  uninformative genes.
+* `03-clustering.html` - Clustering using the Seurat package with a comparison
+  of methods for gene selection.
+* `04-marker-genes.html` - Marker gene detection for each cluster using edgeR.
+* `05-paga.html` - Partition-based graph abstraction using the scanpy Python
+  package with visualisation in R.
+* `06-velocyto.html` - Cell velocity estimates using the veloctyo package.
+* `90-methods.html` - Description of methods used during the analysis.
+
+As indicated by the numbering they should be run in this order. If you want to
+rerun the entire analysis this can be easily done using `workflowr`.
+
+```r
+workflowr::wflow_build(republish = TRUE)
+```
+
+It is important to consider the computer and environment you are using before
+doing this. Running this analysis from scratch requires a considerable amount
+of time, disk space and memory. Some stages of the analysis also assume that
+multiple (up to 10) cores are available for processing. If you have fewer cores
+available you will need to change the following line in the relevant files and
+provide the number of cores that are available for use.
+
+```r
+bpparam <- MulticoreParam(workers = 10)
+```
+
+It is also possible to run individual stages of the analysis, either by
+providing the names of the file you want to run to `workflowr::wflow_build()` or
+by manually knitting the document (for example using the 'Knit' button in
+RStudio).
+
+Caching
+-------
+
+To avoid having to repeatably re-run long running sections of the analysis I
+have turned on caching in the analysis documents. However, this comes at a
+tradeoff with disk space, useability and (potentially but unlikely if careful)
+reproducibility. In most cases this should not be a problem but it is something
+to be aware of. In particular there is a incompatibilty with caching and
+`workflowr` that can cause images to not appear in the resulting HTML files (see
+this [GitHub issue][workflowr-issue] for more details). If you have already run
+part of the analysis (and therefore have a cache) and want to rerun a document
+the safest option is the use the RStudio 'Knit' button.
+
+[geo]: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE114802 "GEO"
+[sra]: https://www.ncbi.nlm.nih.gov/sra?term=SRP148773 "SRA"
+[figshare]: https://melbourne.figshare.com/collections/PhD_thesis_analysis_data/4439804 "Figshare"
+[packrat]: https://rstudio.github.io/packrat/ "Packrat"
+[conda]: https://conda.io/en/latest/ "Conda"
+[workflowr]: https://jdblischak.github.io/workflowr/ "Workflowr"
+[workflowr-issue]: https://github.com/jdblischak/workflowr/issues/113 "Workflowr caching issue"
+
+```{r session-info, eval = FALSE, echo = FALSE}
+devtools::session_info()
+```

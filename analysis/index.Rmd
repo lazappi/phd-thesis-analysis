@@ -4,16 +4,68 @@ site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
     toc: false
+bibliography:
+    - "`r here::here('data/references/references.bib')`"
 ---
 
-Analysis steps:
+```{r organoid-img, out.width = "40%", fig.align = "center", echo = FALSE}
+knitr::include_graphics("organoid-black.png")
+```
 
-* [Pre-processing](01-preprocessing.html)
-* [Alevin](01B-alevin.html)
-* [Quality control](02-quality-control.html)
-* [Clustering](03-clustering.html)
-* [Marker genes](04-marker-genes.html)
-* [PAGA](05-paga.html)
-* [Velocyto](06-velocyto.html)
+This website displays the analysis code and results for the analysis chapter of
+my PhD thesis. In this chapter I reanalyse a previously published kidney
+organoid scRNA-seq dataset [@Phipson2019-er; @Combes2019-uv], focusing on the 
+decisions that are made during analysis and demonstrating a range of tools that
+can be used for various tasks.
 
-[Methods](90-methods.html)
+Follow the links below to access the different stages of analysis or refer to
+the [Getting started](getting-started.html) page for more details about the
+dataset and how to reproduce the analysis.
+
+Analysis
+========
+
+* [Pre-processing](01-preprocessing.html) - Reading of datasets produced using
+  Cell Ranger, comparison of droplet selection methods, annotation of the
+  dataset.
+* [Alevin](01B-alevin.html) - Comparison of the alignment-based dataset from
+  Cell Ranger with the same data processed using the Alevin method in Salmon.
+* [Quality control](02-quality-control.html) - Selection of high-quality cells
+  and removal of uninformative genes.
+* [Clustering](03-clustering.html) - Clustering using the Seurat package with a
+  comparison of methods for gene selection.
+* [Marker genes](04-marker-genes.html) - Marker gene detection for each cluster
+  using edgeR.
+* [PAGA](05-paga.html) - Partition-based graph abstraction using the scanpy
+  Python package with visualisation in R.
+* [Cell velocity](06-velocyto.html) - Cell velocity estimates using the veloctyo
+  package.
+
+[Methods](90-methods.html) - Description of methods used during the analysis.
+
+Citations
+=========
+
+This website and the analysis code can be cited as:
+
+> Zappia, Luke. PhD thesis analysis. 2019.
+> DOI:
+
+This data files associated with this analysis can be cited as:
+
+> Zappia L. PhD thesis analysis data. University of Melbourne. 2019.
+> DOI: [10.26188/5c9182aa7e23d][figshare]
+
+If you use this data in an analysis please cite the publcations that originally
+described it.
+
+References
+==========
+
+<div id="refs"></div>
+
+[figshare]: https://melbourne.figshare.com/collections/PhD_thesis_analysis_data/4439804 "Figshare"
+
+```{r session-info, eval = FALSE}
+devtools::session_info()
+```

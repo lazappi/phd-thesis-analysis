@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Getting started</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PhD Thesis Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="getting-started.html">Getting started</a>
+    </li>
+    <li>
+      <a href="01-preprocessing.html">Pre-processing</a>
+    </li>
+    <li>
+      <a href="01B-alevin.html">Alevin</a>
+    </li>
+    <li>
+      <a href="02-quality-control.html">Quality control</a>
+    </li>
+    <li>
+      <a href="03-clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="04-marker-genes.html">Marker genes</a>
+    </li>
+    <li>
+      <a href="05-paga.html">PAGA</a>
+    </li>
+    <li>
+      <a href="06-velocyto.html">Cell velocity</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Reports
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="cellranger_web_summary.html">Cell Ranger</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="90-methods.html">Methods</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="license.html">License</a>
+</li>
+<li>
+  <a href="https://github.com/lazappi/phd-thesis-analysis">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Getting started</h1>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-03-20</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20190110)</code> </summary></p>
+<p>The command <code>set.seed(20190110)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/20bd9c52271d21d74363dd31694f4a0f46cae2f2" target="_blank">20bd9c5</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    ._.DS_Store
+    Ignored:    analysis/cache/
+    Ignored:    build-logs/
+    Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/._.DS_Store
+    Ignored:    output/03-clustering/selected_genes.csv.zip
+    Ignored:    output/04-marker-genes/de_genes.csv.zip
+    Ignored:    packrat/.DS_Store
+    Ignored:    packrat/._.DS_Store
+    Ignored:    packrat/lib-R/
+    Ignored:    packrat/lib-ext/
+    Ignored:    packrat/lib/
+    Ignored:    packrat/src/
+
+Untracked files:
+    Untracked:  DGEList.Rds
+    Untracked:  scripts/build.pbs
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/20bd9c52271d21d74363dd31694f4a0f46cae2f2/analysis/getting-started.Rmd" target="_blank">20bd9c5</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+<td style="text-align:left;">
+Tidy up website
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<p>This page describes how to download the data and code used in this analysis, set up the project directory and rerun the analysis. I have use the <a href="https://jdblischak.github.io/workflowr/" title="Workflowr"><code>workflowr</code></a> package to organise the analysis and insert reproducibilty information into the output documents. The <a href="https://rstudio.github.io/packrat/" title="Packrat"><code>packrat</code></a> package has also been used to manage R package versions and dependencies and <a href="https://conda.io/en/latest/" title="Conda"><code>conda</code></a> used to manage Python environments.</p>
+<div id="getting-the-code" class="section level1">
+<h1>Getting the code</h1>
+<p>All the code and outputs of analysis are available from GitHub at <a href="https://github.com/lazappi/phd-thesis-analysis" class="uri">https://github.com/lazappi/phd-thesis-analysis</a>. If you want to replicate the analysis you can either fork the repository and clone it or download the repository as a zipped directory.</p>
+<p>Once you have a local copy of the repository you should see the following directory structure:</p>
+<ul>
+<li><code>analysis/</code> - Contains the R Markdown documents with the various stages of analysis. These are numbered according to the order they should be run.</li>
+<li><code>data/</code> - This directory contains the data files used in the analysis with each dataset in it’s own sub-directory (see <a href="#data">Getting the data</a> for details). Processed intermediate data files will also be placed here.</li>
+<li><code>output/</code> - Directory for output files produced by the analysis, each analysis step has it’s own sub-directory.</li>
+<li><code>docs/</code> - This directory contains the analysis website hosted at <a href="http://lazappi.github.io/phd-thesis-analysis" class="uri">http://lazappi.github.io/phd-thesis-analysis</a>, including image files.</li>
+<li><code>R/</code> - R scripts with custom functions used in some analysis stages.</li>
+<li><code>scripts/</code> - Python scripts and examples of how command line tools were run.</li>
+<li><code>packrat/</code> - Directory created by <code>packrat</code> that contains details of the R packages and versions used in the analysis.</li>
+<li><code>env-scanpy.yml</code> - conda environment for scanpy</li>
+<li><code>env-velocyto.yml</code> - conda environment for velocyto.py</li>
+<li><code>README.md</code> - README describing the project.</li>
+<li><code>.Rprofile</code> - Custom R profile for the project including set up for <code>packrat</code> and <code>workflowr</code>.</li>
+<li><code>.gitignore</code> - Details of files and directories that are excluded from the repository.</li>
+<li><code>_workflowr.yml</code> - Workflowr configuration file.</li>
+<li><code>phd-thesis-analysis.Rproj</code> - RStudio project file.</li>
+</ul>
+</div>
+<div id="installing-r-packages" class="section level1">
+<h1>Installing R packages</h1>
+<p>R Packages and dependencies for this project are managed using <a href="https://rstudio.github.io/packrat/" title="Packrat"><code>packrat</code></a>. This should allow you to install and use the same package versions as we have used for the analysis. <code>packrat</code> should automatically take care of this process for you the first time that you open R in the project directory. If for some reason this does not happen you may need to run the following commands:</p>
+<pre class="r"><code>install.packages(&quot;packrat&quot;)
+packrat::restore()</code></pre>
+<p>Note that a clean install of all the required packages can take a significant amount of time when the project is first opened.</p>
+</div>
+<div id="setting-up-python-environments" class="section level1">
+<h1>Setting up Python environments</h1>
+<p>The PAGA and cell velocity parts of the analysis require the scanpy and velocyto Python packages. I have used <code>conda</code> to manage environments for these packages. If you have <code>conda</code> installed you can set up these environments by running the following commands:</p>
+<pre class="bash"><code>conda env create -f env-scanpy.yml
+conda env create -f env-velocyto.yml</code></pre>
+<p>The environments can then be activated using <code>conda</code>:</p>
+<pre class="bash"><code># To use scanpy
+conda activate scanpy
+# To use velocyto
+conda activate velocyto</code></pre>
+</div>
+<div id="data" class="section level1">
+<h1>Getting the data</h1>
+<p>In this project I have used the first batch of kidney organoid samples included in GEO accession number <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE114802" title="GEO">GSE114802</a>. The GEO entry contains processed expression matrices from Cell Ranger but for this analysis I started with the raw FASTQ files which can be downloaded from SRA accession <a href="https://www.ncbi.nlm.nih.gov/sra?term=SRP148773" title="SRA">SRP148773</a>. Some pre-processing of the dataset was done on the command line to produce datasets in a form suitable for statistical analysis in R. These steps are described on the methods page and examples of commands for these steps are provided in the <code>scripts</code> directory. If you don’t want to perform these steps yourself you can download the processed data from this <a href="https://melbourne.figshare.com/collections/PhD_thesis_analysis_data/4439804" title="Figshare">Figshare repository</a>. This repository also contains intermediate files from the statistical analysis.</p>
+<p>Once the processed data has been has been produced or downloaded it needs to be placed in the correct location. The analysis code assumes the following directory structure inside the <code>data/</code> directory:</p>
+<ul>
+<li><code>alevin/</code> - Expression matrices produced by Alevin
+<ul>
+<li><code>Org1/</code> - Alevin output for Organoid 1
+<ul>
+<li><code>quants_mat.gz</code> - Expression matrix</li>
+<li><code>quants_mat_cols.txt</code> - Column labels for expression matrix</li>
+<li><code>quants_mat_rows.txt</code> - Row labels for expression matrix</li>
+</ul></li>
+<li><code>Org2/</code> - Alevin output for Organoid 2 (same files as Org1)</li>
+<li><code>Org3/</code> - Alevin output for Organoid 3 (same files as Org1)</li>
+</ul></li>
+<li><code>cellranger/</code> - Output from the Cell Ranger pipeline
+<ul>
+<li><code>barcodes.tsv.gz</code> - Unfiltered list of droplet barcodes</li>
+<li><code>features.tsv.gz</code> - List of annotated features in the dataset</li>
+<li><code>filterered_barcodes.tsv.gz</code> Filtered list of droplet barcodes</li>
+<li><code>matrix.mtx.gz</code> - Unfiltered expression matrix</li>
+</ul></li>
+<li><code>processed/</code> - Intermediate files produced during the statistical analysis. This will be produced as code in the R Markdown files is run so aren’t required to run the analysis. Files are numbered according to the document that produces them.
+<ul>
+<li><code>01-selected.Rds</code> - <code>SingleCellExperiment</code> object containing selected cells</li>
+<li><code>01B-alevin.Rds</code> - <code>SingleCellExperiment</code> object containing the dataset produced by Alevin</li>
+<li><code>02-filtered.Rds</code> - <code>SingleCellExperiment</code> object following quality control</li>
+<li><code>03-clustered.Rds</code> - <code>SingleCellExperiment</code> with cluster labels</li>
+<li><code>03-seurat.Rds</code> - <code>seurat</code> object used during clustering analysis</li>
+<li><code>03-clustered-sel.loom</code> - <code>Loom</code> file containing genes selected for clustering and used for PAGA analysis</li>
+<li><code>04-markers.Rds</code> - <code>SingleCellExperiment</code> object following marker gene detection.</li>
+<li><code>04-DGEGLM.Rds</code> - <code>DGEGLM</code> object used for edgeR differential expression analysis</li>
+<li><code>05-paga.loom</code> - <code>Loom</code> file with results from PAGA analysis</li>
+<li><code>06-spliced.Rds</code> - Spliced expression matrix produced by velocyto</li>
+<li><code>06-unspliced.Rds</code> - Unspliced expression matrix produced by velocyto</li>
+<li><code>06-tSNE-embedding.Rds</code> - t-SNE cell velocity embedding from velocyto</li>
+<li><code>06-umap-embedding.Rds</code> - UMAP cell velocity embedding from velocyto</li>
+</ul></li>
+<li><code>published/</code> - Results from the previously published analysis of this dataset
+<ul>
+<li><code>cluster_assignments.csv</code> - Cell cluster assignments from published analysis</li>
+</ul></li>
+<li><code>references/</code> - References mentioned during the analysis and on the website
+<ul>
+<li><code>references.bib</code> - BibTex file of references</li>
+</ul></li>
+<li><code>velocyto/</code> - Spliced and unspliced quantification produced by velocyto.py
+<ul>
+<li><code>Org1.loom</code> - Loom file produced by velocyto for Organoid 1</li>
+<li><code>Org2.loom</code> - Loom file produced by velocyto for Organoid 2</li>
+<li><code>Org3.loom</code> - Loom file produced by velocyto for Organoid 3</li>
+</ul></li>
+</ul>
+</div>
+<div id="running-the-analysis" class="section level1">
+<h1>Running the analysis</h1>
+<p>The analysis directory contains the following analysis files:</p>
+<ul>
+<li><code>01-preprocessing.html</code> - Reading of datasets produced using Cell Ranger, comparison of droplet selection methods, annotation of the dataset.</li>
+<li><code>01B-alevin.html</code> - Comparison of the alignment-based dataset from Cell Ranger with the same data processed using the Alevin method in Salmon.</li>
+<li><code>02-quality-control.html</code> - Selection of high-quality cells and removal of uninformative genes.</li>
+<li><code>03-clustering.html</code> - Clustering using the Seurat package with a comparison of methods for gene selection.</li>
+<li><code>04-marker-genes.html</code> - Marker gene detection for each cluster using edgeR.</li>
+<li><code>05-paga.html</code> - Partition-based graph abstraction using the scanpy Python package with visualisation in R.</li>
+<li><code>06-velocyto.html</code> - Cell velocity estimates using the veloctyo package.</li>
+<li><code>90-methods.html</code> - Description of methods used during the analysis.</li>
+</ul>
+<p>As indicated by the numbering they should be run in this order. If you want to rerun the entire analysis this can be easily done using <code>workflowr</code>.</p>
+<pre class="r"><code>workflowr::wflow_build(republish = TRUE)</code></pre>
+<p>It is important to consider the computer and environment you are using before doing this. Running this analysis from scratch requires a considerable amount of time, disk space and memory. Some stages of the analysis also assume that multiple (up to 10) cores are available for processing. If you have fewer cores available you will need to change the following line in the relevant files and provide the number of cores that are available for use.</p>
+<pre class="r"><code>bpparam &lt;- MulticoreParam(workers = 10)</code></pre>
+<p>It is also possible to run individual stages of the analysis, either by providing the names of the file you want to run to <code>workflowr::wflow_build()</code> or by manually knitting the document (for example using the ‘Knit’ button in RStudio).</p>
+<div id="caching" class="section level2">
+<h2>Caching</h2>
+<p>To avoid having to repeatably re-run long running sections of the analysis I have turned on caching in the analysis documents. However, this comes at a tradeoff with disk space, useability and (potentially but unlikely if careful) reproducibility. In most cases this should not be a problem but it is something to be aware of. In particular there is a incompatibilty with caching and <code>workflowr</code> that can cause images to not appear in the resulting HTML files (see this <a href="https://github.com/jdblischak/workflowr/issues/113" title="Workflowr caching issue">GitHub issue</a> for more details). If you have already run part of the analysis (and therefore have a cache) and want to rerun a document the safest option is the use the RStudio ‘Knit’ button.</p>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

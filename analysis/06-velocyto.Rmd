@@ -1,5 +1,5 @@
 ---
-title: "Velocyto"
+title: "Cell velocity"
 ---
 
 ```{r knitr, include = FALSE}

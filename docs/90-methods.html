@@ -400,6 +400,9 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="getting-started.html">Getting started</a>
+    </li>
+    <li>
       <a href="01-preprocessing.html">Pre-processing</a>
     </li>
     <li>
@@ -418,22 +421,31 @@ div.tocify {
       <a href="05-paga.html">PAGA</a>
     </li>
     <li>
-      <a href="06-velocyto.html">Velocyto</a>
+      <a href="06-velocyto.html">Cell velocity</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Reports
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="cellranger_web_summary.html">Cell Ranger</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="methods.html">Methods</a>
-</li>
-<li>
-  <a href="about.html">About</a>
-</li>
-<li>
-  <a href="license.html">License</a>
+  <a href="90-methods.html">Methods</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="license.html">License</a>
+</li>
+<li>
   <a href="https://github.com/lazappi/phd-thesis-analysis">
     <span class="fa fa-github"></span>
      
@@ -468,7 +480,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-03-05</p>
+<p><strong>Last updated:</strong> 2019-03-20</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -492,7 +504,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/1b07d7240da1e83c1017997ebeedb75d8f3f1907" target="_blank">1b07d72</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/6b329bb902feeca02e01ffdd47526938c6764820" target="_blank">6b329bb</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -515,41 +527,8 @@ Ignored files:
     Ignored:    packrat/src/
 
 Untracked files:
-    Untracked:  output/05-paga/parameters.json
-    Untracked:  output/06-velocyto/parameters.json
-    Untracked:  output/90-methods/
-    Untracked:  workflowr-build.e2538443
-    Untracked:  workflowr-build.e2545370
-    Untracked:  workflowr-build.o2538443
-    Untracked:  workflowr-build.o2545370
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
-    Modified:   env-velocyto.yml
-    Modified:   output/01-preprocessing/parameters.json
-    Modified:   output/01B-alevin/alevin-comparison.pdf
-    Modified:   output/01B-alevin/parameters.json
-    Modified:   output/02-quality-control/parameters.json
-    Modified:   output/02-quality-control/qc-thresholds.pdf
-    Modified:   output/02-quality-control/qc-validation.pdf
-    Modified:   output/03-clustering/cluster-comparison.pdf
-    Modified:   output/03-clustering/cluster-validation.pdf
-    Modified:   output/03-clustering/cluster_assignments.tsv.gz
-    Modified:   output/03-clustering/cluster_expression.tsv.gz
-    Modified:   output/03-clustering/gene-selection.pdf
-    Modified:   output/03-clustering/parameters.json
-    Modified:   output/03-clustering/resolution-selection.pdf
-    Modified:   output/04-marker-genes/de-results.pdf
-    Modified:   output/04-marker-genes/de_genes.xlsx
-    Modified:   output/04-marker-genes/parameters.json
-    Modified:   output/05-paga/cell_edges.csv
-    Modified:   output/05-paga/cell_embedding.csv
-    Modified:   output/05-paga/cluster_edges.csv
-    Modified:   output/05-paga/cluster_embedding.csv
-    Modified:   output/05-paga/cluster_tree_edges.csv
-    Modified:   output/05-paga/paga-results.pdf
-    Modified:   output/06-velocyto/cell-velocity.pdf
-    Modified:   scripts/build.pbs
+    Untracked:  DGEList.Rds
+    Untracked:  scripts/build.pbs
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -583,7 +562,24 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/1b07d7240da1e83c1017997ebeedb75d8f3f1907/analysis/90-methods.Rmd" target="_blank">1b07d72</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/6b329bb902feeca02e01ffdd47526938c6764820/analysis/90-methods.Rmd" target="_blank">6b329bb</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+<td style="text-align:left;">
+Tidy up website
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/90-methods.html" target="_blank">2693e97</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -678,8 +674,8 @@ versions &lt;- list(
     viridis        = packageVersion(&quot;viridis&quot;),
     workflowr      = packageVersion(&quot;workflowr&quot;)
 )</code></pre>
-<div id="preprocessing" class="section level1">
-<h1>Preprocessing</h1>
+<div id="pre-processing" class="section level1">
+<h1>Pre-processing</h1>
 <p>The Cell Ranger pipeline (v3.0.1) <span class="citation">(Zheng et al. 2017)</span> was used to perform sample demultiplexing, barcode processing and single-cell gene counting. Briefly,samples were demultiplexed to produce a pair of FASTQ files for each sample. Reads containing sequence information were aligned using the reference provided with Cell Ranger (v3.0.0) based on the GRCh38 reference genome and ENSEMBL gene annotation (v93). PCR duplicates were removed by selecting unique combinations of cell barcodes, unique molecular identifiers and gene ids with the final results being a gene expression matrix that was used for further analysis. The three samples were aggregated using Cell Ranger with no normalisation and treated as a single dataset containing 945038 droplets. The R statistical programming language (v3.5.0) <span class="citation">(R Core Team 2018)</span> was used for further analysis. Count data was read into R and used to construct a SingleCellExperiment object (v1.4.1) <span class="citation">(A. Lun and Risso 2019)</span>.</p>
 <div id="droplet-selection" class="section level2">
 <h2>Droplet selection</h2>
@@ -702,7 +698,7 @@ versions &lt;- list(
 </div>
 <div id="graph-based-clustering" class="section level2">
 <h2>Graph-based clustering</h2>
-<p>Seurat was used to perform graph-based clustering. PCA was performed using the selected genes and the first 15 principal components were used to construct a shared nearest neighbour graph using the overlap between the 30 nearest neighbours of each cell. Louvain modularity optimisation <span class="citation">(Blondel et al. 2008)</span> was used to partition this graph with a resolution parameter between 0 and 1. Clustering tree visualisations <span class="citation">(Zappia and Oshlack 2018)</span> were produced using the clustree package (v0.2.2.9001) showing the expression of previously identified marker genes. By inspecting these trees a resolution of 0.4 which chosen which produced 13 clusters. To compare these cluster to those that had been previously published the Jaccard index was calculated between pairs of clusters from each analysis and visualised as a heatmap.</p>
+<p>Seurat was used to perform graph-based clustering. PCA was performed using the selected genes and the first 15 principal components were used to construct a shared nearest neighbour graph using the overlap between the 30 nearest neighbours of each cell. Louvain modularity optimisation <span class="citation">(Blondel et al. 2008)</span> was used to partition this graph with a resolution parameter between 0 and 1. Clustering tree visualisations <span class="citation">(Zappia and Oshlack 2018)</span> were produced using the clustree package (v0.3.0) showing the expression of previously identified marker genes. By inspecting these trees a resolution of 0.4 which chosen which produced 13 clusters. To compare these cluster to those that had been previously published the Jaccard index was calculated between pairs of clusters from each analysis and visualised as a heatmap.</p>
 </div>
 </div>
 <div id="marker-genes" class="section level1">
@@ -875,7 +871,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-03-05                  
+ date     2019-03-20                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package     * version date       lib source        
@@ -942,7 +938,7 @@ knitr::kable(data.frame(
    sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.5.0)
    stringi       1.2.4   2018-07-20 [1] CRAN (R 3.5.0)
    stringr     * 1.3.1   2018-05-10 [1] CRAN (R 3.5.0)
-   testthat      2.0.0   2017-12-13 [5] CRAN (R 3.5.0)
+   testthat      2.0.1   2018-10-13 [4] CRAN (R 3.5.0)
    tibble      * 2.0.1   2019-01-12 [1] CRAN (R 3.5.0)
    tidyr       * 0.8.2   2018-10-28 [1] CRAN (R 3.5.0)
    tidyselect    0.2.5   2018-10-11 [1] CRAN (R 3.5.0)

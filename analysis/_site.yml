@@ -7,6 +7,8 @@ navbar:
       href: index.html
     - text: "Analysis"
       menu:
+        - text: "Getting started"
+          href: getting-started.html
         - text: "Pre-processing"
           href: 01-preprocessing.html
         - text: "Alevin"
@@ -19,15 +21,17 @@ navbar:
           href: 04-marker-genes.html
         - text: "PAGA"
           href: 05-paga.html
-        - text: "Velocyto"
+        - text: "Cell velocity"
           href: 06-velocyto.html
+    - text: "Reports"
+      menu:
+        - text: "Cell Ranger"
+          href: cellranger_web_summary.html
     - text: "Methods"
-      href: methods.html
-    - text: "About"
-      href: about.html
+      href: 90-methods.html
+  right:
     - text: "License"
       href: license.html
-  right:
     - icon: fa-github
       href: https://github.com/lazappi/phd-thesis-analysis
 output:
