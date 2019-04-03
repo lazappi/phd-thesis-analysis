@@ -12,6 +12,8 @@ bibliography:
 knitr::include_graphics("organoid-black.png")
 ```
 
+[![DOI](https://zenodo.org/badge/164960366.svg)](https://zenodo.org/badge/latestdoi/164960366)
+
 This website displays the analysis code and results for the analysis chapter of
 my PhD thesis. In this chapter I reanalyse a previously published kidney
 organoid scRNA-seq dataset [@Phipson2019-er; @Combes2019-uv], focusing on the 
@@ -49,7 +51,7 @@ Citations
 This website and the analysis code can be cited as:
 
 > Zappia, Luke. PhD thesis analysis. 2019.
-> DOI:
+> DOI: [10.5281/zenodo.2622384][zenodo]
 
 This data files associated with this analysis can be cited as:
 
@@ -65,6 +67,7 @@ References
 <div id="refs"></div>
 
 [figshare]: https://melbourne.figshare.com/collections/PhD_thesis_analysis_data/4439804 "Figshare"
+[zenodo]: https://doi.org/10.5281/zenodo.2622384 "Zenodo"
 
 ```{r session-info, eval = FALSE}
 devtools::session_info()

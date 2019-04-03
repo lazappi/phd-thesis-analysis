@@ -1,5 +1,7 @@
 # PhD Thesis Analysis
 
+[![DOI](https://zenodo.org/badge/164960366.svg)](https://zenodo.org/badge/latestdoi/164960366)
+
 This repository contains code and output for the analysis in the analysis
 chapter of my PhD thesis.
 
