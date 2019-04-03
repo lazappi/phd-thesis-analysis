@@ -141,7 +141,7 @@ Traditional Cell Ranger
 =======================
 
 The version of Cell Ranger we have used here selects cells using a modified
-version of the `emptyDrops` method (see below) but older versions used an
+version of the `EmptyDrops` method (see below) but older versions used an
 alternative approach by calculating the 99th percentile of the total number
 of counts in top given expected number of cells and selecting droplets that
 had at least 10 percent of this many counts. For comparison purposes we will
@@ -176,7 +176,7 @@ cells.
 Empty drops
 ===========
 
-We will now look at identifying which droplets to select using the `emptyDrops`
+We will now look at identifying which droplets to select using the `EmptyDrops`
 method. This method tests whether the composition of a droplet is significantly
 different from the ambient RNA in the sample which is obtained by pooling the
 empty droplets. Droplets with very large counts are also automatically retained.
@@ -190,7 +190,7 @@ emp_drops <- emptyDrops(counts(raw), lower = empty_thresh, niters = emp_iters,
                         test.ambient = TRUE, BPPARAM = bpparam)
 ```
 
-`emptyDrops` calculates p-values using a permutation approach. Let's check that
+`EmptyDrops` calculates p-values using a permutation approach. Let's check that
 we are usually a sufficient number of iterations. If there are any droplets
 that have non-significant p-values but are limited by the number of permuations
 the number should be increased.
@@ -209,7 +209,7 @@ colData(raw)$EmpDropsFilt    <- is_cell
 table(Limited = emp_drops$Limited, Significant = is_cell)
 ```
 
-Another way to check the `emptyDrops` results is to look at the droplets below
+Another way to check the `EmptyDrops` results is to look at the droplets below
 our empty threshold. We are assuming that these droplets only contain ambient
 RNA and therefore the null hypothesis should be true and the distribution of
 p-values should be approximately uniform.
@@ -229,7 +229,7 @@ Peaks near zero would tell us that not all of the droplets below the threshold
 are truly empty and that we should lower it. 
 
 We can also plot the negative log-probability against the total counts to see
-which droplets `emptyDrops` has selected.
+which droplets `EmptyDrops` has selected.
 
 ```{r empty-drops-plot}
 colData(raw) %>%
@@ -259,7 +259,7 @@ plot:
 plot_data <- list(
     "Cell Ranger"    = colData(raw)$Cell[colData(raw)$DefaultFilt],
     "Cell Ranger v3" = colData(raw)$Cell[colData(raw)$CellRangerFilt],
-    "emptyDrops"     = colData(raw)$Cell[colData(raw)$EmpDropsFilt]
+    "EmptyDrops"     = colData(raw)$Cell[colData(raw)$EmpDropsFilt]
 )
 
 upset(fromList(plot_data), order.by = "freq",
@@ -267,18 +267,18 @@ upset(fromList(plot_data), order.by = "freq",
 ```
 
 We can see that most of the cells are identified by all methods. A large number
-of cells are also identified by the new Cell Ranger and `emptyDrops` methods.
+of cells are also identified by the new Cell Ranger and `EmptyDrops` methods.
 These are likely to be those cells that fall below the total counts threshold
-selected by the traditional Cell Ranger algorithm. Our use of the `emptyDrops`
+selected by the traditional Cell Ranger algorithm. Our use of the `EmptyDrops`
 algorithm has identified even more cells than Cell Ranger v3 but there are
-very few cells that Cell Ranger identifed which `emptyDrops` didn't.
+very few cells that Cell Ranger identifed which `EmptyDrops` didn't.
 
 Selection
 =========
 
 We are going to perform further quality control of these cells anyway so at
 this stage we will keep those that were selected by either Cell Ranger v3 or
-`emptyDrops`.
+`EmptyDrops`.
 
 ```{r select}
 selected <- raw[, colData(raw)$CellRangerFilt | colData(raw)$EmpDropsFilt]
@@ -316,25 +316,6 @@ Figure
 ======
 
 ```{r figure}
-# plot_data <- colData(raw) %>%
-#     as.data.frame() %>%
-#     select(Cell, Sample, Total = BarcodeTotal, Kept = DefaultFilt) %>%
-#     group_by(Sample) %>%
-#     mutate(Rank = rank(-Total)) %>%
-#     arrange(Sample, Rank)
-# 
-# default_plot <- ggplot(plot_data, aes(x = Rank, y = Total)) +
-#     geom_point(shape = 1, aes(colour = Kept)) +
-#     scale_x_log10(labels = scales::number) +
-#     scale_y_log10(labels = scales::number) +
-#     scale_colour_manual(values = c("black", "#8DC63F"),
-#                         labels = c("Empty", "Cell")) +
-#     facet_wrap(~ Sample, nrow = 1, labeller = label_both) +
-#     ylab("Total counts") +
-#     ggtitle("Cell Ranger") +
-#     theme_minimal() +
-#     theme(legend.title = element_blank())
-
 plot_data <- colData(raw) %>%
     as.data.frame() %>%
     select(Cell, Kept = EmpDropsFilt, Rank = BarcodeRank,
@@ -362,7 +343,7 @@ emp_plot <- plot_data %>%
     scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
     scale_colour_manual(values = c("black", "#EC008C"),
                         labels = c("Empty", "Cell")) +
-    ggtitle("emptyDrops droplet selection") +
+    ggtitle("EmptyDrops droplet selection") +
     ylab("Total counts") +
     theme_minimal() +
     theme(legend.position = "bottom",
@@ -375,32 +356,6 @@ ggsave(here::here("output", DOCNAME, "droplet-selection.png"), emp_plot,
        width = 7, height = 5, scale = 1)
 
 emp_plot
-
-# cr_plot <- bc_data %>%
-#     filter(Total > 0) %>%
-#     ggplot(aes(x = Rank, y = Total)) +
-#     geom_point(shape = 1, aes(colour = Kept)) +
-#     scale_x_log10(labels = scales::number, breaks = 10 ^ seq(0, 6)) +
-#     scale_y_log10(labels = scales::number, breaks = 10 ^ seq(0, 5)) +
-#     scale_colour_manual(values = c("black", "#F47920"),
-#                         labels = c("Empty", "Cell")) +
-#     ggtitle("Cell Ranger v3") +
-#     ylab("Total counts") +
-#     theme_minimal() +
-#     theme(legend.position = "bottom",
-#           legend.title = element_blank())
-# 
-# p1 <- plot_grid(emp_plot, cr_plot, nrow = 1, labels = c("B", "C"))
-# 
-# fig <- plot_grid(default_plot, p1, ncol = 1, rel_heights = c(0.5, 1),
-#                  labels = c("A", ""))
-# 
-# ggsave(here::here("output", DOCNAME, "droplet-selection.pdf"), fig,
-#        width = 7, height = 6, scale = 2)
-# ggsave(here::here("output", DOCNAME, "droplet-selection.png"), fig,
-#        width = 7, height = 6, scale = 2)
-# 
-# fig
 ```
 
 ```{r fig-comp, collapse = TRUE, fig.show = "hide"}
@@ -409,15 +364,14 @@ plot_data <- colData(raw) %>%
     select(Name             = Cell,
            `Cell Ranger`    = DefaultFilt,
            `Cell Ranger v3` = CellRangerFilt,
-           emptyDrops       = `EmpDropsFilt`,
+           EmptyDrops       = `EmpDropsFilt`,
            `Total counts`   = BarcodeTotal) %>%
     mutate(`Cell Ranger`    = if_else(`Cell Ranger`,    1L, 0L),
            `Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
-           emptyDrops       = if_else(emptyDrops,       1L, 0L)) %>%
+           EmptyDrops       = if_else(EmptyDrops,       1L, 0L)) %>%
     mutate(`Total counts`   = log10(`Total counts`))
 
 upset(plot_data, order.by = "freq",
-      #boxplot.summary = "Total counts",
       sets.x.label = "Number of cells",
       text.scale = c(2, 1.6, 2, 1.3, 2, 3),
       matrix.color = "#7A52C7",
@@ -455,12 +409,12 @@ params <- list(
     list(
         Parameter = "emp_iters",
         Value = emp_iters,
-        Description = "Number of iterations for emptyDrops p-values"
+        Description = "Number of iterations for EmptyDrops p-values"
     ),
     list(
         Parameter = "emp_fdr",
         Value = emp_fdr,
-        Description = "FDR cutoff for emptyDrops"
+        Description = "FDR cutoff for EmptyDrops"
     ),
     list(
         Parameter = "n_default",
@@ -475,7 +429,7 @@ params <- list(
     list(
         Parameter = "n_empdrops",
         Value = sum(colData(raw)$EmpDropsFilt),
-        Description = "Number of cells selected by the emptyDrops method"
+        Description = "Number of cells selected by the EmptyDrops method"
     ),
     list(
         Parameter = "n_cells",

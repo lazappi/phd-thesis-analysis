@@ -696,8 +696,8 @@ exp_plot <- ggplot(plot_data,
     scale_colour_manual(values = c("#EC008C", "#00ADEF"),
                         labels = c("Removed", "Kept")) +
     ggtitle("Counts thresholds") +
-    xlab("Total counts (log10)") +
-    ylab("Total features (log10)") +
+    xlab(expression("Total counts ("*log["10"]*")")) +
+    ylab(expression("Total features ("*log["10"]*")")) +
     theme_minimal() +
     theme(legend.position = "bottom",
           legend.title = element_blank())
@@ -815,12 +815,12 @@ plot_list <- list(
         ggtitle("Cell cycle phase"),
     ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `Total counts (log10)`)) +
         scale_colour_viridis_c() +
-        ggtitle("Total counts (log10)") +
+        ggtitle(expression("Total counts ("*log["10"]*")")) +
         guides(colour = guide_colourbar(barwidth = 10)),
     ggplot(plot_data,
            aes(x = TSNE1, y = TSNE2, colour = `Total features (log10)`)) +
         scale_colour_viridis_c() +
-        ggtitle("Total features (log10)") +
+        ggtitle(expression("Total features ("*log["10"]*")")) +
         guides(colour = guide_colourbar(barwidth = 10)),
     ggplot(plot_data, aes(x = TSNE1, y = TSNE2, colour = `% Mitochondrial`)) +
         scale_colour_viridis_c() +

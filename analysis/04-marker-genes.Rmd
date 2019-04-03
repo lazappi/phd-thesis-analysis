@@ -494,7 +494,7 @@ bcv_plot <- ggplot(plot_data, aes(x = AvgLogCPM)) +
                colour = "#EC008C", size = 1) +
     geom_line(aes(y = sqrt(Trended)), colour = "#00ADEF", size = 1) +
     ggtitle("edgeR biological coefficient of variation") +
-    xlab("Average log CPM") +
+    xlab(expression("Average counts per million ("*log["2"]*")")) +
     ylab("Biological coefficient of variation") +
     theme_minimal()
 

@@ -2,11 +2,11 @@
   {
     "Parameter": ["n_cells"],
     "Value": [10423],
-    "Description": ["Number of cells in Alevin dataset"]
+    "Description": ["Number of cells in alevin dataset"]
   },
   {
     "Parameter": ["n_genes"],
     "Value": [37247],
-    "Description": ["Number of genes in Alevin dataset"]
+    "Description": ["Number of genes in alevin dataset"]
   }
 ]

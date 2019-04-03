@@ -285,6 +285,9 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Home</a>
 </li>
+<li>
+  <a href="getting-started.html">Getting started</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Analysis
@@ -292,9 +295,6 @@ $(document).ready(function () {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="getting-started.html">Getting started</a>
-    </li>
     <li>
       <a href="01-preprocessing.html">Pre-processing</a>
     </li>
@@ -365,7 +365,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-03-20</p>
+<p><strong>Last updated:</strong> 2019-04-03</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -389,7 +389,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/20bd9c52271d21d74363dd31694f4a0f46cae2f2" target="_blank">20bd9c5</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/5870e6e191cf7f91714b40501fc63645582ed59a" target="_blank">5870e6e</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -399,7 +399,10 @@ Ignored files:
     Ignored:    ._.DS_Store
     Ignored:    analysis/cache/
     Ignored:    build-logs/
-    Ignored:    data/
+    Ignored:    data/alevin/
+    Ignored:    data/cellranger/
+    Ignored:    data/processed/
+    Ignored:    data/published/
     Ignored:    output/.DS_Store
     Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
@@ -413,7 +416,21 @@ Ignored files:
 
 Untracked files:
     Untracked:  DGEList.Rds
+    Untracked:  output/90-methods/package-versions.json
     Untracked:  scripts/build.pbs
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01-preprocessing/selection-comparison.pdf
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -447,7 +464,41 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/20bd9c52271d21d74363dd31694f4a0f46cae2f2/analysis/getting-started.Rmd" target="_blank">20bd9c5</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/5870e6e191cf7f91714b40501fc63645582ed59a/analysis/getting-started.Rmd" target="_blank">5870e6e</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-04-03
+</td>
+<td style="text-align:left;">
+Adjust figures and fix names
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/33ac14f1f1aa822355526e1696a4b10e25e79226/analysis/getting-started.Rmd" target="_blank">33ac14f</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+<td style="text-align:left;">
+Tidy up website
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/33ac14f1f1aa822355526e1696a4b10e25e79226/docs/getting-started.html" target="_blank">33ac14f</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -509,7 +560,7 @@ conda activate velocyto</code></pre>
 <p>In this project I have used the first batch of kidney organoid samples included in GEO accession number <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE114802" title="GEO">GSE114802</a>. The GEO entry contains processed expression matrices from Cell Ranger but for this analysis I started with the raw FASTQ files which can be downloaded from SRA accession <a href="https://www.ncbi.nlm.nih.gov/sra?term=SRP148773" title="SRA">SRP148773</a>. Some pre-processing of the dataset was done on the command line to produce datasets in a form suitable for statistical analysis in R. These steps are described on the methods page and examples of commands for these steps are provided in the <code>scripts</code> directory. If you don’t want to perform these steps yourself you can download the processed data from this <a href="https://melbourne.figshare.com/collections/PhD_thesis_analysis_data/4439804" title="Figshare">Figshare repository</a>. This repository also contains intermediate files from the statistical analysis.</p>
 <p>Once the processed data has been has been produced or downloaded it needs to be placed in the correct location. The analysis code assumes the following directory structure inside the <code>data/</code> directory:</p>
 <ul>
-<li><code>alevin/</code> - Expression matrices produced by Alevin
+<li><code>alevin/</code> - Expression matrices produced by alevin
 <ul>
 <li><code>Org1/</code> - Alevin output for Organoid 1
 <ul>
@@ -530,7 +581,7 @@ conda activate velocyto</code></pre>
 <li><code>processed/</code> - Intermediate files produced during the statistical analysis. This will be produced as code in the R Markdown files is run so aren’t required to run the analysis. Files are numbered according to the document that produces them.
 <ul>
 <li><code>01-selected.Rds</code> - <code>SingleCellExperiment</code> object containing selected cells</li>
-<li><code>01B-alevin.Rds</code> - <code>SingleCellExperiment</code> object containing the dataset produced by Alevin</li>
+<li><code>01B-alevin.Rds</code> - <code>SingleCellExperiment</code> object containing the dataset produced by alevin</li>
 <li><code>02-filtered.Rds</code> - <code>SingleCellExperiment</code> object following quality control</li>
 <li><code>03-clustered.Rds</code> - <code>SingleCellExperiment</code> with cluster labels</li>
 <li><code>03-seurat.Rds</code> - <code>seurat</code> object used during clustering analysis</li>
@@ -564,7 +615,7 @@ conda activate velocyto</code></pre>
 <p>The analysis directory contains the following analysis files:</p>
 <ul>
 <li><code>01-preprocessing.html</code> - Reading of datasets produced using Cell Ranger, comparison of droplet selection methods, annotation of the dataset.</li>
-<li><code>01B-alevin.html</code> - Comparison of the alignment-based dataset from Cell Ranger with the same data processed using the Alevin method in Salmon.</li>
+<li><code>01B-alevin.html</code> - Comparison of the alignment-based dataset from Cell Ranger with the same data processed using the alevin method in Salmon.</li>
 <li><code>02-quality-control.html</code> - Selection of high-quality cells and removal of uninformative genes.</li>
 <li><code>03-clustering.html</code> - Clustering using the Seurat package with a comparison of methods for gene selection.</li>
 <li><code>04-marker-genes.html</code> - Marker gene detection for each cluster using edgeR.</li>

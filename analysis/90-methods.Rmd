@@ -151,25 +151,25 @@ Droplet selection
 The droplet selection method in this version of Cell Ranger identified
 `r params$pre$n_cellranger` cell containing droplets. This is more than the
 traditional Cell Ranger approach based on a simple threshold on total counts
-which identified `r params$pre$n_default` cells. The emptyDrops method 
-[@Lun2018-lb] available in the DropletUtils package (v`r versions$DropletUtils`) 
+which identified `r params$pre$n_default` cells. The EmptyDrops method 
+[@Lun2019-wp] available in the DropletUtils package (v`r versions$DropletUtils`) 
 was also applied. Droplets with less than `r params$pre$empty_thresh` total
 counts were used to construct the ambient RNA profile and an FDR threshold of
 less than `r params$pre$emp_fdr` was used to select `r params$pre$n_empdrops` 
-droplets. The droplets selected by either the Cell Ranger v3 method or emptyDrops 
-were kept giving a dataset with `r params$pre$n_cells` cells. Gene annotation 
-information was added from BioMart [@Smedley2015-an] using the biomaRt package
-(v`r versions$biomaRt`) [@Durinck2005-zb] and cells were assigned cell cycle
-scores using the cyclone [@Scialdone2015-rp] function in the scran package
-(v`r versions$scran`) [@Lun2016-mq].
+droplets. The droplets selected by either the Cell Ranger v3 method or
+EmptyDrops were kept giving a dataset with `r params$pre$n_cells` cells. Gene 
+annotation information was added from BioMart [@Smedley2015-an] using the
+biomaRt package (v`r versions$biomaRt`) [@Durinck2005-zb] and cells were
+assigned cell cycle scores using the cyclone [@Scialdone2015-rp] function in the
+scran package (v`r versions$scran`) [@Lun2016-mq].
 
 Alevin
 ------
 
-An alternative quantification was performed using the Alevin method 
-[@Srivastava2018-fy] available as part of the salmon software package
-(v`r versions$salmon`) [@Patro2017-ka]. This produced a dataset with `r 
-params$alevin$n_cells` cells and `r params$alevin$n_genes` genes.
+An alternative quantification was performed using the alevin method 
+[@Srivastava2019-ce] available as part of the salmon software package
+(v`r versions$salmon`) [@Patro2017-ka]. This produced a dataset with
+`r params$alevin$n_cells` cells and `r params$alevin$n_genes` genes.
 
 Quality control
 ===============
@@ -245,7 +245,7 @@ comparing the detected genes to previously published lists of cell type markers.
 Partition-based graph abstraction (PAGA)
 ========================================
 
-Partition-based graph abstraction (PAGA) [@Wolf2017-vq] was performed using the 
+Partition-based graph abstraction (PAGA) [@Wolf2019-fo] was performed using the 
 scanpy library (v`r versions$scanpy`) [@Wolf2018-na] for the Python programming 
 language (v`r versions$python`). A shared nearest neighbour graph was built
 using the same parameters as were used by Seurat and connectivity between the 
@@ -300,7 +300,7 @@ References
 Summary
 =======
 
-Output files
+Output files`
 ------------
 
 This table describes the output files produced by this document. Right click
@@ -310,6 +310,11 @@ and _Save Link As..._ to download the results.
 params <- jsonlite::toJSON(params, pretty = TRUE)
 readr::write_lines(params,
                    here::here("output", DOCNAME, "analysis-parameters.json"))
+
+versions <- purrr::map(versions, as.character)
+versions <- jsonlite::toJSON(versions, pretty = TRUE)
+readr::write_lines(versions,
+                   here::here("output", DOCNAME, "package-versions.json"))
 ```
 
 ```{r output}

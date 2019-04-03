@@ -392,6 +392,9 @@ div.tocify {
         <li>
   <a href="index.html">Home</a>
 </li>
+<li>
+  <a href="getting-started.html">Getting started</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Analysis
@@ -399,9 +402,6 @@ div.tocify {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="getting-started.html">Getting started</a>
-    </li>
     <li>
       <a href="01-preprocessing.html">Pre-processing</a>
     </li>
@@ -480,7 +480,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-03-20</p>
+<p><strong>Last updated:</strong> 2019-04-03</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -504,7 +504,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/20bd9c52271d21d74363dd31694f4a0f46cae2f2" target="_blank">20bd9c5</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/5870e6e191cf7f91714b40501fc63645582ed59a" target="_blank">5870e6e</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -514,7 +514,10 @@ Ignored files:
     Ignored:    ._.DS_Store
     Ignored:    analysis/cache/
     Ignored:    build-logs/
-    Ignored:    data/
+    Ignored:    data/alevin/
+    Ignored:    data/cellranger/
+    Ignored:    data/processed/
+    Ignored:    data/published/
     Ignored:    output/.DS_Store
     Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
@@ -528,7 +531,21 @@ Ignored files:
 
 Untracked files:
     Untracked:  DGEList.Rds
+    Untracked:  output/90-methods/package-versions.json
     Untracked:  scripts/build.pbs
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01-preprocessing/selection-comparison.pdf
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -557,6 +574,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/5870e6e191cf7f91714b40501fc63645582ed59a/analysis/01B-alevin.Rmd" target="_blank">5870e6e</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-04-03
+</td>
+<td style="text-align:left;">
+Adjust figures and fix names
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/33ac14f1f1aa822355526e1696a4b10e25e79226/docs/01B-alevin.html" target="_blank">33ac14f</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+<td style="text-align:left;">
+Tidy up website
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -704,7 +755,7 @@ alevin_paths &lt;- c(
 <pre class="r"><code>bpparam &lt;- BiocParallel::MulticoreParam(workers = 10)</code></pre>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>The standard way to quanitfy 10x Chromium scRNA-seq data is using the Cell Ranger platform that performs traditional alignment to a reference genome and counts the reads overlapping annotated genes. An alternative appraoch is to estimate expression levels directly against the transcriptome. We have done that using an approach designed for scRNA-seq data called Alevin available in the Salmon package. In this document we are going to compare the results of this approach to what we get from Cell Ranger and our previous processing.</p>
+<p>The standard way to quanitfy 10x Chromium scRNA-seq data is using the Cell Ranger platform that performs traditional alignment to a reference genome and counts the reads overlapping annotated genes. An alternative appraoch is to estimate expression levels directly against the transcriptome. We have done that using an approach designed for scRNA-seq data called alevin available in the Salmon package. In this document we are going to compare the results of this approach to what we get from Cell Ranger and our previous processing.</p>
 <pre class="r"><code>if (file.exists(sel_path)) {
     selected &lt;- read_rds(sel_path)
 } else {
@@ -742,9 +793,9 @@ colData(alevin)$BarcodeSample &lt;- paste(
                            &quot;Trad only&quot;, SelBy),
            SelBy = if_else(is.na(total_counts.Trad) &amp;
                                !is.na(total_counts.Alevin),
-                           &quot;Alevin only&quot;, SelBy)) %&gt;%
+                           &quot;alevin only&quot;, SelBy)) %&gt;%
     mutate(SelBy = factor(SelBy,
-                          levels = c(&quot;Both&quot;, &quot;Trad only&quot;, &quot;Alevin only&quot;)))
+                          levels = c(&quot;Both&quot;, &quot;Trad only&quot;, &quot;alevin only&quot;)))
 
 feat_data &lt;- full_join(as.data.frame(rowData(selected)),
                        as.data.frame(rowData(alevin)),
@@ -756,9 +807,9 @@ feat_data &lt;- full_join(as.data.frame(rowData(selected)),
                            &quot;Trad only&quot;, Annot),
            Annot = if_else(is.na(total_counts.Trad) &amp;
                                !is.na(total_counts.Alevin),
-                           &quot;Alevin only&quot;, Annot)) %&gt;%
+                           &quot;alevin only&quot;, Annot)) %&gt;%
     mutate(Annot = factor(Annot,
-                          levels = c(&quot;Both&quot;, &quot;Trad only&quot;, &quot;Alevin only&quot;)))</code></pre>
+                          levels = c(&quot;Both&quot;, &quot;Trad only&quot;, &quot;alevin only&quot;)))</code></pre>
 </div>
 <div id="cell-selection" class="section level1">
 <h1>Cell selection</h1>
@@ -816,12 +867,12 @@ Luke Zappia
 <h2>Standard</h2>
 <pre class="r"><code>plot_data &lt;- cell_data %&gt;%
     mutate(Traditional = total_counts.Trad,
-           Alevin = total_counts.Alevin) %&gt;%
+           alevin = total_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
@@ -875,12 +926,12 @@ Luke Zappia
 <h2>Logged</h2>
 <pre class="r"><code>plot_data &lt;- cell_data %&gt;%
     mutate(Traditional = log10_total_counts.Trad,
-           Alevin = log10_total_counts.Alevin) %&gt;%
+           alevin = log10_total_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
@@ -937,12 +988,12 @@ Luke Zappia
 <h2>Standard</h2>
 <pre class="r"><code>plot_data &lt;- cell_data %&gt;%
     mutate(Traditional = total_features_by_counts.Trad,
-           Alevin = total_features_by_counts.Alevin) %&gt;%
+           alevin = total_features_by_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
@@ -996,12 +1047,12 @@ Luke Zappia
 <h2>Logged</h2>
 <pre class="r"><code>plot_data &lt;- cell_data %&gt;%
     mutate(Traditional = log10_total_features_by_counts.Trad,
-           Alevin = log10_total_features_by_counts.Alevin) %&gt;%
+           alevin = log10_total_features_by_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
@@ -1057,12 +1108,12 @@ Luke Zappia
 <p>Percent counts in top 100 most expressed features.</p>
 <pre class="r"><code>plot_data &lt;- cell_data %&gt;%
     mutate(Traditional = pct_counts_in_top_100_features.Trad,
-           Alevin = pct_counts_in_top_100_features.Alevin) %&gt;%
+           alevin = pct_counts_in_top_100_features.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
@@ -1118,11 +1169,11 @@ Luke Zappia
 <h2>Standard</h2>
 <pre class="r"><code>plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = total_counts.Trad,
-           Alevin = total_counts.Alevin) %&gt;%
+           alevin = total_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional, -1e5),
-           Alevin = replace_na(Alevin, -1e5))
+           alevin = replace_na(alevin, -1e5))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
@@ -1146,6 +1197,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/gene-counts-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-counts-1.png" target="_blank">88dd94a</a>
@@ -1176,11 +1238,11 @@ Luke Zappia
 <h2>Logged</h2>
 <pre class="r"><code>plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = log10_total_counts.Trad,
-           Alevin = log10_total_counts.Alevin) %&gt;%
+           alevin = log10_total_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional, -1),
-           Alevin = replace_na(Alevin, -1))
+           alevin = replace_na(alevin, -1))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
@@ -1204,6 +1266,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/gene-counts-log-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-counts-log-1.png" target="_blank">88dd94a</a>
@@ -1235,11 +1308,11 @@ Luke Zappia
 <h1>Gene cells</h1>
 <pre class="r"><code>plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = n_cells_by_counts.Trad,
-           Alevin = n_cells_by_counts.Alevin) %&gt;%
+           alevin = n_cells_by_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional, -500),
-           Alevin = replace_na(Alevin, -500))
+           alevin = replace_na(alevin, -500))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
@@ -1263,6 +1336,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/gene-cells-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-cells-1.png" target="_blank">88dd94a</a>
@@ -1295,11 +1379,11 @@ Luke Zappia
 <h2>Standard</h2>
 <pre class="r"><code>plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = mean_counts.Trad,
-           Alevin = mean_counts.Alevin) %&gt;%
+           alevin = mean_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional, -5),
-           Alevin = replace_na(Alevin, -5))
+           alevin = replace_na(alevin, -5))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
@@ -1323,6 +1407,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/gene-means-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-means-1.png" target="_blank">88dd94a</a>
@@ -1353,11 +1448,11 @@ Luke Zappia
 <h2>Logged</h2>
 <pre class="r"><code>plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = log10_mean_counts.Trad,
-           Alevin = log10_mean_counts.Alevin) %&gt;%
+           alevin = log10_mean_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional, -0.1),
-           Alevin = replace_na(Alevin, -0.1))
+           alevin = replace_na(alevin, -0.1))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;red&quot;) +
     geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
@@ -1381,6 +1476,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/gene-means-log-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/gene-means-log-1.png" target="_blank">88dd94a</a>
@@ -1449,6 +1555,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/counts-zeros-1.png" target="_blank">2693e97</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/88dd94ac0524f327f15cf64e5e28a658b96adbc7/docs/figure/01B-alevin.Rmd/counts-zeros-1.png" target="_blank">88dd94a</a>
 </td>
 <td style="text-align:left;">
@@ -1478,11 +1595,11 @@ Luke Zappia
 <pre class="r"><code>plot_data &lt;- cell_data %&gt;%
     select(BarcodeSample,
            `Cell Ranger v3` = CellRangerFilt,
-           emptyDrops       = EmpDropsFilt,
-           Alevin           = AlevinFilt) %&gt;%
+           EmptyDrops       = EmpDropsFilt,
+           alevin           = AlevinFilt) %&gt;%
     mutate(`Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
-           emptyDrops       = if_else(emptyDrops,       1L, 0L),
-           Alevin           = if_else(Alevin,           1L, 0L))
+           EmptyDrops       = if_else(EmptyDrops,       1L, 0L),
+           alevin           = if_else(alevin,           1L, 0L))
 
 upset(plot_data, order.by = &quot;freq&quot;,
       sets.x.label = &quot;Number of cells&quot;,
@@ -1495,13 +1612,13 @@ comp_plot &lt;- grid.grab()
 
 plot_data &lt;- cell_data %&gt;%
     mutate(Traditional = total_counts.Trad,
-           Alevin = total_counts.Alevin) %&gt;%
+           alevin = total_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
 counts_plot &lt;- ggplot(plot_data,
-                      aes(x = Traditional, y = Alevin, colour = SelBy)) +
+                      aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;#7A52C7&quot;) +
     geom_smooth(data = filter(plot_data, SelBy == &quot;Both&quot;),
@@ -1509,31 +1626,31 @@ counts_plot &lt;- ggplot(plot_data,
     scale_x_log10(labels = scales::number) +
     scale_y_log10(labels = scales::number) +
     scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;),
-                        labels = c(&quot;Both&quot;, &quot;Alignment based only&quot;,
-                                   &quot;Alevin only&quot;)) +
+                        labels = c(&quot;Both&quot;, &quot;Alignment-based only&quot;,
+                                   &quot;alevin only&quot;)) +
     ggtitle(&quot;Total counts per cell&quot;) +
-    xlab(&quot;Alignment based&quot;) +
+    xlab(&quot;Alignment-based&quot;) +
     theme_minimal() +
     theme(legend.position = &quot;bottom&quot;,
           legend.title = element_blank())
 
 plot_data &lt;- feat_data %&gt;%
     mutate(Traditional = log10_mean_counts.Trad,
-           Alevin = log10_mean_counts.Alevin) %&gt;%
+           alevin = log10_mean_counts.Alevin) %&gt;%
     mutate(Traditional = replace_na(Traditional, -0.1),
-           Alevin = replace_na(Alevin, -0.1))
+           alevin = replace_na(alevin, -0.1))
 
 mean_plot &lt;- ggplot(plot_data,
-                    aes(x = Traditional, y = Alevin, colour = Annot)) +
+                    aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = &quot;#7A52C7&quot;) +
     geom_smooth(data = filter(plot_data, Annot == &quot;Both&quot;),
                 method = &quot;lm&quot;, colour = &quot;#00B7C6&quot;) +
     scale_colour_manual(values = c(&quot;#EC008C&quot;, &quot;#00ADEF&quot;, &quot;#8DC63F&quot;),
-                        labels = c(&quot;Both&quot;, &quot;Alignment based only&quot;,
-                                   &quot;Alevin only&quot;)) +
-    ggtitle(&quot;Mean counts per gene (log10)&quot;) +
-    xlab(&quot;Alignment based&quot;) +
+                        labels = c(&quot;Both&quot;, &quot;Alignment-based only&quot;,
+                                   &quot;alevin only&quot;)) +
+    ggtitle(expression(&quot;Mean counts per gene (&quot;*log[&quot;10&quot;]*&quot;)&quot;)) +
+    xlab(&quot;Alignment-based&quot;) +
     theme_minimal() +
     theme(legend.position = &quot;bottom&quot;,
           legend.title = element_blank())
@@ -1555,7 +1672,7 @@ zeros_data &lt;- feat_data %&gt;%
 
 plot_data &lt;- left_join(counts_data, zeros_data, by = c(&quot;ID&quot;, &quot;Method&quot;)) %&gt;%
     mutate(Method = factor(Method, levels = c(&quot;Trad&quot;, &quot;Alevin&quot;),
-                           labels = c(&quot;Alignment based&quot;, &quot;Alevin&quot;)))
+                           labels = c(&quot;Alignment-based&quot;, &quot;alevin&quot;)))
 
 zeros_plot &lt;- ggplot(plot_data,
        aes(x = log10_total_counts, y = PropZero, colour = Method)) +
@@ -1565,7 +1682,7 @@ zeros_plot &lt;- ggplot(plot_data,
     scale_colour_manual(values = c(&quot;#00ADEF&quot;, &quot;#8DC63F&quot;)) +
     facet_wrap(~ Method) +
     ggtitle(&quot;Zeros relationship&quot;) +
-    xlab(&quot;Total counts per gene (log10)&quot;) +
+    xlab(expression(&quot;Total counts per gene (&quot;*log[&quot;10&quot;]*&quot;)&quot;)) +
     ylab(&quot;Percentage zeros&quot;) +
     theme_minimal() +
     theme(legend.position = &quot;none&quot;)</code></pre>
@@ -1595,6 +1712,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/ae75188bc71339aca2e7a2c6746a18185fc113c4/docs/figure/01B-alevin.Rmd/make-fig-1.png" target="_blank">ae75188</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-06
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/lazappi/phd-thesis-analysis/blob/2693e979c9a55c66e7d99877e14f641a06a9b9a7/docs/figure/01B-alevin.Rmd/make-fig-1.png" target="_blank">2693e97</a>
@@ -1631,12 +1759,12 @@ Luke Zappia
     list(
         Parameter = &quot;n_cells&quot;,
         Value = ncol(alevin),
-        Description = &quot;Number of cells in Alevin dataset&quot;
+        Description = &quot;Number of cells in alevin dataset&quot;
     ),
     list(
         Parameter = &quot;n_genes&quot;,
         Value = nrow(alevin),
-        Description = &quot;Number of genes in Alevin dataset&quot;
+        Description = &quot;Number of genes in alevin dataset&quot;
     )
 )
 
@@ -1654,12 +1782,12 @@ knitr::kable(jsonlite::fromJSON(params))</code></pre>
 <tr class="odd">
 <td align="left">n_cells</td>
 <td align="left">10423</td>
-<td align="left">Number of cells in Alevin dataset</td>
+<td align="left">Number of cells in alevin dataset</td>
 </tr>
 <tr class="even">
 <td align="left">n_genes</td>
 <td align="left">37247</td>
-<td align="left">Number of genes in Alevin dataset</td>
+<td align="left">Number of genes in alevin dataset</td>
 </tr>
 </tbody>
 </table>
@@ -1720,7 +1848,7 @@ knitr::kable(data.frame(
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2019-03-20                  
+ date     2019-04-03                  
 
 ─ Packages ──────────────────────────────────────────────────────────────
  ! package              * version   date       lib source        

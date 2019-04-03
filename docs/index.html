@@ -294,6 +294,9 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Home</a>
 </li>
+<li>
+  <a href="getting-started.html">Getting started</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Analysis
@@ -301,9 +304,6 @@ $(document).ready(function () {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="getting-started.html">Getting started</a>
-    </li>
     <li>
       <a href="01-preprocessing.html">Pre-processing</a>
     </li>
@@ -382,7 +382,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2019-03-20</p>
+<p><strong>Last updated:</strong> 2019-04-03</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -406,7 +406,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/20bd9c52271d21d74363dd31694f4a0f46cae2f2" target="_blank">20bd9c5</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="http://github.com/lazappi/phd-thesis-analysis/tree/5870e6e191cf7f91714b40501fc63645582ed59a" target="_blank">5870e6e</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -416,7 +416,10 @@ Ignored files:
     Ignored:    ._.DS_Store
     Ignored:    analysis/cache/
     Ignored:    build-logs/
-    Ignored:    data/
+    Ignored:    data/alevin/
+    Ignored:    data/cellranger/
+    Ignored:    data/processed/
+    Ignored:    data/published/
     Ignored:    output/.DS_Store
     Ignored:    output/._.DS_Store
     Ignored:    output/03-clustering/selected_genes.csv.zip
@@ -430,7 +433,21 @@ Ignored files:
 
 Untracked files:
     Untracked:  DGEList.Rds
+    Untracked:  output/90-methods/package-versions.json
     Untracked:  scripts/build.pbs
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   output/01-preprocessing/droplet-selection.pdf
+    Modified:   output/01-preprocessing/parameters.json
+    Modified:   output/01-preprocessing/selection-comparison.pdf
+    Modified:   output/01B-alevin/alevin-comparison.pdf
+    Modified:   output/01B-alevin/parameters.json
+    Modified:   output/02-quality-control/qc-thresholds.pdf
+    Modified:   output/02-quality-control/qc-validation.pdf
+    Modified:   output/03-clustering/cluster-comparison.pdf
+    Modified:   output/03-clustering/cluster-validation.pdf
+    Modified:   output/04-marker-genes/de-results.pdf
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -464,7 +481,41 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
-<a href="http://github.com/lazappi/phd-thesis-analysis/blob/20bd9c52271d21d74363dd31694f4a0f46cae2f2/analysis/index.Rmd" target="_blank">20bd9c5</a>
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/5870e6e191cf7f91714b40501fc63645582ed59a/analysis/index.Rmd" target="_blank">5870e6e</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-04-03
+</td>
+<td style="text-align:left;">
+Adjust figures and fix names
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="http://github.com/lazappi/phd-thesis-analysis/blob/33ac14f1f1aa822355526e1696a4b10e25e79226/analysis/index.Rmd" target="_blank">33ac14f</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+<td style="text-align:left;">
+Tidy up website
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/http://github.com/lazappi/phd-thesis-analysis/33ac14f1f1aa822355526e1696a4b10e25e79226/docs/index.html" target="_blank">33ac14f</a>
 </td>
 <td style="text-align:left;">
 Luke Zappia
@@ -635,13 +686,43 @@ Start workflowr project.
 <p></details></p>
 <hr />
 <p><img src="organoid-black.png" width="40%" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of organoid-black.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/lazappi/phd-thesis-analysis/blob/33ac14f1f1aa822355526e1696a4b10e25e79226/docs/organoid-black.png" target="_blank">33ac14f</a>
+</td>
+<td style="text-align:left;">
+Luke Zappia
+</td>
+<td style="text-align:left;">
+2019-03-20
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>This website displays the analysis code and results for the analysis chapter of my PhD thesis. In this chapter I reanalyse a previously published kidney organoid scRNA-seq dataset <span class="citation">(Phipson et al. 2019; Combes et al. 2019)</span>, focusing on the decisions that are made during analysis and demonstrating a range of tools that can be used for various tasks.</p>
 <p>Follow the links below to access the different stages of analysis or refer to the <a href="getting-started.html">Getting started</a> page for more details about the dataset and how to reproduce the analysis.</p>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
 <ul>
 <li><a href="01-preprocessing.html">Pre-processing</a> - Reading of datasets produced using Cell Ranger, comparison of droplet selection methods, annotation of the dataset.</li>
-<li><a href="01B-alevin.html">Alevin</a> - Comparison of the alignment-based dataset from Cell Ranger with the same data processed using the Alevin method in Salmon.</li>
+<li><a href="01B-alevin.html">Alevin</a> - Comparison of the alignment-based dataset from Cell Ranger with the same data processed using the alevin method in Salmon.</li>
 <li><a href="02-quality-control.html">Quality control</a> - Selection of high-quality cells and removal of uninformative genes.</li>
 <li><a href="03-clustering.html">Clustering</a> - Clustering using the Seurat package with a comparison of methods for gene selection.</li>
 <li><a href="04-marker-genes.html">Marker genes</a> - Marker gene detection for each cluster using edgeR.</li>
@@ -666,10 +747,10 @@ Start workflowr project.
 <h1>References</h1>
 <div id="refs">
 <div id="ref-Combes2019-uv">
-<p>Combes, Alexander N, Luke Zappia, Pei Xuan Er, Alicia Oshlack, and Melissa H Little. 2019. “Single-cell analysis reveals congruence between kidney organoids and human fetal kidney.” <em>Genome Med.</em> 11 (1): 3. doi:<a href="https://doi.org/10.1186/s13073-019-0615-0">10.1186/s13073-019-0615-0</a>.</p>
+<p>Combes, Alexander N, Luke Zappia, Pei Xuan Er, Alicia Oshlack, and Melissa H Little. 2019. “Single-cell analysis reveals congruence between kidney organoids and human fetal kidney.” <em>Genome Medicine</em> 11 (1): 3. doi:<a href="https://doi.org/10.1186/s13073-019-0615-0">10.1186/s13073-019-0615-0</a>.</p>
 </div>
 <div id="ref-Phipson2019-er">
-<p>Phipson, Belinda, Pei X Er, Alexander N Combes, Thomas A Forbes, Sara E Howden, Luke Zappia, Hsan-Jan Yen, et al. 2019. “Evaluation of variability in human kidney organoids.” <em>Nat. Methods</em> 16 (1): 79–87. doi:<a href="https://doi.org/10.1038/s41592-018-0253-2">10.1038/s41592-018-0253-2</a>.</p>
+<p>Phipson, Belinda, Pei X Er, Alexander N Combes, Thomas A Forbes, Sara E Howden, Luke Zappia, Hsan-Jan Yen, et al. 2019. “Evaluation of variability in human kidney organoids.” <em>Nature Methods</em> 16 (1): 79–87. doi:<a href="https://doi.org/10.1038/s41592-018-0253-2">10.1038/s41592-018-0253-2</a>.</p>
 </div>
 </div>
 <pre class="r"><code>devtools::session_info()</code></pre>

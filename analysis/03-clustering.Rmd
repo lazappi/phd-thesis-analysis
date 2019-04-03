@@ -1180,7 +1180,7 @@ plot_data <- cell_data %>%
     mutate(SelMethod = factor(
         SelMethod, 
         levels = c("Both", "CellRanger", "emptyDrops"),
-        labels = c("Both", "Cell Ranger v3 only", "emptyDrops only")
+        labels = c("Both", "Cell Ranger v3 only", "EmptyDrops only")
     ))
 
 sel_plot <- ggplot(plot_data, aes(x = Cluster, y = Prop, fill = SelMethod)) +
@@ -1211,7 +1211,7 @@ cycle_plot <- ggplot(plot_data, aes(x = Cluster, y = Prop, fill = CellCycle)) +
 counts_plot <- ggplot(cell_data, aes(x = Cluster, y = log10_total_counts)) +
     geom_sina(aes(colour = Cluster), size = 0.5) +
     ggtitle("Total counts by cluster") +
-    ylab("Total counts (log10)") +
+    ylab(expression("Total counts ("*log["10"]*")")) +
     theme_minimal() +
     theme(legend.position = "none",
           axis.title.x = element_blank())

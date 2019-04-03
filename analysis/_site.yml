@@ -5,10 +5,10 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "Getting started"
+      href: getting-started.html
     - text: "Analysis"
       menu:
-        - text: "Getting started"
-          href: getting-started.html
         - text: "Pre-processing"
           href: 01-preprocessing.html
         - text: "Alevin"

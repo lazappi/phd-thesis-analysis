@@ -73,7 +73,7 @@ The standard way to quanitfy 10x Chromium scRNA-seq data is using the Cell
 Ranger platform that performs traditional alignment to a reference genome and
 counts the reads overlapping annotated genes. An alternative appraoch is to
 estimate expression levels directly against the transcriptome. We have done that
-using an approach designed for scRNA-seq data called Alevin available in the
+using an approach designed for scRNA-seq data called alevin available in the
 Salmon package. In this document we are going to compare the results of this
 approach to what we get from Cell Ranger and our previous processing.
 
@@ -121,9 +121,9 @@ cell_data <- full_join(as.data.frame(colData(selected)),
                            "Trad only", SelBy),
            SelBy = if_else(is.na(total_counts.Trad) &
                                !is.na(total_counts.Alevin),
-                           "Alevin only", SelBy)) %>%
+                           "alevin only", SelBy)) %>%
     mutate(SelBy = factor(SelBy,
-                          levels = c("Both", "Trad only", "Alevin only")))
+                          levels = c("Both", "Trad only", "alevin only")))
 
 feat_data <- full_join(as.data.frame(rowData(selected)),
                        as.data.frame(rowData(alevin)),
@@ -135,9 +135,9 @@ feat_data <- full_join(as.data.frame(rowData(selected)),
                            "Trad only", Annot),
            Annot = if_else(is.na(total_counts.Trad) &
                                !is.na(total_counts.Alevin),
-                           "Alevin only", Annot)) %>%
+                           "alevin only", Annot)) %>%
     mutate(Annot = factor(Annot,
-                          levels = c("Both", "Trad only", "Alevin only")))
+                          levels = c("Both", "Trad only", "alevin only")))
 ```
 
 Cell selection
@@ -162,12 +162,12 @@ Standard
 ```{r cell-counts}
 plot_data <- cell_data %>%
     mutate(Traditional = total_counts.Trad,
-           Alevin = total_counts.Alevin) %>%
+           alevin = total_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, SelBy == "Both"),
@@ -182,12 +182,12 @@ Logged
 ```{r cell-counts-log}
 plot_data <- cell_data %>%
     mutate(Traditional = log10_total_counts.Trad,
-           Alevin = log10_total_counts.Alevin) %>%
+           alevin = log10_total_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, SelBy == "Both"),
@@ -205,12 +205,12 @@ Standard
 ```{r cell-features}
 plot_data <- cell_data %>%
     mutate(Traditional = total_features_by_counts.Trad,
-           Alevin = total_features_by_counts.Alevin) %>%
+           alevin = total_features_by_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, SelBy == "Both"),
@@ -225,12 +225,12 @@ Logged
 ```{r cell-features-log}
 plot_data <- cell_data %>%
     mutate(Traditional = log10_total_features_by_counts.Trad,
-           Alevin = log10_total_features_by_counts.Alevin) %>%
+           alevin = log10_total_features_by_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, SelBy == "Both"),
@@ -247,12 +247,12 @@ Percent counts in top 100 most expressed features.
 ```{r top-100}
 plot_data <- cell_data %>%
     mutate(Traditional = pct_counts_in_top_100_features.Trad,
-           Alevin = pct_counts_in_top_100_features.Alevin) %>%
+           alevin = pct_counts_in_top_100_features.Alevin) %>%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = SelBy)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, SelBy == "Both"),
@@ -270,11 +270,11 @@ Standard
 ```{r gene-counts}
 plot_data <- feat_data %>%
     mutate(Traditional = total_counts.Trad,
-           Alevin = total_counts.Alevin) %>%
+           alevin = total_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional, -1e5),
-           Alevin = replace_na(Alevin, -1e5))
+           alevin = replace_na(alevin, -1e5))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, Annot == "Both"),
@@ -289,11 +289,11 @@ Logged
 ```{r gene-counts-log}
 plot_data <- feat_data %>%
     mutate(Traditional = log10_total_counts.Trad,
-           Alevin = log10_total_counts.Alevin) %>%
+           alevin = log10_total_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional, -1),
-           Alevin = replace_na(Alevin, -1))
+           alevin = replace_na(alevin, -1))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, Annot == "Both"),
@@ -308,11 +308,11 @@ Gene cells {.tabset}
 ```{r gene-cells}
 plot_data <- feat_data %>%
     mutate(Traditional = n_cells_by_counts.Trad,
-           Alevin = n_cells_by_counts.Alevin) %>%
+           alevin = n_cells_by_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional, -500),
-           Alevin = replace_na(Alevin, -500))
+           alevin = replace_na(alevin, -500))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, Annot == "Both"),
@@ -330,11 +330,11 @@ Standard
 ```{r gene-means}
 plot_data <- feat_data %>%
     mutate(Traditional = mean_counts.Trad,
-           Alevin = mean_counts.Alevin) %>%
+           alevin = mean_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional, -5),
-           Alevin = replace_na(Alevin, -5))
+           alevin = replace_na(alevin, -5))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, Annot == "Both"),
@@ -349,11 +349,11 @@ Logged
 ```{r gene-means-log}
 plot_data <- feat_data %>%
     mutate(Traditional = log10_mean_counts.Trad,
-           Alevin = log10_mean_counts.Alevin) %>%
+           alevin = log10_mean_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional, -0.1),
-           Alevin = replace_na(Alevin, -0.1))
+           alevin = replace_na(alevin, -0.1))
 
-ggplot(plot_data, aes(x = Traditional, y = Alevin, colour = Annot)) +
+ggplot(plot_data, aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "red") +
     geom_smooth(data = filter(plot_data, Annot == "Both"),
@@ -395,11 +395,11 @@ Figures
 plot_data <- cell_data %>%
     select(BarcodeSample,
            `Cell Ranger v3` = CellRangerFilt,
-           emptyDrops       = EmpDropsFilt,
-           Alevin           = AlevinFilt) %>%
+           EmptyDrops       = EmpDropsFilt,
+           alevin           = AlevinFilt) %>%
     mutate(`Cell Ranger v3` = if_else(`Cell Ranger v3`, 1L, 0L),
-           emptyDrops       = if_else(emptyDrops,       1L, 0L),
-           Alevin           = if_else(Alevin,           1L, 0L))
+           EmptyDrops       = if_else(EmptyDrops,       1L, 0L),
+           alevin           = if_else(alevin,           1L, 0L))
 
 upset(plot_data, order.by = "freq",
       sets.x.label = "Number of cells",
@@ -412,13 +412,13 @@ comp_plot <- grid.grab()
 
 plot_data <- cell_data %>%
     mutate(Traditional = total_counts.Trad,
-           Alevin = total_counts.Alevin) %>%
+           alevin = total_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional,
                                     0.9 * min(Traditional, na.rm = TRUE)),
-           Alevin = replace_na(Alevin, 0.9 * min(Alevin, na.rm = TRUE)))
+           alevin = replace_na(alevin, 0.9 * min(alevin, na.rm = TRUE)))
 
 counts_plot <- ggplot(plot_data,
-                      aes(x = Traditional, y = Alevin, colour = SelBy)) +
+                      aes(x = Traditional, y = alevin, colour = SelBy)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "#7A52C7") +
     geom_smooth(data = filter(plot_data, SelBy == "Both"),
@@ -426,31 +426,31 @@ counts_plot <- ggplot(plot_data,
     scale_x_log10(labels = scales::number) +
     scale_y_log10(labels = scales::number) +
     scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F"),
-                        labels = c("Both", "Alignment based only",
-                                   "Alevin only")) +
+                        labels = c("Both", "Alignment-based only",
+                                   "alevin only")) +
     ggtitle("Total counts per cell") +
-    xlab("Alignment based") +
+    xlab("Alignment-based") +
     theme_minimal() +
     theme(legend.position = "bottom",
           legend.title = element_blank())
 
 plot_data <- feat_data %>%
     mutate(Traditional = log10_mean_counts.Trad,
-           Alevin = log10_mean_counts.Alevin) %>%
+           alevin = log10_mean_counts.Alevin) %>%
     mutate(Traditional = replace_na(Traditional, -0.1),
-           Alevin = replace_na(Alevin, -0.1))
+           alevin = replace_na(alevin, -0.1))
 
 mean_plot <- ggplot(plot_data,
-                    aes(x = Traditional, y = Alevin, colour = Annot)) +
+                    aes(x = Traditional, y = alevin, colour = Annot)) +
     geom_point(alpha = 0.3) +
     geom_abline(intercept = 0, slope = 1, colour = "#7A52C7") +
     geom_smooth(data = filter(plot_data, Annot == "Both"),
                 method = "lm", colour = "#00B7C6") +
     scale_colour_manual(values = c("#EC008C", "#00ADEF", "#8DC63F"),
-                        labels = c("Both", "Alignment based only",
-                                   "Alevin only")) +
-    ggtitle("Mean counts per gene (log10)") +
-    xlab("Alignment based") +
+                        labels = c("Both", "Alignment-based only",
+                                   "alevin only")) +
+    ggtitle(expression("Mean counts per gene ("*log["10"]*")")) +
+    xlab("Alignment-based") +
     theme_minimal() +
     theme(legend.position = "bottom",
           legend.title = element_blank())
@@ -472,7 +472,7 @@ zeros_data <- feat_data %>%
 
 plot_data <- left_join(counts_data, zeros_data, by = c("ID", "Method")) %>%
     mutate(Method = factor(Method, levels = c("Trad", "Alevin"),
-                           labels = c("Alignment based", "Alevin")))
+                           labels = c("Alignment-based", "alevin")))
 
 zeros_plot <- ggplot(plot_data,
        aes(x = log10_total_counts, y = PropZero, colour = Method)) +
@@ -482,7 +482,7 @@ zeros_plot <- ggplot(plot_data,
     scale_colour_manual(values = c("#00ADEF", "#8DC63F")) +
     facet_wrap(~ Method) +
     ggtitle("Zeros relationship") +
-    xlab("Total counts per gene (log10)") +
+    xlab(expression("Total counts per gene ("*log["10"]*")")) +
     ylab("Percentage zeros") +
     theme_minimal() +
     theme(legend.position = "none")
@@ -499,7 +499,6 @@ ggsave(here::here("output", DOCNAME, "alevin-comparison.png"), fig,
 
 fig
 ```
-
 
 Summary
 =======
@@ -519,12 +518,12 @@ params <- list(
     list(
         Parameter = "n_cells",
         Value = ncol(alevin),
-        Description = "Number of cells in Alevin dataset"
+        Description = "Number of cells in alevin dataset"
     ),
     list(
         Parameter = "n_genes",
         Value = nrow(alevin),
-        Description = "Number of genes in Alevin dataset"
+        Description = "Number of genes in alevin dataset"
     )
 )
 

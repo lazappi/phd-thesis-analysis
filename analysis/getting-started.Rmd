@@ -106,7 +106,7 @@ Once the processed data has been has been produced or downloaded it needs to be
 placed in the correct location. The analysis code assumes the following
 directory structure inside the `data/` directory:
 
-* `alevin/` - Expression matrices produced by Alevin
+* `alevin/` - Expression matrices produced by alevin
     * `Org1/` - Alevin output for Organoid 1
         * `quants_mat.gz` - Expression matrix
         * `quants_mat_cols.txt` - Column labels for expression matrix
@@ -125,7 +125,7 @@ directory structure inside the `data/` directory:
     * `01-selected.Rds` - `SingleCellExperiment` object containing selected
       cells
     * `01B-alevin.Rds` - `SingleCellExperiment` object containing the dataset
-      produced by Alevin
+      produced by alevin
     * `02-filtered.Rds` - `SingleCellExperiment` object following quality
       control
     * `03-clustered.Rds` - `SingleCellExperiment` with cluster labels
@@ -159,7 +159,7 @@ The analysis directory contains the following analysis files:
 * `01-preprocessing.html` - Reading of datasets produced using Cell Ranger, 
   comparison of droplet selection methods, annotation of the dataset.
 * `01B-alevin.html` - Comparison of the alignment-based dataset from
-  Cell Ranger with the same data processed using the Alevin method in Salmon.
+  Cell Ranger with the same data processed using the alevin method in Salmon.
 * `02-quality-control.html` - Selection of high-quality cells and removal of
   uninformative genes.
 * `03-clustering.html` - Clustering using the Seurat package with a comparison

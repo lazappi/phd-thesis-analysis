@@ -29,7 +29,7 @@ Analysis
   Cell Ranger, comparison of droplet selection methods, annotation of the
   dataset.
 * [Alevin](01B-alevin.html) - Comparison of the alignment-based dataset from
-  Cell Ranger with the same data processed using the Alevin method in Salmon.
+  Cell Ranger with the same data processed using the alevin method in Salmon.
 * [Quality control](02-quality-control.html) - Selection of high-quality cells
   and removal of uninformative genes.
 * [Clustering](03-clustering.html) - Clustering using the Seurat package with a

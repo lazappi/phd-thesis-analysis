@@ -12,12 +12,12 @@
   {
     "Parameter": ["emp_iters"],
     "Value": [30000],
-    "Description": ["Number of iterations for emptyDrops p-values"]
+    "Description": ["Number of iterations for EmptyDrops p-values"]
   },
   {
     "Parameter": ["emp_fdr"],
     "Value": [0.01],
-    "Description": ["FDR cutoff for emptyDrops"]
+    "Description": ["FDR cutoff for EmptyDrops"]
   },
   {
     "Parameter": ["n_default"],
@@ -32,7 +32,7 @@
   {
     "Parameter": ["n_empdrops"],
     "Value": [9858],
-    "Description": ["Number of cells selected by the emptyDrops method"]
+    "Description": ["Number of cells selected by the EmptyDrops method"]
   },
   {
     "Parameter": ["n_cells"],
