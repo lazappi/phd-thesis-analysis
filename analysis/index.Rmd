@@ -53,7 +53,7 @@ This website and the analysis code can be cited as:
 > Zappia, Luke. PhD thesis analysis. 2019.
 > DOI: [10.5281/zenodo.2622384][zenodo]
 
-This data files associated with this analysis can be cited as:
+The data files associated with this analysis can be cited as:
 
 > Zappia L. PhD thesis analysis data. University of Melbourne. 2019.
 > DOI: [10.26188/5c9182aa7e23d][figshare]
